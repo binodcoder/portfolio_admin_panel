@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "814700879413",
+    "firebase_url": "https://binodfolio-default-rtdb.firebaseio.com",
+    "project_id": "binodfolio",
+    "storage_bucket": "binodfolio.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814700879413:android:3db6169c6726b17df75b7c",
+        "android_client_info": {
+          "package_name": "com.example.portfolio_admin_panel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfdH4wDBReRSr8FSV0adhHJMIiRahqAYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
