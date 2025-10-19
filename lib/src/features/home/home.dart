@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
+const double _mobileBreakpoint = 600;
+const double _contentMaxWidth = 1000;
+
 class Home extends StatelessWidget {
   const Home({super.key});
 
@@ -24,11 +27,11 @@ class Home extends StatelessWidget {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => context.goNamed(AppRoute.intro.name),
-            child: const Text('Intro'),
-          ),
-          const SizedBox(width: 8),
+          // TextButton(
+          //   onPressed: () => context.goNamed(AppRoute.intro.name),
+          //   child: const Text('Intro'),
+          // ),
+          // const SizedBox(width: 8),
           OutlinedButton.icon(
             onPressed: () => context.goNamed(AppRoute.account.name),
             style: OutlinedButton.styleFrom(shape: const StadiumBorder()),
@@ -48,7 +51,7 @@ class Home extends StatelessWidget {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1000),
+          constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             child: Column(
@@ -57,52 +60,85 @@ class Home extends StatelessWidget {
                 Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  clipBehavior: Clip.antiAlias,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          colorScheme.primary.withAlpha((0.08 * 250).toInt()),
-                          colorScheme.primary.withAlpha((0.03 * 250).toInt()),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
+                  child: Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.dashboard_outlined,
-                          size: 48,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isNarrow = constraints.maxWidth < _mobileBreakpoint;
+                        final titleStyle = theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        );
+                        final subtitleStyle = theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        );
+
+                        if (isNarrow) {
+                          return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Welcome to your Admin',
-                                style: theme.textTheme.headlineSmall?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              Row(
+                                children: [
+                                  // Icon(
+                                  //   Icons.dashboard_outlined,
+                                  //   size: 40,
+                                  //   color: colorScheme.primary,
+                                  // ),
+                                  // const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Welcome to your Admin', style: titleStyle),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          'Manage your portfolio content quickly and comfortably on the web.',
+                                          style: subtitleStyle,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Manage your portfolio content quickly and comfortably on the web.',
-                                style: theme.textTheme.bodyMedium,
-                              ),
+                              // const SizedBox(height: 16),
+                              // FilledButton.icon(
+                              //   onPressed: () => context.goNamed(AppRoute.intro.name),
+                              //   icon: const Icon(Icons.edit_outlined),
+                              //   label: const Text('Edit Intro'),
+                              // ),
                             ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        FilledButton.icon(
-                          onPressed: () => context.goNamed(AppRoute.intro.name),
-                          icon: const Icon(Icons.edit_outlined),
-                          label: const Text('Edit Intro'),
-                        ),
-                      ],
+                          );
+                        }
+
+                        return Row(
+                          children: [
+                            // Icon(
+                            //   Icons.dashboard_outlined,
+                            //   size: 48,
+                            //   color: colorScheme.primary,
+                            // ),
+                            // const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Welcome to your Admin', style: titleStyle),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Manage your portfolio content quickly and comfortably on the web.',
+                                    style: subtitleStyle,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // const SizedBox(width: 12),
+                            // FilledButton.icon(
+                            //   onPressed: () => context.goNamed(AppRoute.intro.name),
+                            //   icon: const Icon(Icons.edit_outlined),
+                            //   label: const Text('Edit Intro'),
+                            // ),
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -112,16 +148,26 @@ class Home extends StatelessWidget {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final maxWidth = constraints.maxWidth;
-                    const tileWidth = 280.0;
-                    int columns = (maxWidth / tileWidth).floor();
-                    columns = columns.clamp(1, 4).toInt();
+                    int columns;
+                    if (maxWidth < 520) {
+                      columns = 1;
+                    } else if (maxWidth < 900) {
+                      columns = 2;
+                    } else if (maxWidth < 1200) {
+                      columns = 3;
+                    } else {
+                      columns = 4;
+                    }
+                    final isMobile = maxWidth < _mobileBreakpoint;
+                    final aspect = isMobile ? 2.2 : 1.25;
+
                     return GridView.count(
                       crossAxisCount: columns,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 1.3,
+                      childAspectRatio: aspect,
                       children: [
                         _ActionCard(
                           icon: Icons.edit_note_outlined,
@@ -210,7 +256,7 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _ActionCard extends StatelessWidget {
+class _ActionCard extends StatefulWidget {
   final IconData icon;
   final String title;
   final String subtitle;
@@ -225,38 +271,114 @@ class _ActionCard extends StatelessWidget {
   });
 
   @override
+  State<_ActionCard> createState() => _ActionCardState();
+}
+
+class _ActionCardState extends State<_ActionCard> {
+  bool _hovering = false;
+  bool _focused = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final interactive = widget.enabled && widget.onTap != null;
+    final showLift = _hovering || _focused;
+
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(14),
+      side: BorderSide(
+        color: showLift ? colorScheme.outlineVariant : Colors.transparent,
+      ),
+    );
+
     return Opacity(
-      opacity: enabled ? 1 : 0.6,
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: enabled ? onTap : null,
-          borderRadius: BorderRadius.circular(14),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(icon, size: 32, color: colorScheme.primary),
-                const Spacer(),
-                Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+      opacity: widget.enabled ? 1 : 0.6,
+      child: FocusableActionDetector(
+        enabled: widget.enabled,
+        mouseCursor: interactive ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        onShowFocusHighlight: (v) => setState(() => _focused = v),
+        onShowHoverHighlight: (v) => setState(() => _hovering = v),
+        child: TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 140),
+          curve: Curves.easeOut,
+          tween: Tween<double>(begin: 0, end: showLift ? 3 : 0),
+          builder: (context, elevation, child) {
+            return Card(
+              elevation: elevation,
+              shape: shape,
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: interactive ? widget.onTap : null,
+                borderRadius: BorderRadius.circular(14),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Semantics(
+                    button: true,
+                    enabled: widget.enabled,
+                    label: '${widget.title}. ${widget.subtitle}',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _IconBadge(icon: widget.icon),
+                            const Spacer(),
+                            Icon(
+                              Icons.arrow_outward,
+                              size: 18,
+                              color: colorScheme.outline,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          widget.title,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          widget.subtitle,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(subtitle, style: theme.textTheme.bodySmall),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+class _IconBadge extends StatelessWidget {
+  final IconData icon;
+  const _IconBadge({required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      alignment: Alignment.center,
+      child: Icon(icon, size: 22, color: colorScheme.onPrimaryContainer),
     );
   }
 }
