@@ -8,6 +8,30 @@ import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/ui/intro_form.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/ui/intro_page.dart';
 import 'package:portfolio_admin_panel/src/features/home/home.dart';
+import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
+import 'package:portfolio_admin_panel/src/features/about/presentation/about_form.dart';
+import 'package:portfolio_admin_panel/src/features/about/presentation/about_page.dart';
+import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
+import 'package:portfolio_admin_panel/src/features/skills/presentation/skill_form.dart';
+import 'package:portfolio_admin_panel/src/features/skills/presentation/skills_page.dart';
+import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
+import 'package:portfolio_admin_panel/src/features/projects/presentation/project_form.dart';
+import 'package:portfolio_admin_panel/src/features/projects/presentation/projects_page.dart';
+import 'package:portfolio_admin_panel/src/features/social/domain/social_link.dart';
+import 'package:portfolio_admin_panel/src/features/social/presentation/social_form.dart';
+import 'package:portfolio_admin_panel/src/features/social/presentation/social_page.dart';
+import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
+import 'package:portfolio_admin_panel/src/features/experience/presentation/experience_form.dart';
+import 'package:portfolio_admin_panel/src/features/experience/presentation/experience_page.dart';
+import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
+import 'package:portfolio_admin_panel/src/features/education/presentation/education_form.dart';
+import 'package:portfolio_admin_panel/src/features/education/presentation/education_page.dart';
+import 'package:portfolio_admin_panel/src/features/certifications/domain/certification.dart';
+import 'package:portfolio_admin_panel/src/features/certifications/presentation/certification_form.dart';
+import 'package:portfolio_admin_panel/src/features/certifications/presentation/certifications_page.dart';
+import 'package:portfolio_admin_panel/src/features/contact/domain/contact_info.dart';
+import 'package:portfolio_admin_panel/src/features/contact/presentation/contact_form.dart';
+import 'package:portfolio_admin_panel/src/features/contact/presentation/contact_page.dart';
 import 'package:portfolio_admin_panel/src/routing/go_router_refresh_stream.dart';
 import 'package:portfolio_admin_panel/src/routing/not_found_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -19,7 +43,29 @@ part 'app_router.g.dart';
 /// ```dart
 /// context.goNamed(AppRoute.orders.name)
 /// ```
-enum AppRoute { home, account, signIn, intro, introEdit }
+enum AppRoute {
+  home,
+  account,
+  signIn,
+  intro,
+  introEdit,
+  about,
+  aboutEdit,
+  skills,
+  skillEdit,
+  projects,
+  projectEdit,
+  social,
+  socialEdit,
+  experience,
+  experienceEdit,
+  education,
+  educationEdit,
+  certifications,
+  certificationEdit,
+  contact,
+  contactEdit,
+}
 
 /// returns the GoRouter instance that defines all the routes in the app
 @riverpod
@@ -82,6 +128,126 @@ GoRouter goRouter(Ref ref) {
                 pageBuilder: (context, state) => MaterialPage(
                   fullscreenDialog: true,
                   child: IntroForm(item: state.extra as Intro?),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'about',
+            name: AppRoute.about.name,
+            builder: (context, state) => const AboutPage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.aboutEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: AboutForm(item: state.extra as About?),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'skills',
+            name: AppRoute.skills.name,
+            builder: (context, state) => const SkillsPage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.skillEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: SkillForm(item: state.extra as Skill?),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'projects',
+            name: AppRoute.projects.name,
+            builder: (context, state) => const ProjectsPage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.projectEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: ProjectForm(item: state.extra as Project?),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'social',
+            name: AppRoute.social.name,
+            builder: (context, state) => const SocialPage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.socialEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: SocialForm(item: state.extra as SocialLink?),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'experience',
+            name: AppRoute.experience.name,
+            builder: (context, state) => const ExperiencePage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.experienceEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: ExperienceForm(item: state.extra as Experience?),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'education',
+            name: AppRoute.education.name,
+            builder: (context, state) => const EducationPage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.educationEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: EducationForm(item: state.extra as Education?),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'certifications',
+            name: AppRoute.certifications.name,
+            builder: (context, state) => const CertificationsPage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.certificationEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: CertificationForm(item: state.extra as Certification?),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'contact',
+            name: AppRoute.contact.name,
+            builder: (context, state) => const ContactPage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.contactEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: ContactForm(item: state.extra as ContactInfo?),
                 ),
               ),
             ],

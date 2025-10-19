@@ -17,7 +17,7 @@ class MyApp extends ConsumerWidget {
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
       restorationScopeId: 'app',
-      onGenerateTitle: (BuildContext context) => 'My Shop'.hardcoded,
+      onGenerateTitle: (BuildContext context) => 'binodcoder'.hardcoded,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: colorScheme,
