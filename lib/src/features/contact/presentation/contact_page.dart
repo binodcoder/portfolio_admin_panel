@@ -13,7 +13,7 @@ class ContactPage extends ConsumerWidget {
     final state = ref.watch(contactControllerProvider);
     final action = ref.watch(contactActionControllerProvider);
 
-    Future<void> _delete() async {
+    Future<void> deleteItem() async {
       final items = state.asData?.value ?? const <ContactInfo>[];
       if (items.isEmpty || items.first.id == null) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nothing to delete')));
@@ -34,7 +34,7 @@ class ContactPage extends ConsumerWidget {
       await ref.read(contactActionControllerProvider.notifier).deleteContact(items.first.id!);
     }
 
-    void _edit() {
+    void editItem() {
       final List<ContactInfo> existing = state.asData?.value ?? const [];
       context.goNamed(AppRoute.contactEdit.name, extra: existing.isNotEmpty ? existing.first : null);
     }
@@ -43,10 +43,10 @@ class ContactPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Contact'),
         actions: [
-          TextButton.icon(onPressed: _edit, icon: const Icon(Icons.edit_outlined), label: const Text('Edit')),
+          TextButton.icon(onPressed: editItem, icon: const Icon(Icons.edit_outlined), label: const Text('Edit')),
           const SizedBox(width: 4),
           TextButton.icon(
-            onPressed: action.isLoading ? null : _delete,
+            onPressed: action.isLoading ? null : deleteItem,
             icon: const Icon(Icons.delete_outline),
             label: const Text('Delete'),
           ),
@@ -72,7 +72,7 @@ class ContactPage extends ConsumerWidget {
                         const Icon(Icons.info_outline),
                         const SizedBox(width: 8),
                         const Expanded(child: Text('No contact details yet')),
-                        FilledButton.icon(onPressed: _edit, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
+                        FilledButton.icon(onPressed: editItem, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
                       ]),
                     ),
                   ),

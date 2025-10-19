@@ -13,7 +13,7 @@ class SkillsPage extends ConsumerWidget {
     final state = ref.watch(skillsControllerProvider);
     final action = ref.watch(skillsActionControllerProvider);
 
-    Future<void> _delete(Skill s) async {
+    Future<void> deleteItem(Skill s) async {
       final confirm = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -29,14 +29,14 @@ class SkillsPage extends ConsumerWidget {
       await ref.read(skillsActionControllerProvider.notifier).deleteSkill(s.id!);
     }
 
-    void _new() => context.goNamed(AppRoute.skillEdit.name, extra: null);
-    void _edit(Skill s) => context.goNamed(AppRoute.skillEdit.name, extra: s);
+    void createNew() => context.goNamed(AppRoute.skillEdit.name, extra: null);
+    void editItem(Skill s) => context.goNamed(AppRoute.skillEdit.name, extra: s);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Skills'),
         actions: [
-          TextButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('New')),
+          TextButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('New')),
           const SizedBox(width: 8),
         ],
       ),
@@ -58,7 +58,7 @@ class SkillsPage extends ConsumerWidget {
                         const Icon(Icons.info_outline),
                         const SizedBox(width: 8),
                         const Expanded(child: Text('No skills yet')),
-                        FilledButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
+                        FilledButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
                       ]),
                     ),
                   ),
@@ -77,9 +77,9 @@ class SkillsPage extends ConsumerWidget {
                               title: Text(s.name),
                               subtitle: Text('${s.category ?? 'General'} • ${s.level}%'),
                               trailing: Wrap(spacing: 8, children: [
-                                IconButton(onPressed: () => _edit(s), icon: const Icon(Icons.edit_outlined)),
+                                IconButton(onPressed: () => editItem(s), icon: const Icon(Icons.edit_outlined)),
                                 IconButton(
-                                  onPressed: action.isLoading || s.id == null ? null : () => _delete(s),
+                                  onPressed: action.isLoading || s.id == null ? null : () => deleteItem(s),
                                   icon: const Icon(Icons.delete_outline),
                                 ),
                               ]),
@@ -100,9 +100,9 @@ class SkillsPage extends ConsumerWidget {
                         DataCell(Text(s.category ?? '-')),
                         DataCell(Text('${s.level}%')),
                         DataCell(Row(children: [
-                          IconButton(onPressed: () => _edit(s), icon: const Icon(Icons.edit_outlined)),
+                          IconButton(onPressed: () => editItem(s), icon: const Icon(Icons.edit_outlined)),
                           IconButton(
-                            onPressed: action.isLoading || s.id == null ? null : () => _delete(s),
+                            onPressed: action.isLoading || s.id == null ? null : () => deleteItem(s),
                             icon: const Icon(Icons.delete_outline),
                           ),
                         ])),

@@ -13,7 +13,7 @@ class CertificationsPage extends ConsumerWidget {
     final state = ref.watch(certificationsControllerProvider);
     final action = ref.watch(certificationsActionControllerProvider);
 
-    Future<void> _delete(Certification c) async {
+    Future<void> deleteItem(Certification c) async {
       final confirm = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -29,14 +29,14 @@ class CertificationsPage extends ConsumerWidget {
       await ref.read(certificationsActionControllerProvider.notifier).deleteCertification(c.id!);
     }
 
-    void _new() => context.goNamed(AppRoute.certificationEdit.name, extra: null);
-    void _edit(Certification c) => context.goNamed(AppRoute.certificationEdit.name, extra: c);
+    void createNew() => context.goNamed(AppRoute.certificationEdit.name, extra: null);
+    void editItem(Certification c) => context.goNamed(AppRoute.certificationEdit.name, extra: c);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Certifications'),
         actions: [
-          TextButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('New')),
+          TextButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('New')),
           const SizedBox(width: 8),
         ],
       ),
@@ -58,7 +58,7 @@ class CertificationsPage extends ConsumerWidget {
                         const Icon(Icons.info_outline),
                         const SizedBox(width: 8),
                         const Expanded(child: Text('No certifications yet')),
-                        FilledButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
+                        FilledButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
                       ]),
                     ),
                   ),
@@ -73,9 +73,9 @@ class CertificationsPage extends ConsumerWidget {
                         title: Text(c.name),
                         subtitle: Text('${c.issuer ?? ''}${(c.issueDate ?? '').isNotEmpty ? ' • ${c.issueDate}' : ''}'),
                         trailing: Wrap(spacing: 8, children: [
-                          IconButton(onPressed: () => _edit(c), icon: const Icon(Icons.edit_outlined)),
+                          IconButton(onPressed: () => editItem(c), icon: const Icon(Icons.edit_outlined)),
                           IconButton(
-                            onPressed: action.isLoading || c.id == null ? null : () => _delete(c),
+                            onPressed: action.isLoading || c.id == null ? null : () => deleteItem(c),
                             icon: const Icon(Icons.delete_outline),
                           ),
                         ]),

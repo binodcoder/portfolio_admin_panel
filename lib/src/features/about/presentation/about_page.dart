@@ -13,12 +13,10 @@ class AboutPage extends ConsumerWidget {
     final state = ref.watch(aboutControllerProvider);
     final action = ref.watch(aboutActionControllerProvider);
 
-    Future<void> _delete() async {
+    Future<void> deleteItem() async {
       final items = state.asData?.value ?? const <About>[];
       if (items.isEmpty || items.first.id == null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Nothing to delete')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nothing to delete')));
         return;
       }
       final confirmed =
@@ -42,18 +40,15 @@ class AboutPage extends ConsumerWidget {
           false;
       if (!confirmed) return;
       await ref.read(aboutActionControllerProvider.notifier).deleteAbout(items.first.id!);
+      if (!context.mounted) return;
       if (ref.read(aboutActionControllerProvider).hasError) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Failed to delete')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to delete')));
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Deleted')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Deleted')));
       }
     }
 
-    void _edit() {
+    void editItem() {
       final List<About> existing = state.asData?.value ?? const [];
       context.goNamed(
         AppRoute.aboutEdit.name,
@@ -66,13 +61,13 @@ class AboutPage extends ConsumerWidget {
         title: const Text('About'),
         actions: [
           TextButton.icon(
-            onPressed: _edit,
+            onPressed: editItem,
             icon: const Icon(Icons.edit_outlined),
             label: const Text('Edit'),
           ),
           const SizedBox(width: 4),
           TextButton.icon(
-            onPressed: action.isLoading ? null : _delete,
+            onPressed: action.isLoading ? null : deleteItem,
             icon: const Icon(Icons.delete_outline),
             label: const Text('Delete'),
           ),
@@ -111,7 +106,7 @@ class AboutPage extends ConsumerWidget {
                           const SizedBox(width: 12),
                           const Expanded(child: Text('No content yet')),
                           FilledButton.icon(
-                            onPressed: _edit,
+                            onPressed: editItem,
                             icon: const Icon(Icons.add_outlined),
                             label: const Text('Add'),
                           ),

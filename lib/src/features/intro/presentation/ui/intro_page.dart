@@ -42,6 +42,7 @@ class IntroPage extends ConsumerWidget {
 
     await ref.read(introActionControllerProvider.notifier).deleteIntro(items.first.id!);
     final action = ref.read(introActionControllerProvider);
+    if (!context.mounted) return;
     if (action.hasError) {
       final message = 'Failed to delete: ${action.error}';
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));

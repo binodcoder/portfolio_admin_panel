@@ -13,7 +13,7 @@ class EducationPage extends ConsumerWidget {
     final state = ref.watch(educationControllerProvider);
     final action = ref.watch(educationActionControllerProvider);
 
-    Future<void> _delete(Education e) async {
+    Future<void> deleteItem(Education e) async {
       final confirm = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -29,14 +29,14 @@ class EducationPage extends ConsumerWidget {
       await ref.read(educationActionControllerProvider.notifier).deleteEducation(e.id!);
     }
 
-    void _new() => context.goNamed(AppRoute.educationEdit.name, extra: null);
-    void _edit(Education e) => context.goNamed(AppRoute.educationEdit.name, extra: e);
+    void createNew() => context.goNamed(AppRoute.educationEdit.name, extra: null);
+    void editItem(Education e) => context.goNamed(AppRoute.educationEdit.name, extra: e);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Education'),
         actions: [
-          TextButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('New')),
+          TextButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('New')),
           const SizedBox(width: 8),
         ],
       ),
@@ -58,7 +58,7 @@ class EducationPage extends ConsumerWidget {
                         const Icon(Icons.info_outline),
                         const SizedBox(width: 8),
                         const Expanded(child: Text('No education added yet')),
-                        FilledButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
+                        FilledButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
                       ]),
                     ),
                   ),
@@ -74,9 +74,9 @@ class EducationPage extends ConsumerWidget {
                         subtitle: Text('${e.institution}${e.location != null ? ' • ${e.location}' : ''}\n${e.start ?? ''} - ${e.end ?? ''}'),
                         isThreeLine: true,
                         trailing: Wrap(spacing: 8, children: [
-                          IconButton(onPressed: () => _edit(e), icon: const Icon(Icons.edit_outlined)),
+                          IconButton(onPressed: () => editItem(e), icon: const Icon(Icons.edit_outlined)),
                           IconButton(
-                            onPressed: action.isLoading || e.id == null ? null : () => _delete(e),
+                            onPressed: action.isLoading || e.id == null ? null : () => deleteItem(e),
                             icon: const Icon(Icons.delete_outline),
                           ),
                         ]),

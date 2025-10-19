@@ -13,7 +13,7 @@ class SocialPage extends ConsumerWidget {
     final state = ref.watch(socialControllerProvider);
     final action = ref.watch(socialActionControllerProvider);
 
-    Future<void> _delete(SocialLink s) async {
+    Future<void> deleteItem(SocialLink s) async {
       final confirm = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -29,14 +29,14 @@ class SocialPage extends ConsumerWidget {
       await ref.read(socialActionControllerProvider.notifier).deleteSocial(s.id!);
     }
 
-    void _new() => context.goNamed(AppRoute.socialEdit.name, extra: null);
-    void _edit(SocialLink s) => context.goNamed(AppRoute.socialEdit.name, extra: s);
+    void createNew() => context.goNamed(AppRoute.socialEdit.name, extra: null);
+    void editItem(SocialLink s) => context.goNamed(AppRoute.socialEdit.name, extra: s);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Social Links'),
         actions: [
-          TextButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('New')),
+          TextButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('New')),
           const SizedBox(width: 8),
         ],
       ),
@@ -58,7 +58,7 @@ class SocialPage extends ConsumerWidget {
                         const Icon(Icons.info_outline),
                         const SizedBox(width: 8),
                         const Expanded(child: Text('No links yet')),
-                        FilledButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
+                        FilledButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
                       ]),
                     ),
                   ),
@@ -73,9 +73,9 @@ class SocialPage extends ConsumerWidget {
                         title: Text(s.platform),
                         subtitle: Text(s.url),
                         trailing: Wrap(spacing: 8, children: [
-                          IconButton(onPressed: () => _edit(s), icon: const Icon(Icons.edit_outlined)),
+                          IconButton(onPressed: () => editItem(s), icon: const Icon(Icons.edit_outlined)),
                           IconButton(
-                            onPressed: action.isLoading || s.id == null ? null : () => _delete(s),
+                            onPressed: action.isLoading || s.id == null ? null : () => deleteItem(s),
                             icon: const Icon(Icons.delete_outline),
                           ),
                         ]),

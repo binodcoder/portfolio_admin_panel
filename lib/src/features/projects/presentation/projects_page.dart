@@ -13,7 +13,7 @@ class ProjectsPage extends ConsumerWidget {
     final state = ref.watch(projectsControllerProvider);
     final action = ref.watch(projectsActionControllerProvider);
 
-    Future<void> _delete(Project p) async {
+    Future<void> deleteItem(Project p) async {
       final confirm = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -29,14 +29,14 @@ class ProjectsPage extends ConsumerWidget {
       await ref.read(projectsActionControllerProvider.notifier).deleteProject(p.id!);
     }
 
-    void _new() => context.goNamed(AppRoute.projectEdit.name, extra: null);
-    void _edit(Project p) => context.goNamed(AppRoute.projectEdit.name, extra: p);
+    void createNew() => context.goNamed(AppRoute.projectEdit.name, extra: null);
+    void editItem(Project p) => context.goNamed(AppRoute.projectEdit.name, extra: p);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Projects'),
         actions: [
-          TextButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('New')),
+          TextButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('New')),
           const SizedBox(width: 8),
         ],
       ),
@@ -58,7 +58,7 @@ class ProjectsPage extends ConsumerWidget {
                         const Icon(Icons.info_outline),
                         const SizedBox(width: 8),
                         const Expanded(child: Text('No projects yet')),
-                        FilledButton.icon(onPressed: _new, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
+                        FilledButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
                       ]),
                     ),
                   ),
@@ -75,9 +75,9 @@ class ProjectsPage extends ConsumerWidget {
                           subtitle: Text(p.description ?? 'No description'),
                           isThreeLine: true,
                           trailing: Wrap(spacing: 8, children: [
-                            IconButton(onPressed: () => _edit(p), icon: const Icon(Icons.edit_outlined)),
+                            IconButton(onPressed: () => editItem(p), icon: const Icon(Icons.edit_outlined)),
                             IconButton(
-                              onPressed: action.isLoading || p.id == null ? null : () => _delete(p),
+                              onPressed: action.isLoading || p.id == null ? null : () => deleteItem(p),
                               icon: const Icon(Icons.delete_outline),
                             ),
                           ]),
