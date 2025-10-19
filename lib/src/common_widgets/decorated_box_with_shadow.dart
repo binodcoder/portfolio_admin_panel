@@ -9,11 +9,16 @@ class DecoratedBoxWithShadow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
         boxShadow: [
-          BoxShadow(color: Colors.grey, offset: Offset(0.0, 1.0), blurRadius: 5.0),
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.12),
+            offset: const Offset(0.0, 1.0),
+            blurRadius: 5.0,
+          ),
         ],
       ),
       child: Padding(padding: const EdgeInsets.all(Sizes.p16), child: child),

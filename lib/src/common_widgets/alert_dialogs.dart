@@ -13,33 +13,19 @@ Future<bool?> showAlertDialog({
   String? cancelActionText,
   String defaultActionText = 'OK',
 }) async {
+  final isCupertino = !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS);
+
   return showDialog(
-    context: context,
-    // * Only make the dialog dismissible if there is a cancel button
-    barrierDismissible: cancelActionText != null,
-    // * AlertDialog.adaptive was added in Flutter 3.13
-    builder: (context) => AlertDialog.adaptive(
-      title: Text(title),
-      content: content != null ? Text(content) : null,
-      // * Use [TextButton] or [CupertinoDialogAction] depending on the platform
-      // https://codewithandrea.com/tips/default-target-platform/
-      actions:
-          kIsWeb ||
-              !(defaultTargetPlatform == TargetPlatform.iOS ||
-                  defaultTargetPlatform == TargetPlatform.macOS)
-          ? <Widget>[
-              if (cancelActionText != null)
-                TextButton(
-                  child: Text(cancelActionText),
-                  onPressed: () => Navigator.of(context).pop(false),
-                ),
-              TextButton(
-                key: kDialogDefaultKey,
-                child: Text(defaultActionText),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ]
-          : <Widget>[
+      context: context,
+      barrierDismissible: cancelActionText != null,
+      builder: (context) {
+        if (isCupertino) {
+          return CupertinoAlertDialog(
+            title: Text(title),
+            content: content != null ? Text(content) : null,
+            actions: <Widget>[
               if (cancelActionText != null)
                 CupertinoDialogAction(
                   child: Text(cancelActionText),
@@ -51,8 +37,26 @@ Future<bool?> showAlertDialog({
                 onPressed: () => Navigator.of(context).pop(true),
               ),
             ],
-    ),
-  );
+          );
+        }
+        // Material/browser style
+        return AlertDialog(
+          title: Text(title),
+          content: content != null ? Text(content) : null,
+          actions: <Widget>[
+            if (cancelActionText != null)
+              TextButton(
+                child: Text(cancelActionText),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+            TextButton(
+              key: kDialogDefaultKey,
+              child: Text(defaultActionText),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      });
 }
 
 /// Generic function to show a platform-aware Material or Cupertino error dialog

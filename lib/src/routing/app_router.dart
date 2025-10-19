@@ -4,6 +4,9 @@ import 'package:portfolio_admin_panel/src/features/auth/data/auth_repository.dar
 import 'package:portfolio_admin_panel/src/features/auth/presentation/account/account_screen.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/email_password_sign_in_form_type.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/email_password_sign_in_screen.dart';
+import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/ui/intro_form.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/ui/intro_page.dart';
 import 'package:portfolio_admin_panel/src/features/home/home.dart';
 import 'package:portfolio_admin_panel/src/routing/go_router_refresh_stream.dart';
 import 'package:portfolio_admin_panel/src/routing/not_found_screen.dart';
@@ -16,7 +19,7 @@ part 'app_router.g.dart';
 /// ```dart
 /// context.goNamed(AppRoute.orders.name)
 /// ```
-enum AppRoute { home, account, signIn }
+enum AppRoute { home, account, signIn, intro, introEdit }
 
 /// returns the GoRouter instance that defines all the routes in the app
 @riverpod
@@ -67,6 +70,21 @@ GoRouter goRouter(Ref ref) {
                 formType: EmailPasswordSignInFormType.signIn,
               ),
             ),
+          ),
+          GoRoute(
+            path: 'intro',
+            name: AppRoute.intro.name,
+            builder: (context, state) => const IntroPage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: AppRoute.introEdit.name,
+                pageBuilder: (context, state) => MaterialPage(
+                  fullscreenDialog: true,
+                  child: IntroForm(item: state.extra as Intro?),
+                ),
+              ),
+            ],
           ),
         ],
       ),

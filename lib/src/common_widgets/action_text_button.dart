@@ -12,9 +12,15 @@ class ActionTextButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: Sizes.p16),
       child: TextButton(
         onPressed: onPressed,
-        child: Text(
-          text,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
+        child: Builder(
+          builder: (context) {
+            final theme = Theme.of(context);
+            final color = theme.appBarTheme.foregroundColor ?? theme.colorScheme.onSurface;
+            return Text(
+              text,
+              style: theme.textTheme.titleLarge!.copyWith(color: color),
+            );
+          },
         ),
       ),
     );
