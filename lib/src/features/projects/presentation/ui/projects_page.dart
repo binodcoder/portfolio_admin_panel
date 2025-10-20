@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
-import 'package:portfolio_admin_panel/src/features/projects/presentation/projects_controller.dart';
+import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/projects_controller.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class ProjectsPage extends ConsumerWidget {
@@ -14,13 +14,20 @@ class ProjectsPage extends ConsumerWidget {
     final action = ref.watch(projectsActionControllerProvider);
 
     Future<void> deleteItem(Project p) async {
-      final confirm = await showDialog<bool>(
+      final confirm =
+          await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('Delete project?'),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-                TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Delete'),
+                ),
               ],
             ),
           ) ??
@@ -36,7 +43,11 @@ class ProjectsPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Projects'),
         actions: [
-          TextButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('New')),
+          TextButton.icon(
+            onPressed: createNew,
+            icon: const Icon(Icons.add_outlined),
+            label: const Text('New'),
+          ),
           const SizedBox(width: 8),
         ],
       ),
@@ -45,7 +56,12 @@ class ProjectsPage extends ConsumerWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1100),
           child: state.when(
-            loading: () => const Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator())),
+            loading: () => const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: CircularProgressIndicator(),
+              ),
+            ),
             error: (e, _) => Center(child: Text('Error: $e')),
             data: (items) {
               if (items.isEmpty) {
@@ -54,12 +70,18 @@ class ProjectsPage extends ConsumerWidget {
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(24),
-                      child: Row(children: [
-                        const Icon(Icons.info_outline),
-                        const SizedBox(width: 8),
-                        const Expanded(child: Text('No projects yet')),
-                        FilledButton.icon(onPressed: createNew, icon: const Icon(Icons.add_outlined), label: const Text('Add'))
-                      ]),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.info_outline),
+                          const SizedBox(width: 8),
+                          const Expanded(child: Text('No projects yet')),
+                          FilledButton.icon(
+                            onPressed: createNew,
+                            icon: const Icon(Icons.add_outlined),
+                            label: const Text('Add'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -74,13 +96,21 @@ class ProjectsPage extends ConsumerWidget {
                           title: Text(p.title),
                           subtitle: Text(p.description ?? 'No description'),
                           isThreeLine: true,
-                          trailing: Wrap(spacing: 8, children: [
-                            IconButton(onPressed: () => editItem(p), icon: const Icon(Icons.edit_outlined)),
-                            IconButton(
-                              onPressed: action.isLoading || p.id == null ? null : () => deleteItem(p),
-                              icon: const Icon(Icons.delete_outline),
-                            ),
-                          ]),
+                          trailing: Wrap(
+                            spacing: 8,
+                            children: [
+                              IconButton(
+                                onPressed: () => editItem(p),
+                                icon: const Icon(Icons.edit_outlined),
+                              ),
+                              IconButton(
+                                onPressed: action.isLoading || p.id == null
+                                    ? null
+                                    : () => deleteItem(p),
+                                icon: const Icon(Icons.delete_outline),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                   ],

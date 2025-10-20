@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/about_controller.dart';
+import 'package:portfolio_admin_panel/src/features/about/presentation/controller/about_controller.dart';
 
 class AboutForm extends ConsumerStatefulWidget {
   const AboutForm({super.key, this.item});
@@ -20,6 +20,8 @@ class _AboutFormState extends ConsumerState<AboutForm> {
   void initState() {
     super.initState();
     if (widget.item != null) textController.text = widget.item!.value;
+    // Rebuild when text changes so Save button updates
+    textController.addListener(() => setState(() {}));
   }
 
   @override

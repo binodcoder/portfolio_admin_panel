@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
-import 'package:portfolio_admin_panel/src/features/intro/presentation/controller/intro_action_controller.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/controller/intro_controller.dart';
 
 class IntroForm extends ConsumerStatefulWidget {
   const IntroForm({super.key, this.item});
@@ -44,10 +44,6 @@ class _IntroFormState extends ConsumerState<IntroForm> {
     Navigator.of(context).pop();
   }
 
-  void _cancel() {
-    Navigator.of(context).maybePop();
-  }
-
   @override
   void dispose() {
     textEditingController.dispose();
@@ -77,11 +73,12 @@ class _IntroFormState extends ConsumerState<IntroForm> {
           ),
         ],
       ),
-      body: Center(
+      body: Align(
+        alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 900),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 24),
             child: Form(
               key: _formKey,
               child: Column(
@@ -141,34 +138,6 @@ class _IntroFormState extends ConsumerState<IntroForm> {
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton.icon(
-                        onPressed: async.isLoading ? null : _cancel,
-                        icon: const Icon(Icons.close_outlined),
-                        label: const Text('Cancel'),
-                      ),
-                      const SizedBox(width: 8),
-                      FilledButton.icon(
-                        onPressed: canSave ? _save : null,
-                        icon: async.isLoading
-                            ? SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Theme.of(context).colorScheme.onPrimary,
-                                  ),
-                                ),
-                              )
-                            : const Icon(Icons.check_outlined),
-                        label: const Text('Save Changes'),
-                      ),
-                    ],
                   ),
                 ],
               ),

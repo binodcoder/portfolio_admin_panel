@@ -3,22 +3,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/controller/intro_controller.dart';
-import 'package:portfolio_admin_panel/src/features/intro/presentation/controller/intro_action_controller.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/widgets/error_card.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/widgets/intro_card.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class IntroPage extends ConsumerWidget {
   const IntroPage({super.key});
 
-  Future<void> _delete(BuildContext context, WidgetRef ref) async {
-    final items = ref.read(introControllerProvider).asData?.value ?? const <Intro>[];
-    if (items.isEmpty || items.first.id == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Nothing to delete')));
-      return;
-    }
+  static const double _maxWidth = 900;
+  static const double _pagePadding = 24;
+  static const double _loadingPadding = 32;
 
-    final confirm =
+  Intro? _currentIntro(WidgetRef ref) {
+    final data = ref.read(introControllerProvider).asData?.value;
+    if (data == null || data.isEmpty) return null;
+    return data.first;
+  }
+
+  Future<bool> _confirmDelete(BuildContext context) async {
+    final confirmed =
         await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
@@ -37,33 +41,41 @@ class IntroPage extends ConsumerWidget {
           ),
         ) ??
         false;
+    return confirmed;
+  }
 
+  void _showSnack(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _deleteCurrent(BuildContext context, WidgetRef ref) async {
+    final current = _currentIntro(ref);
+    if (current?.id == null) return;
+
+    final confirm = await _confirmDelete(context);
     if (!confirm) return;
 
-    await ref.read(introActionControllerProvider.notifier).deleteIntro(items.first.id!);
+    await ref.read(introActionControllerProvider.notifier).deleteIntro(current!.id!);
     final action = ref.read(introActionControllerProvider);
     if (!context.mounted) return;
     if (action.hasError) {
-      final message = 'Failed to delete: ${action.error}';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      _showSnack(context, 'Failed to delete: ${action.error}');
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Intro deleted')));
+      _showSnack(context, 'Intro deleted');
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final introState = ref.watch(introControllerProvider);
-    final deleteState = ref.watch(introActionControllerProvider);
+    final actionState = ref.watch(introActionControllerProvider);
+
+    final currentIntro = (introState.asData?.value.isNotEmpty ?? false)
+        ? introState.asData!.value.first
+        : null;
 
     void goToEdit() {
-      final List<Intro> existing = introState.asData?.value ?? const [];
-      context.goNamed(
-        AppRoute.introEdit.name,
-        extra: existing.isNotEmpty ? existing.first : null,
-      );
+      context.goNamed(AppRoute.introEdit.name, extra: currentIntro);
     }
 
     return Scaffold(
@@ -72,12 +84,20 @@ class IntroPage extends ConsumerWidget {
         actions: [
           TextButton.icon(
             onPressed: goToEdit,
-            icon: const Icon(Icons.edit_outlined),
-            label: const Text('Edit'),
+            icon: Icon(
+              actionState.isLoading || currentIntro?.id == null
+                  ? Icons.add_outlined
+                  : Icons.edit_outlined,
+            ),
+            label: Text(
+              actionState.isLoading || currentIntro?.id == null ? 'Add' : 'Edit',
+            ),
           ),
           const SizedBox(width: 4),
           TextButton.icon(
-            onPressed: deleteState.isLoading ? null : () => _delete(context, ref),
+            onPressed: actionState.isLoading || currentIntro?.id == null
+                ? null
+                : () => _deleteCurrent(context, ref),
             icon: const Icon(Icons.delete_outline),
             label: const Text('Delete'),
           ),
@@ -87,118 +107,33 @@ class IntroPage extends ConsumerWidget {
       body: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
+          constraints: const BoxConstraints(maxWidth: _maxWidth),
           child: introState.when(
             loading: () => const Padding(
-              padding: EdgeInsets.all(32),
+              padding: EdgeInsets.all(_loadingPadding),
               child: Center(child: CircularProgressIndicator()),
             ),
             error: (error, _) => Padding(
-              padding: const EdgeInsets.all(24),
-              child: _ErrorCard(message: 'Failed to load intro: $error'),
+              padding: const EdgeInsets.all(_pagePadding),
+              child: ErrorCard(message: 'Failed to load intro: $error'),
             ),
             data: (items) {
               final item = items.isNotEmpty ? items.first : null;
               if (item == null) {
                 return Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: _EmptyState(onCreate: goToEdit),
+                  padding: const EdgeInsets.all(_pagePadding),
+                  child: EmptyState(onCreate: goToEdit),
                 );
               }
               return Padding(
-                padding: const EdgeInsets.all(24),
-                child: Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  clipBehavior: Clip.antiAlias,
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: SelectionArea(
-                      child: Text(
-                        item.value,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                  ),
+                padding: const EdgeInsets.all(_pagePadding),
+                child: IntroCard(
+                  text: item.value,
+                  padding: const EdgeInsets.all(_pagePadding),
                 ),
               );
             },
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.onCreate});
-  final VoidCallback onCreate;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Row(
-          children: [
-            Icon(Icons.info_outline, size: 40, color: colorScheme.primary),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'No introduction yet',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Add a short introduction to show on your portfolio.',
-                    style: theme.textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            FilledButton.icon(
-              onPressed: onCreate,
-              icon: const Icon(Icons.add_outlined),
-              label: const Text('Add Intro'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorCard extends StatelessWidget {
-  const _ErrorCard({required this.message});
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Row(
-          children: [
-            Icon(Icons.error_outline, size: 40, color: colorScheme.error),
-            const SizedBox(width: 16),
-            Expanded(child: Text(message, style: theme.textTheme.bodyMedium)),
-          ],
         ),
       ),
     );

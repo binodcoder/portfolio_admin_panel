@@ -31,16 +31,18 @@ class AccountScreen extends ConsumerWidget {
           children: [
             Icon(Icons.person_outline, color: colors.primary),
             const SizedBox(width: 8),
-            Text('Account'.hardcoded,
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+            Text(
+              'Account'.hardcoded,
+              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            ),
             if (state.isLoading) ...[
               const SizedBox(width: 12),
               const SizedBox(
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            ]
+              ),
+            ],
           ],
         ),
         actions: [
@@ -69,7 +71,7 @@ class AccountScreen extends ConsumerWidget {
           child: Divider(
             height: 1,
             thickness: 1,
-            color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+            color: theme.colorScheme.outlineVariant.withAlpha((0.5 * 250).toInt()),
           ),
         ),
       ),
@@ -91,7 +93,7 @@ class AccountScreenContents extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
+    // final colors = theme.colorScheme;
     final user = ref.watch(authStateChangesProvider).value;
     if (user == null) return const SizedBox.shrink();
 
@@ -106,12 +108,12 @@ class AccountScreenContents extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: colors.primaryContainer,
-                    foregroundColor: colors.onPrimaryContainer,
-                    child: const Icon(Icons.person_outline),
-                  ),
-                  gapW12,
+                  // CircleAvatar(
+                  //   backgroundColor: colors.primaryContainer,
+                  //   foregroundColor: colors.onPrimaryContainer,
+                  //   child: const Icon(Icons.person_outline),
+                  // ),
+                  // gapW12,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,7 +140,7 @@ class AccountScreenContents extends ConsumerWidget {
                                 }
                               },
                               icon: const Icon(Icons.copy_outlined),
-                            )
+                            ),
                           ],
                         ),
                       ],
@@ -188,7 +190,9 @@ class EmailVerificationWidget extends ConsumerWidget {
         avatar: Icon(Icons.check_circle, color: colors.primary),
         label: Text('Verified'.hardcoded),
         backgroundColor: colors.primaryContainer,
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.onPrimaryContainer),
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: colors.onPrimaryContainer,
+        ),
       );
     }
   }

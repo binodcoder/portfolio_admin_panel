@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
-import 'package:portfolio_admin_panel/src/features/skills/presentation/skills_controller.dart';
+import 'package:portfolio_admin_panel/src/features/skills/presentation/controller/skills_controller.dart';
 
 class SkillForm extends ConsumerStatefulWidget {
   const SkillForm({super.key, this.item});
@@ -28,6 +28,9 @@ class _SkillFormState extends ConsumerState<SkillForm> {
       categoryController.text = s.category ?? '';
       level = s.level.toDouble();
     }
+    // Rebuild when fields change so Save button updates
+    nameController.addListener(() => setState(() {}));
+    categoryController.addListener(() => setState(() {}));
   }
 
   @override
@@ -44,7 +47,9 @@ class _SkillFormState extends ConsumerState<SkillForm> {
       id: _id,
       name: nameController.text.trim(),
       level: level.round(),
-      category: categoryController.text.trim().isEmpty ? null : categoryController.text.trim(),
+      category: categoryController.text.trim().isEmpty
+          ? null
+          : categoryController.text.trim(),
     );
     final notifier = ref.read(skillsActionControllerProvider.notifier);
     if (_id == null) {
@@ -68,7 +73,11 @@ class _SkillFormState extends ConsumerState<SkillForm> {
           TextButton.icon(
             onPressed: canSave ? _save : null,
             icon: async.isLoading
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : const Icon(Icons.check_outlined),
             label: const Text('Save'),
           ),
@@ -90,13 +99,16 @@ class _SkillFormState extends ConsumerState<SkillForm> {
                     children: [
                       TextFormField(
                         controller: nameController,
-                        validator: (v) => (v ?? '').trim().isEmpty ? 'Enter skill name' : null,
+                        validator: (v) =>
+                            (v ?? '').trim().isEmpty ? 'Enter skill name' : null,
                         decoration: const InputDecoration(labelText: 'Name'),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: categoryController,
-                        decoration: const InputDecoration(labelText: 'Category (optional)'),
+                        decoration: const InputDecoration(
+                          labelText: 'Category (optional)',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Text('Level: ${level.round()}%'),

@@ -11,3 +11,27 @@ class IntroController extends _$IntroController {
     return repo.getIntro();
   }
 }
+
+@riverpod
+class IntroActionController extends _$IntroActionController {
+  @override
+  FutureOr<void> build() {}
+
+  Future<void> createIntro(Intro intro) async {
+    final introRepository = ref.read(introRepositoryProvider);
+    state = AsyncValue.loading();
+    state = await AsyncValue.guard(() => introRepository.createIntro(intro));
+  }
+
+  Future<void> updateIntro(String id, Intro data) async {
+    final introRepository = ref.read(introRepositoryProvider);
+    state = AsyncValue.loading();
+    state = await AsyncValue.guard(() => introRepository.updateIntro(id, data));
+  }
+
+  Future<void> deleteIntro(String id) async {
+    final introRepository = ref.read(introRepositoryProvider);
+    state = AsyncValue.loading();
+    state = await AsyncValue.guard(() => introRepository.deleteIntro(id));
+  }
+}

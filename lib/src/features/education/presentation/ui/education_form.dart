@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
-import 'package:portfolio_admin_panel/src/features/education/presentation/education_controller.dart';
+import 'package:portfolio_admin_panel/src/features/education/presentation/controller/education_controller.dart';
 
 class EducationForm extends ConsumerStatefulWidget {
   const EducationForm({super.key, this.item});
@@ -37,6 +37,15 @@ class _EducationFormState extends ConsumerState<EducationForm> {
       gpaController.text = e.gpa ?? '';
       descriptionController.text = e.description ?? '';
     }
+    // Rebuild when fields change so Save button updates
+    institutionController.addListener(() => setState(() {}));
+    degreeController.addListener(() => setState(() {}));
+    fieldController.addListener(() => setState(() {}));
+    startController.addListener(() => setState(() {}));
+    endController.addListener(() => setState(() {}));
+    locationController.addListener(() => setState(() {}));
+    gpaController.addListener(() => setState(() {}));
+    descriptionController.addListener(() => setState(() {}));
   }
 
   @override
@@ -62,9 +71,13 @@ class _EducationFormState extends ConsumerState<EducationForm> {
       field: fieldController.text.trim().isEmpty ? null : fieldController.text.trim(),
       start: startController.text.trim().isEmpty ? null : startController.text.trim(),
       end: endController.text.trim().isEmpty ? null : endController.text.trim(),
-      location: locationController.text.trim().isEmpty ? null : locationController.text.trim(),
+      location: locationController.text.trim().isEmpty
+          ? null
+          : locationController.text.trim(),
       gpa: gpaController.text.trim().isEmpty ? null : gpaController.text.trim(),
-      description: descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim(),
+      description: descriptionController.text.trim().isEmpty
+          ? null
+          : descriptionController.text.trim(),
     );
     final notifier = ref.read(educationActionControllerProvider.notifier);
     if (_id == null) {
@@ -88,7 +101,11 @@ class _EducationFormState extends ConsumerState<EducationForm> {
           TextButton.icon(
             onPressed: canSave ? _save : null,
             icon: async.isLoading
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : const Icon(Icons.check_outlined),
             label: const Text('Save'),
           ),
@@ -110,63 +127,84 @@ class _EducationFormState extends ConsumerState<EducationForm> {
                     children: [
                       TextFormField(
                         controller: institutionController,
-                        validator: (v) => (v ?? '').trim().isEmpty ? 'Enter institution' : null,
+                        validator: (v) =>
+                            (v ?? '').trim().isEmpty ? 'Enter institution' : null,
                         decoration: const InputDecoration(labelText: 'Institution'),
                       ),
                       const SizedBox(height: 12),
-                      Row(children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: degreeController,
-                            decoration: const InputDecoration(labelText: 'Degree (e.g., BSc)'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: degreeController,
+                              decoration: const InputDecoration(
+                                labelText: 'Degree (e.g., BSc)',
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: fieldController,
-                            decoration: const InputDecoration(labelText: 'Field of study'),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: fieldController,
+                              decoration: const InputDecoration(
+                                labelText: 'Field of study',
+                              ),
+                            ),
                           ),
-                        ),
-                      ]),
+                        ],
+                      ),
                       const SizedBox(height: 12),
-                      Row(children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: startController,
-                            decoration: const InputDecoration(labelText: 'Start (YYYY-MM)'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: startController,
+                              decoration: const InputDecoration(
+                                labelText: 'Start (YYYY-MM)',
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: endController,
-                            decoration: const InputDecoration(labelText: 'End (YYYY-MM)'),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: endController,
+                              decoration: const InputDecoration(
+                                labelText: 'End (YYYY-MM)',
+                              ),
+                            ),
                           ),
-                        ),
-                      ]),
+                        ],
+                      ),
                       const SizedBox(height: 12),
-                      Row(children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: locationController,
-                            decoration: const InputDecoration(labelText: 'Location (optional)'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: locationController,
+                              decoration: const InputDecoration(
+                                labelText: 'Location (optional)',
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: gpaController,
-                            decoration: const InputDecoration(labelText: 'GPA (optional)'),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: gpaController,
+                              decoration: const InputDecoration(
+                                labelText: 'GPA (optional)',
+                              ),
+                            ),
                           ),
-                        ),
-                      ]),
+                        ],
+                      ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: descriptionController,
                         minLines: 3,
                         maxLines: null,
-                        decoration: const InputDecoration(labelText: 'Description (optional)'),
+                        decoration: const InputDecoration(
+                          labelText: 'Description (optional)',
+                        ),
                       ),
                     ],
                   ),

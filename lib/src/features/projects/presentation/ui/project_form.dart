@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
-import 'package:portfolio_admin_panel/src/features/projects/presentation/projects_controller.dart';
+import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/projects_controller.dart';
 
 class ProjectForm extends ConsumerStatefulWidget {
   const ProjectForm({super.key, this.item});
@@ -31,6 +31,12 @@ class _ProjectFormState extends ConsumerState<ProjectForm> {
       liveController.text = p.liveUrl ?? '';
       tagsController.text = p.tags.join(', ');
     }
+    // Rebuild when fields change so Save button updates
+    titleController.addListener(() => setState(() {}));
+    descController.addListener(() => setState(() {}));
+    repoController.addListener(() => setState(() {}));
+    liveController.addListener(() => setState(() {}));
+    tagsController.addListener(() => setState(() {}));
   }
 
   @override
@@ -81,7 +87,11 @@ class _ProjectFormState extends ConsumerState<ProjectForm> {
           TextButton.icon(
             onPressed: canSave ? _save : null,
             icon: async.isLoading
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : const Icon(Icons.check_outlined),
             label: const Text('Save'),
           ),
@@ -116,17 +126,23 @@ class _ProjectFormState extends ConsumerState<ProjectForm> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: repoController,
-                        decoration: const InputDecoration(labelText: 'Repository URL (optional)'),
+                        decoration: const InputDecoration(
+                          labelText: 'Repository URL (optional)',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: liveController,
-                        decoration: const InputDecoration(labelText: 'Live URL (optional)'),
+                        decoration: const InputDecoration(
+                          labelText: 'Live URL (optional)',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: tagsController,
-                        decoration: const InputDecoration(labelText: 'Tags (comma separated)'),
+                        decoration: const InputDecoration(
+                          labelText: 'Tags (comma separated)',
+                        ),
                       ),
                     ],
                   ),

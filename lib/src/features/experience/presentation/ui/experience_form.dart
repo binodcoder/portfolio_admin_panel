@@ -37,6 +37,14 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
       techsController.text = e.technologies.join(', ');
       current = e.current;
     }
+    // Rebuild when fields change so Save button updates
+    companyController.addListener(() => setState(() {}));
+    titleController.addListener(() => setState(() {}));
+    locationController.addListener(() => setState(() {}));
+    startController.addListener(() => setState(() {}));
+    endController.addListener(() => setState(() {}));
+    descriptionController.addListener(() => setState(() {}));
+    techsController.addListener(() => setState(() {}));
   }
 
   @override

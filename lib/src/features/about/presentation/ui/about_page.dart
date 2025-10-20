@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/about_controller.dart';
+import 'package:portfolio_admin_panel/src/features/about/presentation/controller/about_controller.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class AboutPage extends ConsumerWidget {
@@ -16,7 +16,9 @@ class AboutPage extends ConsumerWidget {
     Future<void> deleteItem() async {
       final items = state.asData?.value ?? const <About>[];
       if (items.isEmpty || items.first.id == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nothing to delete')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Nothing to delete')));
         return;
       }
       final confirmed =
@@ -42,9 +44,13 @@ class AboutPage extends ConsumerWidget {
       await ref.read(aboutActionControllerProvider.notifier).deleteAbout(items.first.id!);
       if (!context.mounted) return;
       if (ref.read(aboutActionControllerProvider).hasError) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to delete')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to delete')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Deleted')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Deleted')));
       }
     }
 

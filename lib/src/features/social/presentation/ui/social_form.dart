@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/social/domain/social_link.dart';
-import 'package:portfolio_admin_panel/src/features/social/presentation/social_controller.dart';
+import 'package:portfolio_admin_panel/src/features/social/presentation/controller/social_controller.dart';
 
 class SocialForm extends ConsumerStatefulWidget {
   const SocialForm({super.key, this.item});
@@ -26,6 +26,9 @@ class _SocialFormState extends ConsumerState<SocialForm> {
       platformController.text = s.platform;
       urlController.text = s.url;
     }
+    // Rebuild when fields change so Save button updates
+    platformController.addListener(() => setState(() {}));
+    urlController.addListener(() => setState(() {}));
   }
 
   @override
@@ -38,7 +41,11 @@ class _SocialFormState extends ConsumerState<SocialForm> {
   Future<void> _save() async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
-    final data = SocialLink(id: _id, platform: platformController.text.trim(), url: urlController.text.trim());
+    final data = SocialLink(
+      id: _id,
+      platform: platformController.text.trim(),
+      url: urlController.text.trim(),
+    );
     final notifier = ref.read(socialActionControllerProvider.notifier);
     if (_id == null) {
       await notifier.createSocial(data);
@@ -52,7 +59,10 @@ class _SocialFormState extends ConsumerState<SocialForm> {
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(socialActionControllerProvider);
-    final canSave = !async.isLoading && platformController.text.trim().isNotEmpty && urlController.text.trim().isNotEmpty;
+    final canSave =
+        !async.isLoading &&
+        platformController.text.trim().isNotEmpty &&
+        urlController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +71,11 @@ class _SocialFormState extends ConsumerState<SocialForm> {
           TextButton.icon(
             onPressed: canSave ? _save : null,
             icon: async.isLoading
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : const Icon(Icons.check_outlined),
             label: const Text('Save'),
           ),
@@ -83,8 +97,11 @@ class _SocialFormState extends ConsumerState<SocialForm> {
                     children: [
                       TextFormField(
                         controller: platformController,
-                        validator: (v) => (v ?? '').trim().isEmpty ? 'Enter platform name' : null,
-                        decoration: const InputDecoration(labelText: 'Platform (e.g. GitHub, LinkedIn)'),
+                        validator: (v) =>
+                            (v ?? '').trim().isEmpty ? 'Enter platform name' : null,
+                        decoration: const InputDecoration(
+                          labelText: 'Platform (e.g. GitHub, LinkedIn)',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(

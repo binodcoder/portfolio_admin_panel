@@ -27,11 +27,6 @@ class Home extends StatelessWidget {
           ],
         ),
         actions: [
-          // TextButton(
-          //   onPressed: () => context.goNamed(AppRoute.intro.name),
-          //   child: const Text('Intro'),
-          // ),
-          // const SizedBox(width: 8),
           OutlinedButton.icon(
             onPressed: () => context.goNamed(AppRoute.account.name),
             style: OutlinedButton.styleFrom(shape: const StadiumBorder()),
@@ -78,12 +73,6 @@ class Home extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  // Icon(
-                                  //   Icons.dashboard_outlined,
-                                  //   size: 40,
-                                  //   color: colorScheme.primary,
-                                  // ),
-                                  // const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,24 +88,12 @@ class Home extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              // const SizedBox(height: 16),
-                              // FilledButton.icon(
-                              //   onPressed: () => context.goNamed(AppRoute.intro.name),
-                              //   icon: const Icon(Icons.edit_outlined),
-                              //   label: const Text('Edit Intro'),
-                              // ),
                             ],
                           );
                         }
 
                         return Row(
                           children: [
-                            // Icon(
-                            //   Icons.dashboard_outlined,
-                            //   size: 48,
-                            //   color: colorScheme.primary,
-                            // ),
-                            // const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,12 +107,6 @@ class Home extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            // const SizedBox(width: 12),
-                            // FilledButton.icon(
-                            //   onPressed: () => context.goNamed(AppRoute.intro.name),
-                            //   icon: const Icon(Icons.edit_outlined),
-                            //   label: const Text('Edit Intro'),
-                            // ),
                           ],
                         );
                       },
@@ -199,12 +170,7 @@ class Home extends StatelessWidget {
                           subtitle: 'Add GitHub, LinkedIn, etc.',
                           onTap: () => context.goNamed(AppRoute.social.name),
                         ),
-                        _ActionCard(
-                          icon: Icons.manage_accounts_outlined,
-                          title: 'Account',
-                          subtitle: 'Profile & sign out',
-                          onTap: () => context.goNamed(AppRoute.account.name),
-                        ),
+
                         _ActionCard(
                           icon: Icons.business_center_outlined,
                           title: 'Experience',
@@ -287,13 +253,11 @@ class _ActionCardState extends State<_ActionCard> {
 
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(14),
-      side: BorderSide(
-        color: showLift ? colorScheme.outlineVariant : Colors.transparent,
-      ),
+      side: BorderSide(color: showLift ? colorScheme.outlineVariant : Colors.transparent),
     );
 
     return Opacity(
-      opacity: widget.enabled ? 1 : 0.6,
+      opacity: widget.enabled ? 1.0 : 0.6,
       child: FocusableActionDetector(
         enabled: widget.enabled,
         mouseCursor: interactive ? SystemMouseCursors.click : SystemMouseCursors.basic,
@@ -302,7 +266,7 @@ class _ActionCardState extends State<_ActionCard> {
         child: TweenAnimationBuilder<double>(
           duration: const Duration(milliseconds: 140),
           curve: Curves.easeOut,
-          tween: Tween<double>(begin: 0, end: showLift ? 3 : 0),
+          tween: Tween<double>(begin: 0.0, end: showLift ? 3.0 : 0.0),
           builder: (context, elevation, child) {
             return Card(
               elevation: elevation,
@@ -327,7 +291,7 @@ class _ActionCardState extends State<_ActionCard> {
                             const Spacer(),
                             Icon(
                               Icons.arrow_outward,
-                              size: 18,
+                              size: 18.0,
                               color: colorScheme.outline,
                             ),
                           ],
