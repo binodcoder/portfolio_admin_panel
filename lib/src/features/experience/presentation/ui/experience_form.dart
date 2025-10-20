@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
-import 'package:portfolio_admin_panel/src/features/experience/presentation/experience_controller.dart';
+import 'package:portfolio_admin_panel/src/features/experience/presentation/controller/experience_controller.dart';
 
 class ExperienceForm extends ConsumerStatefulWidget {
   const ExperienceForm({super.key, this.item});
@@ -71,11 +71,17 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
       id: _id,
       company: companyController.text.trim(),
       title: titleController.text.trim(),
-      location: locationController.text.trim().isEmpty ? null : locationController.text.trim(),
+      location: locationController.text.trim().isEmpty
+          ? null
+          : locationController.text.trim(),
       start: startController.text.trim().isEmpty ? null : startController.text.trim(),
-      end: current ? null : (endController.text.trim().isEmpty ? null : endController.text.trim()),
+      end: current
+          ? null
+          : (endController.text.trim().isEmpty ? null : endController.text.trim()),
       current: current,
-      description: descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim(),
+      description: descriptionController.text.trim().isEmpty
+          ? null
+          : descriptionController.text.trim(),
       technologies: techs,
     );
     final notifier = ref.read(experienceActionControllerProvider.notifier);
@@ -91,7 +97,10 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(experienceActionControllerProvider);
-    final canSave = !async.isLoading && companyController.text.trim().isNotEmpty && titleController.text.trim().isNotEmpty;
+    final canSave =
+        !async.isLoading &&
+        companyController.text.trim().isNotEmpty &&
+        titleController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(
       appBar: AppBar(
@@ -100,7 +109,11 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
           TextButton.icon(
             onPressed: canSave ? _save : null,
             icon: async.isLoading
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : const Icon(Icons.check_outlined),
             label: const Text('Save'),
           ),
@@ -120,55 +133,71 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: companyController,
-                            validator: (v) => (v ?? '').trim().isEmpty ? 'Enter company' : null,
-                            decoration: const InputDecoration(labelText: 'Company'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: companyController,
+                              validator: (v) =>
+                                  (v ?? '').trim().isEmpty ? 'Enter company' : null,
+                              decoration: const InputDecoration(labelText: 'Company'),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: titleController,
-                            validator: (v) => (v ?? '').trim().isEmpty ? 'Enter title/role' : null,
-                            decoration: const InputDecoration(labelText: 'Title / Role'),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: titleController,
+                              validator: (v) =>
+                                  (v ?? '').trim().isEmpty ? 'Enter title/role' : null,
+                              decoration: const InputDecoration(
+                                labelText: 'Title / Role',
+                              ),
+                            ),
                           ),
-                        ),
-                      ]),
+                        ],
+                      ),
                       const SizedBox(height: 12),
-                      Row(children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: startController,
-                            decoration: const InputDecoration(labelText: 'Start (YYYY-MM)'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: startController,
+                              decoration: const InputDecoration(
+                                labelText: 'Start (YYYY-MM)',
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: endController,
-                            decoration: const InputDecoration(labelText: 'End (YYYY-MM)'),
-                            enabled: !current,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: endController,
+                              decoration: const InputDecoration(
+                                labelText: 'End (YYYY-MM)',
+                              ),
+                              enabled: !current,
+                            ),
                           ),
-                        ),
-                      ]),
+                        ],
+                      ),
                       const SizedBox(height: 8),
-                      Row(children: [
-                        Checkbox(
-                          value: current,
-                          onChanged: (v) => setState(() {
-                            current = v ?? false;
-                            if (current) endController.clear();
-                          }),
-                        ),
-                        const Text('I currently work here'),
-                      ]),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: current,
+                            onChanged: (v) => setState(() {
+                              current = v ?? false;
+                              if (current) endController.clear();
+                            }),
+                          ),
+                          const Text('I currently work here'),
+                        ],
+                      ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: locationController,
-                        decoration: const InputDecoration(labelText: 'Location (optional)'),
+                        decoration: const InputDecoration(
+                          labelText: 'Location (optional)',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -180,7 +209,9 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: techsController,
-                        decoration: const InputDecoration(labelText: 'Technologies (comma separated)'),
+                        decoration: const InputDecoration(
+                          labelText: 'Technologies (comma separated)',
+                        ),
                       ),
                     ],
                   ),

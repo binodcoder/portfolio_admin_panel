@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:portfolio_admin_panel/src/features/auth/data/auth_repository.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/email_password_sign_in_form_type.dart';
+import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_form_type.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'email_password_sign_in_controller.g.dart';

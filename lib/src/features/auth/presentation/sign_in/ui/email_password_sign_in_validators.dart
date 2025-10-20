@@ -1,5 +1,5 @@
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/email_password_sign_in_form_type.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/string_validators.dart';
+import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_form_type.dart';
+import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/string_validators.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
 /// Mixin class to be used for client-side email & password validation

@@ -6,10 +6,10 @@ import 'package:portfolio_admin_panel/src/common_widgets/custom_text_button.dart
 import 'package:portfolio_admin_panel/src/common_widgets/primary_button.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_scrollable_card.dart';
 import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/email_password_sign_in_controller.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/email_password_sign_in_form_type.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/email_password_sign_in_validators.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/string_validators.dart';
+import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/controller/email_password_sign_in_controller.dart';
+import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_form_type.dart';
+import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_validators.dart';
+import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/string_validators.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/utils/async_value_ui.dart';
 

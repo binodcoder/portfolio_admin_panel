@@ -12,7 +12,7 @@ class IntroPage extends ConsumerWidget {
   const IntroPage({super.key});
 
   static const double _maxWidth = 900;
-  static const double _pagePadding = 24;
+  static const double _pagePadding = 4;
   static const double _loadingPadding = 32;
 
   Intro? _currentIntro(WidgetRef ref) {
