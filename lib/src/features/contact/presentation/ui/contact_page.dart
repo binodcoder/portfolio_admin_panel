@@ -3,15 +3,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/features/contact/domain/contact_info.dart';
 import 'package:portfolio_admin_panel/src/features/contact/presentation/controller/contact_controller.dart';
+import 'package:portfolio_admin_panel/src/features/contact/presentation/widgets/contact_error_view.dart';
+import 'package:portfolio_admin_panel/src/features/contact/presentation/widgets/contact_loading_view.dart';
+import 'package:portfolio_admin_panel/src/features/contact/presentation/widgets/contact_success_view.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
-class ContactPage extends ConsumerWidget {
+class ContactPage extends StatelessWidget {
   const ContactPage({super.key});
 
   @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: _AppBar(), body: _Body());
+  }
+}
+
+class _AppBar extends ConsumerWidget implements PreferredSizeWidget {
+  const _AppBar();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(65);
+
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(contactControllerProvider);
     final action = ref.watch(contactActionControllerProvider);
+    final state = ref.watch(contactControllerProvider);
 
     Future<void> deleteItem() async {
       final items = state.asData?.value ?? const <ContactInfo>[];
@@ -53,84 +68,41 @@ class ContactPage extends ConsumerWidget {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Contact'),
-        actions: [
-          TextButton.icon(
-            onPressed: editItem,
-            icon: const Icon(Icons.edit_outlined),
-            label: const Text('Edit'),
-          ),
-          const SizedBox(width: 4),
-          TextButton.icon(
-            onPressed: action.isLoading ? null : deleteItem,
-            icon: const Icon(Icons.delete_outline),
-            label: const Text('Delete'),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: state.when(
-            loading: () => const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(),
-              ),
-            ),
-            error: (e, _) => Center(child: Text('Error: $e')),
-            data: (items) {
-              final item = items.isNotEmpty ? items.first : null;
-              if (item == null) {
-                return Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.info_outline),
-                          const SizedBox(width: 8),
-                          const Expanded(child: Text('No contact details yet')),
-                          FilledButton.icon(
-                            onPressed: editItem,
-                            icon: const Icon(Icons.add_outlined),
-                            label: const Text('Add'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }
-              return Padding(
-                padding: const EdgeInsets.all(24),
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (item.email != null) Text('Email: ${item.email}'),
-                        if (item.phone != null) Text('Phone: ${item.phone}'),
-                        if (item.location != null) Text('Location: ${item.location}'),
-                        if (item.website != null) Text('Website: ${item.website}'),
-                        Text('Open to work: ${item.openToWork ? 'Yes' : 'No'}'),
-                        if (item.message != null) ...[
-                          const SizedBox(height: 12),
-                          Text(item.message!),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+    return AppBar(
+      title: const Text('Contact'),
+      actions: [
+        TextButton.icon(
+          onPressed: editItem,
+          icon: const Icon(Icons.edit_outlined),
+          label: const Text('Edit'),
+        ),
+        const SizedBox(width: 4),
+        TextButton.icon(
+          onPressed: action.isLoading ? null : deleteItem,
+          icon: const Icon(Icons.delete_outline),
+          label: const Text('Delete'),
+        ),
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+}
+
+class _Body extends ConsumerWidget {
+  const _Body();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(contactControllerProvider);
+
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 900),
+        child: state.when(
+          loading: () => ContactLoadingView(),
+          error: (e, _) => ContactErrorView(message: e),
+          data: (items) => ContactSuccessView(items: items),
         ),
       ),
     );

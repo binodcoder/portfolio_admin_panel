@@ -40,6 +40,18 @@ class _CertificationFormState extends ConsumerState<CertificationForm> {
     expiryDateController.addListener(() => setState(() {}));
     credentialIdController.addListener(() => setState(() {}));
     credentialUrlController.addListener(() => setState(() {}));
+
+    // Listen for action errors and show a SnackBar
+    // ref.listen(certificationsActionControllerProvider, (prev, next) {
+    //   next.whenOrNull(
+    //     error: (e, _) {
+    //       if (!mounted) return;
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(content: Text('Save failed: $e')),
+    //       );
+    //     },
+    //   );
+    // });
   }
 
   @override
