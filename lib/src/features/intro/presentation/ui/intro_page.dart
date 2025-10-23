@@ -8,12 +8,74 @@ import 'package:portfolio_admin_panel/src/features/intro/presentation/widgets/er
 import 'package:portfolio_admin_panel/src/features/intro/presentation/widgets/intro_card.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
-class IntroPage extends ConsumerWidget {
+class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: _AppBar(), body: _Body());
+  }
+}
+
+class _Body extends ConsumerWidget {
+  const _Body();
 
   static const double _maxWidth = 900;
   static const double _pagePadding = 4;
   static const double _loadingPadding = 32;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final introState = ref.watch(introControllerProvider);
+
+    final currentIntro = (introState.asData?.value.isNotEmpty ?? false)
+        ? introState.asData!.value.first
+        : null;
+
+    void goToEdit() {
+      context.goNamed(AppRoute.introEdit.name, extra: currentIntro);
+    }
+
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxWidth),
+        child: introState.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.all(_loadingPadding),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          error: (error, _) => Padding(
+            padding: const EdgeInsets.all(_pagePadding),
+            child: ErrorCard(message: 'Failed to load intro: $error'),
+          ),
+          data: (items) {
+            final item = items.isNotEmpty ? items.first : null;
+            if (item == null) {
+              return Padding(
+                padding: const EdgeInsets.all(_pagePadding),
+                child: EmptyState(onCreate: goToEdit),
+              );
+            }
+            return Padding(
+              padding: const EdgeInsets.all(_pagePadding),
+              child: IntroCard(
+                text: item.value,
+                padding: const EdgeInsets.all(_pagePadding),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _AppBar extends ConsumerWidget implements PreferredSizeWidget {
+  const _AppBar();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(65);
 
   Intro? _currentIntro(WidgetRef ref) {
     final data = ref.read(introControllerProvider).asData?.value;
@@ -67,75 +129,38 @@ class IntroPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final introState = ref.watch(introControllerProvider);
     final actionState = ref.watch(introActionControllerProvider);
+    final introState = ref.watch(introControllerProvider);
 
     final currentIntro = (introState.asData?.value.isNotEmpty ?? false)
         ? introState.asData!.value.first
         : null;
-
     void goToEdit() {
       context.goNamed(AppRoute.introEdit.name, extra: currentIntro);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Intro'),
-        actions: [
-          TextButton.icon(
-            onPressed: goToEdit,
-            icon: Icon(
-              actionState.isLoading || currentIntro?.id == null
-                  ? Icons.add_outlined
-                  : Icons.edit_outlined,
-            ),
-            label: Text(
-              actionState.isLoading || currentIntro?.id == null ? 'Add' : 'Edit',
-            ),
+    return AppBar(
+      title: const Text('Intro'),
+      actions: [
+        TextButton.icon(
+          onPressed: goToEdit,
+          icon: Icon(
+            actionState.isLoading || currentIntro?.id == null
+                ? Icons.add_outlined
+                : Icons.edit_outlined,
           ),
-          const SizedBox(width: 4),
-          TextButton.icon(
-            onPressed: actionState.isLoading || currentIntro?.id == null
-                ? null
-                : () => _deleteCurrent(context, ref),
-            icon: const Icon(Icons.delete_outline),
-            label: const Text('Delete'),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: _maxWidth),
-          child: introState.when(
-            loading: () => const Padding(
-              padding: EdgeInsets.all(_loadingPadding),
-              child: Center(child: CircularProgressIndicator()),
-            ),
-            error: (error, _) => Padding(
-              padding: const EdgeInsets.all(_pagePadding),
-              child: ErrorCard(message: 'Failed to load intro: $error'),
-            ),
-            data: (items) {
-              final item = items.isNotEmpty ? items.first : null;
-              if (item == null) {
-                return Padding(
-                  padding: const EdgeInsets.all(_pagePadding),
-                  child: EmptyState(onCreate: goToEdit),
-                );
-              }
-              return Padding(
-                padding: const EdgeInsets.all(_pagePadding),
-                child: IntroCard(
-                  text: item.value,
-                  padding: const EdgeInsets.all(_pagePadding),
-                ),
-              );
-            },
-          ),
+          label: Text(actionState.isLoading || currentIntro?.id == null ? 'Add' : 'Edit'),
         ),
-      ),
+        const SizedBox(width: 4),
+        TextButton.icon(
+          onPressed: actionState.isLoading || currentIntro?.id == null
+              ? null
+              : () => _deleteCurrent(context, ref),
+          icon: const Icon(Icons.delete_outline),
+          label: const Text('Delete'),
+        ),
+        const SizedBox(width: 8),
+      ],
     );
   }
 }

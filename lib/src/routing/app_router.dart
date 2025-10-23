@@ -72,7 +72,7 @@ enum AppRoute {
 GoRouter goRouter(Ref ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/signIn',
     debugLogDiagnostics: true,
     // * redirect logic based on the authentication state
     redirect: (context, state) async {
@@ -97,6 +97,15 @@ GoRouter goRouter(Ref ref) {
     refreshListenable: GoRouterRefreshStream(authRepository.authStateChanges()),
     routes: [
       GoRoute(
+        path: '/signIn',
+        name: AppRoute.signIn.name,
+        pageBuilder: (context, state) => const MaterialPage(
+          //fullscreenDialog: true,
+          child: EmailPasswordSignInScreen(formType: EmailPasswordSignInFormType.signIn),
+        ),
+      ),
+
+      GoRoute(
         path: '/',
         name: AppRoute.home.name,
         builder: (context, state) => const Home(),
@@ -104,19 +113,9 @@ GoRouter goRouter(Ref ref) {
           GoRoute(
             path: 'account',
             name: AppRoute.account.name,
-            pageBuilder: (context, state) =>
-                const MaterialPage(fullscreenDialog: true, child: AccountScreen()),
+            pageBuilder: (context, state) => const MaterialPage(child: AccountScreen()),
           ),
-          GoRoute(
-            path: 'signIn',
-            name: AppRoute.signIn.name,
-            pageBuilder: (context, state) => const MaterialPage(
-              fullscreenDialog: true,
-              child: EmailPasswordSignInScreen(
-                formType: EmailPasswordSignInFormType.signIn,
-              ),
-            ),
-          ),
+
           GoRoute(
             path: 'intro',
             name: AppRoute.intro.name,
@@ -126,7 +125,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.introEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  // fullscreenDialog: true,
                   child: IntroForm(item: state.extra as Intro?),
                 ),
               ),
@@ -141,7 +140,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.aboutEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  // fullscreenDialog: true,
                   child: AboutForm(item: state.extra as About?),
                 ),
               ),
@@ -156,7 +155,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.skillEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  // fullscreenDialog: true,
                   child: SkillForm(item: state.extra as Skill?),
                 ),
               ),
@@ -171,7 +170,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.projectEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  // fullscreenDialog: true,
                   child: ProjectForm(item: state.extra as Project?),
                 ),
               ),
@@ -186,7 +185,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.socialEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  //  fullscreenDialog: true,
                   child: SocialForm(item: state.extra as SocialLink?),
                 ),
               ),
@@ -201,7 +200,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.experienceEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  // fullscreenDialog: true,
                   child: ExperienceForm(item: state.extra as Experience?),
                 ),
               ),
@@ -216,7 +215,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.educationEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  // fullscreenDialog: true,
                   child: EducationForm(item: state.extra as Education?),
                 ),
               ),
@@ -231,7 +230,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.certificationEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  // fullscreenDialog: true,
                   child: CertificationForm(item: state.extra as Certification?),
                 ),
               ),
@@ -246,7 +245,7 @@ GoRouter goRouter(Ref ref) {
                 path: 'edit',
                 name: AppRoute.contactEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
-                  fullscreenDialog: true,
+                  // fullscreenDialog: true,
                   child: ContactForm(item: state.extra as ContactInfo?),
                 ),
               ),

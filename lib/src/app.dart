@@ -32,7 +32,7 @@ class MyApp extends ConsumerWidget {
         appBarTheme: AppBarTheme(
           backgroundColor: colorScheme.surface,
           foregroundColor: colorScheme.onSurface,
-          elevation: 0,
+          elevation: 2,
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
         ),
