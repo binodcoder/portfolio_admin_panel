@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 
-class SuccessView extends StatelessWidget {
-  const SuccessView({super.key, required this.items});
+class AboutSuccessView extends StatelessWidget {
+  const AboutSuccessView({super.key, required this.items});
 
   final List<About> items;
 

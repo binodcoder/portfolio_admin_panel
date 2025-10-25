@@ -4,10 +4,10 @@ import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/controller/intro_controller.dart';
 
 class IntroForm extends ConsumerStatefulWidget {
-  const IntroForm({super.key, this.item});
+  const IntroForm({super.key, this.introId});
 
-  // Optional existing item passed via router for editing
-  final Intro? item;
+  // Optional id from router path parameter; when null or 'new', treat as create
+  final String? introId;
 
   @override
   ConsumerState<IntroForm> createState() => _IntroFormState();
@@ -17,16 +17,15 @@ class _IntroFormState extends ConsumerState<IntroForm> {
   final TextEditingController textEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  String? get _id => widget.item?.id;
+  bool get _isEditing => (widget.introId != null && widget.introId != 'new');
+  String? get _id => _isEditing ? widget.introId : null;
+
+  bool _initializedFromRemote = false;
 
   @override
   void initState() {
     super.initState();
-    final existing = widget.item;
-    if (existing != null) {
-      final text = existing.value;
-      textEditingController.text = text;
-    }
+    // For edit case, value will be set when provider returns data in build()
     textEditingController.addListener(() => setState(() {}));
   }
 
@@ -53,8 +52,23 @@ class _IntroFormState extends ConsumerState<IntroForm> {
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(introActionControllerProvider);
-    final isEditing = _id != null;
+    final isEditing = _isEditing;
     final canSave = !async.isLoading && textEditingController.text.trim().isNotEmpty;
+
+    // If editing, watch the intro by id and prefill once
+    if (isEditing) {
+      final introAsync = ref.watch(introByIdProvider(_id!));
+      introAsync.when(
+        data: (intro) {
+          if (!_initializedFromRemote && intro != null) {
+            textEditingController.text = intro.value;
+            _initializedFromRemote = true;
+          }
+        },
+        loading: () {},
+        error: (e, __) {},
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -107,6 +121,28 @@ class _IntroFormState extends ConsumerState<IntroForm> {
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                           const SizedBox(height: 16),
+                          if (isEditing)
+                            Consumer(
+                              builder: (context, ref, _) {
+                                final introAsync = ref.watch(introByIdProvider(_id!));
+                                if (introAsync.isLoading && !_initializedFromRemote) {
+                                  return const Padding(
+                                    padding: EdgeInsets.only(bottom: 16),
+                                    child: LinearProgressIndicator(),
+                                  );
+                                }
+                                if (introAsync.hasError) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: Text(
+                                      'Failed to load intro: ${introAsync.error}',
+                                      style: TextStyle(color: Theme.of(context).colorScheme.error),
+                                    ),
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
                           TextFormField(
                             controller: textEditingController,
                             minLines: 6,

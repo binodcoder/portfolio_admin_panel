@@ -4,7 +4,6 @@ import 'package:portfolio_admin_panel/src/features/auth/data/auth_repository.dar
 import 'package:portfolio_admin_panel/src/features/auth/presentation/account/account_screen.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_form_type.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_screen.dart';
-import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/ui/intro_form.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/ui/intro_page.dart';
 import 'package:portfolio_admin_panel/src/features/home/home.dart';
@@ -122,11 +121,11 @@ GoRouter goRouter(Ref ref) {
             builder: (context, state) => const IntroPage(),
             routes: [
               GoRoute(
-                path: 'edit',
+                path: 'edit/:id',
                 name: AppRoute.introEdit.name,
                 pageBuilder: (context, state) => MaterialPage(
                   // fullscreenDialog: true,
-                  child: IntroForm(item: state.extra as Intro?),
+                  child: IntroForm(introId: state.pathParameters['id']),
                 ),
               ),
             ],

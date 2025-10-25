@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/intro/data/intro_repository.dart';
 import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -35,3 +36,9 @@ class IntroActionController extends _$IntroActionController {
     state = await AsyncValue.guard(() => introRepository.deleteIntro(id));
   }
 }
+
+// Lightweight provider to watch a single intro by id.
+final introByIdProvider = StreamProvider.family<Intro?, String>((ref, id) {
+  final repo = ref.watch(introRepositoryProvider);
+  return repo.watchIntroById(id);
+});

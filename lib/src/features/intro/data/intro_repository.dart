@@ -25,6 +25,15 @@ class IntroRepository {
     );
   }
 
+  Stream<Intro?> watchIntroById(String id) {
+    return _introCollection.doc(id).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      final data = doc.data();
+      if (data == null) return null;
+      return Intro.fromMap({...data, 'id': doc.id});
+    });
+  }
+
   Future<void> updateIntro(String id, Intro data) {
     return _introCollection.doc(id).update(data.toMap());
   }

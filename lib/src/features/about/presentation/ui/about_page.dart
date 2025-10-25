@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 import 'package:portfolio_admin_panel/src/features/about/presentation/controller/about_controller.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/error_view.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/loading_view.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/success_view.dart';
+import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/about_error_view.dart';
+import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/about_loading_view.dart';
+import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/about_success_view.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class AboutPage extends StatelessWidget {
@@ -108,9 +108,9 @@ class _Body extends ConsumerWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
         child: aboutState.when(
-          loading: () => LoadingView(),
-          error: (e, _) => ErrorView(message: e),
-          data: (items) => SuccessView(items: items),
+          loading: () => AboutLoadingView(),
+          error: (e, _) => AboutErrorView(message: e),
+          data: (items) => AboutSuccessView(items: items),
         ),
       ),
     );

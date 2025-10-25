@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/constants/breakpoints.dart';
 import 'package:portfolio_admin_panel/src/features/certifications/presentation/controller/certifications_controller.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/error_view.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/loading_view.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/success_view.dart';
+import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/certification_error_view.dart';
+import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/certification_loading_view.dart';
+import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/certification_success_view.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class CertificationsPage extends StatelessWidget {

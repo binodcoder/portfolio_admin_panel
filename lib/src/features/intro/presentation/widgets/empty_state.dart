@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.onCreate});
-  final VoidCallback onCreate;
+  const EmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
