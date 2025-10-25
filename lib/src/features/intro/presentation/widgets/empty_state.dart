@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
 class EmptyState extends StatelessWidget {
   const EmptyState({super.key});
@@ -19,14 +20,14 @@ class EmptyState extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'No introduction yet',
+                    'No introduction yet'.hardcoded,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Add a short introduction to show on your portfolio.',
+                    'Add a short introduction to show on your portfolio.'.hardcoded,
                     style: theme.textTheme.bodySmall,
                   ),
                 ],

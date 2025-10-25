@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 import 'package:portfolio_admin_panel/src/features/about/presentation/controller/about_controller.dart';
 import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/about_error_view.dart';
@@ -103,10 +104,8 @@ class _Body extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final aboutState = ref.watch(aboutControllerProvider);
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 900),
+    return SingleChildScrollView(
+      child: ResponsiveCenter(
         child: aboutState.when(
           loading: () => AboutLoadingView(),
           error: (e, _) => AboutErrorView(message: e),

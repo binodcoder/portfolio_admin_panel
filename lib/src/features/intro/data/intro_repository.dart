@@ -8,29 +8,31 @@ class IntroRepository {
   IntroRepository(this._firestore);
   final FirebaseFirestore _firestore;
 
-  // Collection reference (typed)
-  CollectionReference<Map<String, dynamic>> get _introCollection =>
-      _firestore.collection('intro');
+  // Typed collection reference using Firestore converters
+  CollectionReference<Intro> get _introCollection => _firestore
+      .collection('intro')
+      .withConverter<Intro>(
+        fromFirestore: (snapshot, _) =>
+            Intro.fromMap({...?snapshot.data(), 'id': snapshot.id}),
+        toFirestore: (intro, _) => intro.toMap(),
+      );
 
   Future<void> createIntro(Intro intro) {
     // Using add() to let Firestore generate the id
-    return _introCollection.add({'value': intro.value});
+    return _introCollection.add(intro);
   }
 
-  Stream<List<Intro>> getIntro() {
+  // Clearer naming: watch all intros
+  Stream<List<Intro>> watchIntros() {
     return _introCollection.snapshots().map(
-      (snapshot) => snapshot.docs
-          .map((doc) => Intro.fromMap({...doc.data(), 'id': doc.id}))
-          .toList(),
+      (snapshot) => snapshot.docs.map((doc) => doc.data()).toList(),
     );
   }
 
   Stream<Intro?> watchIntroById(String id) {
     return _introCollection.doc(id).snapshots().map((doc) {
       if (!doc.exists) return null;
-      final data = doc.data();
-      if (data == null) return null;
-      return Intro.fromMap({...data, 'id': doc.id});
+      return doc.data();
     });
   }
 

@@ -99,3 +99,72 @@ abstract class _$IntroActionController extends $AsyncNotifier<void> {
     element.handleValue(ref, null);
   }
 }
+
+@ProviderFor(introById)
+const introByIdProvider = IntroByIdFamily._();
+
+final class IntroByIdProvider
+    extends $FunctionalProvider<AsyncValue<Intro?>, Intro?, Stream<Intro?>>
+    with $FutureModifier<Intro?>, $StreamProvider<Intro?> {
+  const IntroByIdProvider._({
+    required IntroByIdFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'introByIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$introByIdHash();
+
+  @override
+  String toString() {
+    return r'introByIdProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<Intro?> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<Intro?> create(Ref ref) {
+    final argument = this.argument as String;
+    return introById(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is IntroByIdProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$introByIdHash() => r'783833708db340d31c6ffec98d871aaf4486b638';
+
+final class IntroByIdFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<Intro?>, String> {
+  const IntroByIdFamily._()
+    : super(
+        retry: null,
+        name: r'introByIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  IntroByIdProvider call(String id) =>
+      IntroByIdProvider._(argument: id, from: this);
+
+  @override
+  String toString() => r'introByIdProvider';
+}

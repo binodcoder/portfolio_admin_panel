@@ -4,8 +4,8 @@ import 'package:portfolio_admin_panel/src/features/auth/data/auth_repository.dar
 import 'package:portfolio_admin_panel/src/features/auth/presentation/account/account_screen.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_form_type.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_screen.dart';
-import 'package:portfolio_admin_panel/src/features/intro/presentation/ui/intro_form.dart';
-import 'package:portfolio_admin_panel/src/features/intro/presentation/ui/intro_page.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/pages/intro_form.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/pages/intro_page.dart';
 import 'package:portfolio_admin_panel/src/features/home/home.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 import 'package:portfolio_admin_panel/src/features/about/presentation/ui/about_form.dart';
