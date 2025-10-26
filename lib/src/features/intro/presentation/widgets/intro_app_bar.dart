@@ -14,7 +14,7 @@ class IntroAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final actionState = ref.watch(introActionControllerProvider);
     final introState = ref.watch(introControllerProvider);
 
-    final currentIntro = introState.asData?.value.firstOrNull;
+    final currentIntro = introState.asData?.value;
 
     return AppBar(
       title: Text('Intro'.hardcoded),
@@ -30,11 +30,9 @@ class IntroAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
         const SizedBox(width: 4),
         TextButton.icon(
-          onPressed: (actionState.isLoading || currentIntro?.id == null)
+          onPressed: (actionState.isLoading || currentIntro == null)
               ? null
-              : () => ref
-                    .read(introActionControllerProvider.notifier)
-                    .deleteIntro(context, currentIntro!),
+              : () => ref.read(introActionControllerProvider.notifier).deleteIntro(context),
           icon: const Icon(Icons.delete_outline),
           label: Text('Delete'.hardcoded),
         ),

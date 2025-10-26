@@ -8,40 +8,30 @@ class IntroRepository {
   IntroRepository(this._firestore);
   final FirebaseFirestore _firestore;
 
-  // Typed collection reference using Firestore converters
-  CollectionReference<Intro> get _introCollection => _firestore
+  // Single-document model: store the intro at intro/current
+  DocumentReference<Intro> get _introDoc => _firestore
       .collection('intro')
+      .doc('current')
       .withConverter<Intro>(
-        fromFirestore: (snapshot, _) =>
-            Intro.fromMap({...?snapshot.data(), 'id': snapshot.id}),
+        fromFirestore: (snapshot, _) => snapshot.exists
+            ? Intro.fromMap({...?snapshot.data(), 'id': snapshot.id})
+            : const Intro(value: ''),
         toFirestore: (intro, _) => intro.toMap(),
       );
 
-  Future<void> createIntro(Intro intro) {
-    // Using add() to let Firestore generate the id
-    return _introCollection.add(intro);
+  // Stream the single intro document
+  Stream<Intro?> watchIntro() {
+    return _introDoc.snapshots().map((doc) => doc.exists ? doc.data() : null);
   }
 
-  // Clearer naming: watch all intros
-  Stream<List<Intro>> watchIntros() {
-    return _introCollection.snapshots().map(
-      (snapshot) => snapshot.docs.map((doc) => doc.data()).toList(),
-    );
+  // Create or update the single intro document
+  Future<void> setIntro(Intro data) {
+    return _introDoc.set(data);
   }
 
-  Stream<Intro?> watchIntroById(String id) {
-    return _introCollection.doc(id).snapshots().map((doc) {
-      if (!doc.exists) return null;
-      return doc.data();
-    });
-  }
-
-  Future<void> updateIntro(String id, Intro data) {
-    return _introCollection.doc(id).update(data.toMap());
-  }
-
-  Future<void> deleteIntro(String id) {
-    return _introCollection.doc(id).delete();
+  // Delete the single intro document
+  Future<void> deleteIntro() {
+    return _introDoc.delete();
   }
 }
 

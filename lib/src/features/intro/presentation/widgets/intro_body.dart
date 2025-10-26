@@ -16,7 +16,7 @@ class IntroBody extends ConsumerWidget {
         child: introState.when(
           loading: () => const IntroLoadingView(),
           error: (error, _) => IntroErrorView(error: error),
-          data: (items) => IntroSuccessView(items: items),
+          data: (item) => IntroSuccessView(item: item!),
         ),
       ),
     );

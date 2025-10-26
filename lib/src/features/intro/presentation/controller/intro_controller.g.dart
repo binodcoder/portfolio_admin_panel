@@ -13,7 +13,7 @@ part of 'intro_controller.dart';
 const introControllerProvider = IntroControllerProvider._();
 
 final class IntroControllerProvider
-    extends $StreamNotifierProvider<IntroController, List<Intro>> {
+    extends $StreamNotifierProvider<IntroController, Intro?> {
   const IntroControllerProvider._()
     : super(
         from: null,
@@ -33,20 +33,20 @@ final class IntroControllerProvider
   IntroController create() => IntroController();
 }
 
-String _$introControllerHash() => r'0360498fba45de42bba9313b6a3e70ca873aadcd';
+String _$introControllerHash() => r'feb4ccd9e1f8845e77eff58a503e0c289676a35b';
 
-abstract class _$IntroController extends $StreamNotifier<List<Intro>> {
-  Stream<List<Intro>> build();
+abstract class _$IntroController extends $StreamNotifier<Intro?> {
+  Stream<Intro?> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<List<Intro>>, List<Intro>>;
+    final ref = this.ref as $Ref<AsyncValue<Intro?>, Intro?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Intro>>, List<Intro>>,
-              AsyncValue<List<Intro>>,
+              AnyNotifier<AsyncValue<Intro?>, Intro?>,
+              AsyncValue<Intro?>,
               Object?,
               Object?
             >;
@@ -79,7 +79,7 @@ final class IntroActionControllerProvider
 }
 
 String _$introActionControllerHash() =>
-    r'e4d865ea0e77d315aac2d3622493daf6a5ac97ea';
+    r'7cc5f24ae5bdbffc2b9dcf456b2f3d18fd929807';
 
 abstract class _$IntroActionController extends $AsyncNotifier<void> {
   FutureOr<void> build();
@@ -98,73 +98,4 @@ abstract class _$IntroActionController extends $AsyncNotifier<void> {
             >;
     element.handleValue(ref, null);
   }
-}
-
-@ProviderFor(introById)
-const introByIdProvider = IntroByIdFamily._();
-
-final class IntroByIdProvider
-    extends $FunctionalProvider<AsyncValue<Intro?>, Intro?, Stream<Intro?>>
-    with $FutureModifier<Intro?>, $StreamProvider<Intro?> {
-  const IntroByIdProvider._({
-    required IntroByIdFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'introByIdProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
-
-  @override
-  String debugGetCreateSourceHash() => _$introByIdHash();
-
-  @override
-  String toString() {
-    return r'introByIdProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $StreamProviderElement<Intro?> $createElement($ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
-
-  @override
-  Stream<Intro?> create(Ref ref) {
-    final argument = this.argument as String;
-    return introById(ref, argument);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is IntroByIdProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$introByIdHash() => r'783833708db340d31c6ffec98d871aaf4486b638';
-
-final class IntroByIdFamily extends $Family
-    with $FunctionalFamilyOverride<Stream<Intro?>, String> {
-  const IntroByIdFamily._()
-    : super(
-        retry: null,
-        name: r'introByIdProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
-        isAutoDispose: true,
-      );
-
-  IntroByIdProvider call(String id) =>
-      IntroByIdProvider._(argument: id, from: this);
-
-  @override
-  String toString() => r'introByIdProvider';
 }

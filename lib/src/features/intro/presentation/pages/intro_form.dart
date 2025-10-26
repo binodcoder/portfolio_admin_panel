@@ -4,6 +4,7 @@ import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/controller/intro_controller.dart';
+import 'package:portfolio_admin_panel/src/features/intro/presentation/widgets/intro_dialogs.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
 class IntroForm extends ConsumerStatefulWidget {
@@ -18,10 +19,6 @@ class _IntroFormState extends ConsumerState<IntroForm> {
   final _formKey = GlobalKey<FormState>();
   final _introTextController = TextEditingController();
   bool _hasPrefilled = false;
-  String? _initialText;
-
-  bool get _isEditMode => widget.introId != null && widget.introId != 'new';
-  String? get _editingIntroId => _isEditMode ? widget.introId : null;
 
   @override
   void dispose() {
@@ -35,42 +32,47 @@ class _IntroFormState extends ConsumerState<IntroForm> {
     final text = _introTextController.text.trim();
     final notifier = ref.read(introActionControllerProvider.notifier);
 
-    if (_isEditMode) {
-      await notifier.updateIntro(_editingIntroId!, Intro(value: text));
-    } else {
-      await notifier.createIntro(Intro(value: text));
-    }
+    await notifier.upsertIntro(Intro(value: text));
 
     if (!mounted) return;
 
     final actionState = ref.read(introActionControllerProvider);
     if (actionState.hasError) {
       final err = actionState.error;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to save: $err'.hardcoded)));
+      IntroDialogs.showSnack(context, 'Failed to save: $err'.hardcoded);
       return;
     }
 
-    // Success
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Saved'.hardcoded)));
+    // Success handled by IntroPage listener; just pop
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final actionState = ref.watch(introActionControllerProvider);
+    final introAsync = ref.watch(introControllerProvider);
+
+    // Prefill from the single intro doc once
+    final existing = introAsync.asData?.value;
+    if (!_hasPrefilled && existing != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _introTextController.text = existing.value;
+        setState(() {
+          _hasPrefilled = true;
+        });
+      });
+    }
+
     final isSaving = actionState.isLoading;
     final trimmed = _introTextController.text.trim();
     final hasContent = trimmed.isNotEmpty;
-    final hasChanges = !_isEditMode || (trimmed != (_initialText ?? '').trim());
+    final existingText = existing?.value ?? '';
+    final hasChanges = trimmed != existingText.trim();
     final isSaveEnabled = !isSaving && hasContent && hasChanges;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Edit Intro'.hardcoded : 'New Intro'.hardcoded),
+        title: Text((existing != null) ? 'Edit Intro'.hardcoded : 'New Intro'.hardcoded),
         actions: [
           _SaveButton(onPressed: isSaveEnabled ? _save : null, isLoading: isSaving),
         ],
@@ -85,14 +87,8 @@ class _IntroFormState extends ConsumerState<IntroForm> {
             child: Form(
               key: _formKey,
               child: _IntroFormCard(
-                isEditing: _isEditMode,
-                editingIntroId: _editingIntroId,
+                isEditing: existing != null,
                 controller: _introTextController,
-                hasPrefilled: _hasPrefilled,
-                onPrefilled: (value) => setState(() {
-                  _hasPrefilled = true;
-                  _initialText = value;
-                }),
                 isLoading: isSaving,
                 onChanged: (_) => setState(() {}),
               ),
@@ -107,19 +103,13 @@ class _IntroFormState extends ConsumerState<IntroForm> {
 class _IntroFormCard extends StatelessWidget {
   const _IntroFormCard({
     required this.isEditing,
-    required this.editingIntroId,
     required this.controller,
-    required this.hasPrefilled,
-    required this.onPrefilled,
     required this.isLoading,
     required this.onChanged,
   });
 
   final bool isEditing;
-  final String? editingIntroId;
   final TextEditingController controller;
-  final bool hasPrefilled;
-  final ValueChanged<String> onPrefilled;
   final bool isLoading;
   final ValueChanged<String> onChanged;
 
@@ -146,13 +136,6 @@ class _IntroFormCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             gapH20,
-            if (isEditing && editingIntroId != null)
-              _IntroPrefillLoader(
-                introId: editingIntroId!,
-                textController: controller,
-                hasPrefilled: hasPrefilled,
-                onPrefilled: onPrefilled,
-              ),
             TextFormField(
               controller: controller,
               minLines: 6,
@@ -180,50 +163,6 @@ class _IntroFormCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _IntroPrefillLoader extends ConsumerWidget {
-  const _IntroPrefillLoader({
-    required this.introId,
-    required this.textController,
-    required this.hasPrefilled,
-    required this.onPrefilled,
-  });
-
-  final String introId;
-  final TextEditingController textController;
-  final bool hasPrefilled;
-  final ValueChanged<String> onPrefilled;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final introAsync = ref.watch(introByIdProvider(introId));
-
-    return introAsync.when(
-      loading: () => hasPrefilled
-          ? const SizedBox.shrink()
-          : const Padding(
-              padding: EdgeInsets.only(bottom: 16),
-              child: LinearProgressIndicator(),
-            ),
-      error: (error, _) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: Text(
-          'Failed to load intro: $error',
-          style: TextStyle(color: Theme.of(context).colorScheme.error),
-        ),
-      ),
-      data: (intro) {
-        if (!hasPrefilled && intro != null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            textController.text = intro.value;
-            onPrefilled(intro.value);
-          });
-        }
-        return const SizedBox.shrink();
-      },
     );
   }
 }
