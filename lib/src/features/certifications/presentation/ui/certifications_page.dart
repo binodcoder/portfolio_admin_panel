@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/constants/breakpoints.dart';
 import 'package:portfolio_admin_panel/src/features/certifications/presentation/controller/certifications_controller.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/certification_error_view.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/certification_loading_view.dart';
 import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/certification_success_view.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class CertificationsPage extends StatelessWidget {
@@ -62,11 +63,14 @@ class _Body extends ConsumerWidget {
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: Breakpoint.desktop),
-        child: state.when(
-          loading: () => const CertificationLoadingView(),
-          error: (e, _) =>
-              CertificationErrorView(message: e, onRetry: () => refresh(ref)),
-          data: (items) => CertificationSuccessView(items: items, onCreate: onCreate),
+        child: AsyncValueWidget(
+          value: state,
+          data: (items) => items.isEmpty
+              ? EmptyState(
+                  title: "No certifications yet".hardcoded,
+                  subTitle: "Trying adding".hardcoded,
+                )
+              : CertificationSuccessView(items: items, onCreate: onCreate),
         ),
       ),
     );

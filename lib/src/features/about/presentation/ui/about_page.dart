@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 import 'package:portfolio_admin_panel/src/features/about/presentation/controller/about_controller.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/about_error_view.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/about_loading_view.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/widgets/about_success_view.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class AboutPage extends StatelessWidget {
@@ -103,13 +103,42 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final aboutState = ref.watch(aboutControllerProvider);
+    final aboutValue = ref.watch(aboutControllerProvider);
     return SingleChildScrollView(
       child: ResponsiveCenter(
-        child: aboutState.when(
-          loading: () => AboutLoadingView(),
-          error: (e, _) => AboutErrorView(message: e),
-          data: (items) => AboutSuccessView(items: items),
+        child: AsyncValueWidget<List<About>>(
+          value: aboutValue,
+          data: (items) {
+            final item = items.isNotEmpty ? items.first : null;
+            if (item == null) {
+              return EmptyState(
+                title: 'No content yet'.hardcoded,
+                subTitle: 'Add a short about to show on your portfolio.'.hardcoded,
+              );
+            }
+            return AboutSuccessView(item: item);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class AboutSuccessView extends StatelessWidget {
+  const AboutSuccessView({super.key, required this.item});
+
+  final About item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: SelectionArea(
+            child: Text(item.value, style: Theme.of(context).textTheme.titleMedium),
+          ),
         ),
       ),
     );

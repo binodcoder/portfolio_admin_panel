@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
 import 'package:portfolio_admin_panel/src/features/education/presentation/controller/education_controller.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class EducationPage extends StatelessWidget {
@@ -49,35 +52,17 @@ class _Body extends ConsumerWidget {
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1100),
-        child: state.when(
-          loading: () => EducationLoadingView(),
-          error: (e, _) => EducationErrorView(error: e),
-          data: (items) => EducationSuccessView(items: items),
+        child: AsyncValueWidget(
+          value: state,
+          data: (items) => items.isEmpty
+              ? EmptyState(
+                  title: "No Education added yet".hardcoded,
+                  subTitle: "Try adding education".hardcoded,
+                )
+              : EducationSuccessView(items: items),
         ),
       ),
     );
-  }
-}
-
-class EducationLoadingView extends StatelessWidget {
-  const EducationLoadingView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator()),
-    );
-  }
-}
-
-class EducationErrorView extends StatelessWidget {
-  const EducationErrorView({super.key, required this.error});
-
-  final Object error;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Error: $error'));
   }
 }
 
@@ -114,23 +99,7 @@ class EducationSuccessView extends ConsumerWidget {
     }
 
     void editItem(Education e) => context.goNamed(AppRoute.educationEdit.name, extra: e);
-    if (items.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(24),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Row(
-              children: [
-                const Icon(Icons.info_outline),
-                const SizedBox(width: 8),
-                const Expanded(child: Text('No education added yet')),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(

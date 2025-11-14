@@ -62,28 +62,6 @@ class CertificationSuccessView extends ConsumerWidget {
       return '$issuer$date';
     }
 
-    if (items.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(24),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Row(
-              children: [
-                const Icon(Icons.info_outline),
-                const SizedBox(width: 8),
-                const Expanded(child: Text('No certifications yet')),
-                FilledButton.icon(
-                  onPressed: onCreate,
-                  icon: const Icon(Icons.add_outlined),
-                  label: const Text('Add'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
     return Padding(
       padding: const EdgeInsets.all(16),
       child: ListView.separated(

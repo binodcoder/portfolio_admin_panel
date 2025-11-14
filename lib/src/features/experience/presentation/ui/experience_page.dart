@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
 import 'package:portfolio_admin_panel/src/features/experience/presentation/controller/experience_controller.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class ExperiencePage extends StatelessWidget {
@@ -49,35 +52,17 @@ class _Body extends ConsumerWidget {
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1100),
-        child: state.when(
-          loading: () => ExperienceLoadingView(),
-          error: (e, _) => ExperienceErrorView(error: e),
-          data: (items) => ExperienceSuccessView(items: items),
+        child: AsyncValueWidget(
+          value: state,
+          data: (items) => items.isEmpty
+              ? EmptyState(
+                  title: "No Experience yet".hardcoded,
+                  subTitle: "Try adding some experience".hardcoded,
+                )
+              : ExperienceSuccessView(items: items),
         ),
       ),
     );
-  }
-}
-
-class ExperienceLoadingView extends StatelessWidget {
-  const ExperienceLoadingView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator()),
-    );
-  }
-}
-
-class ExperienceErrorView extends StatelessWidget {
-  const ExperienceErrorView({super.key, required this.error});
-
-  final Object error;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Error: $error'));
   }
 }
 

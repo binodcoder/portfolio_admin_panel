@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/features/contact/domain/contact_info.dart';
 import 'package:portfolio_admin_panel/src/features/contact/presentation/controller/contact_controller.dart';
-import 'package:portfolio_admin_panel/src/features/contact/presentation/widgets/contact_error_view.dart';
-import 'package:portfolio_admin_panel/src/features/contact/presentation/widgets/contact_loading_view.dart';
-import 'package:portfolio_admin_panel/src/features/contact/presentation/widgets/contact_success_view.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class ContactPage extends StatelessWidget {
@@ -99,10 +99,51 @@ class _Body extends ConsumerWidget {
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: state.when(
-          loading: () => ContactLoadingView(),
-          error: (e, _) => ContactErrorView(message: e),
-          data: (items) => ContactSuccessView(items: items),
+        child: AsyncValueWidget(
+          value: state,
+          data: (items) {
+            final item = items.isNotEmpty ? items.first : null;
+
+            if (item == null) {
+              return EmptyState(
+                title: "No contact yet".hardcoded,
+                subTitle: "Try Adding contact".hardcoded,
+              );
+            }
+            return ContactSuccessView(item: item);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class ContactSuccessView extends StatelessWidget {
+  const ContactSuccessView({super.key, required this.item});
+
+  final ContactInfo item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (item.email != null) Text('Email: ${item.email}'),
+              if (item.phone != null) Text('Phone: ${item.phone}'),
+              if (item.location != null) Text('Location: ${item.location}'),
+              if (item.website != null) Text('Website: ${item.website}'),
+              Text('Open to work: ${item.openToWork ? 'Yes' : 'No'}'),
+              if (item.message != null) ...[
+                const SizedBox(height: 12),
+                Text(item.message!),
+              ],
+            ],
+          ),
         ),
       ),
     );

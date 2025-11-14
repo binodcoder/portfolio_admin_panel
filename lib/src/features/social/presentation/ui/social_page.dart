@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/features/social/domain/social_link.dart';
 import 'package:portfolio_admin_panel/src/features/social/presentation/controller/social_controller.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 
 class SocialPage extends ConsumerWidget {
@@ -48,35 +51,17 @@ class _Body extends ConsumerWidget {
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: state.when(
-          loading: () => SocialLoadingView(),
-          error: (e, _) => SocialErrorView(error: e),
-          data: (items) => SocialSuccessView(items: items),
+        child: AsyncValueWidget(
+          value: state,
+          data: (items) => items.isEmpty
+              ? EmptyState(
+                  title: "No Social items".hardcoded,
+                  subTitle: "Try adding some".hardcoded,
+                )
+              : SocialSuccessView(items: items),
         ),
       ),
     );
-  }
-}
-
-class SocialLoadingView extends StatelessWidget {
-  const SocialLoadingView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator()),
-    );
-  }
-}
-
-class SocialErrorView extends StatelessWidget {
-  const SocialErrorView({super.key, required this.error});
-
-  final Object error;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Error: $error'));
   }
 }
 
@@ -113,23 +98,7 @@ class SocialSuccessView extends ConsumerWidget {
     }
 
     void editItem(SocialLink s) => context.goNamed(AppRoute.socialEdit.name, extra: s);
-    if (items.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(24),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Row(
-              children: [
-                const Icon(Icons.info_outline),
-                const SizedBox(width: 8),
-                const Expanded(child: Text('No links yet')),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
