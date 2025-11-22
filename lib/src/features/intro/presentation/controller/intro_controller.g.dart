@@ -9,11 +9,12 @@ part of 'intro_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(IntroController)
+@ProviderFor(introController)
 const introControllerProvider = IntroControllerProvider._();
 
 final class IntroControllerProvider
-    extends $StreamNotifierProvider<IntroController, Intro?> {
+    extends $FunctionalProvider<AsyncValue<Intro?>, Intro?, Stream<Intro?>>
+    with $FutureModifier<Intro?>, $StreamProvider<Intro?> {
   const IntroControllerProvider._()
     : super(
         from: null,
@@ -30,29 +31,16 @@ final class IntroControllerProvider
 
   @$internal
   @override
-  IntroController create() => IntroController();
-}
+  $StreamProviderElement<Intro?> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
 
-String _$introControllerHash() => r'feb4ccd9e1f8845e77eff58a503e0c289676a35b';
-
-abstract class _$IntroController extends $StreamNotifier<Intro?> {
-  Stream<Intro?> build();
-  @$mustCallSuper
   @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<AsyncValue<Intro?>, Intro?>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<Intro?>, Intro?>,
-              AsyncValue<Intro?>,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, created);
+  Stream<Intro?> create(Ref ref) {
+    return introController(ref);
   }
 }
+
+String _$introControllerHash() => r'00e78b41eac6b354ddf35f284fd6457ec2b0250c';
 
 @ProviderFor(IntroActionController)
 const introActionControllerProvider = IntroActionControllerProvider._();
@@ -79,7 +67,7 @@ final class IntroActionControllerProvider
 }
 
 String _$introActionControllerHash() =>
-    r'7cc5f24ae5bdbffc2b9dcf456b2f3d18fd929807';
+    r'a0dd93c25cd36c534b5ccd8005310e9650c8cd22';
 
 abstract class _$IntroActionController extends $AsyncNotifier<void> {
   FutureOr<void> build();

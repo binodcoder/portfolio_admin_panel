@@ -10,20 +10,18 @@ part 'intro_controller.g.dart';
 enum IntroActionKind { save, delete }
 
 @riverpod
-class IntroController extends _$IntroController {
-  @override
-  Stream<Intro?> build() {
-    final repo = ref.watch(introRepositoryProvider);
-    return repo.watchIntro();
-  }
+Stream<Intro?> introController(Ref ref) {
+  final repo = ref.watch(introRepositoryProvider);
+  return repo.watchIntro();
 }
 
 @riverpod
 class IntroActionController extends _$IntroActionController {
-  @override
-  FutureOr<void> build() {}
   IntroActionKind? _lastAction;
   IntroActionKind? get lastAction => _lastAction;
+
+  @override
+  FutureOr<void> build() {}
 
   Future<void> upsertIntro(Intro data) async {
     final repo = ref.read(introRepositoryProvider);

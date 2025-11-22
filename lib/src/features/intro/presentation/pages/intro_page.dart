@@ -30,7 +30,6 @@ class IntroPage extends ConsumerWidget {
         loading: () {},
       );
     });
-
     return const Scaffold(appBar: IntroAppBar(), body: IntroBody());
   }
 }

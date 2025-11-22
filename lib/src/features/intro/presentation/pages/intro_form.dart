@@ -11,44 +11,45 @@ class IntroForm extends ConsumerStatefulWidget {
   const IntroForm({super.key, this.introId});
   final String? introId;
 
+  // * Keys for testing using find.byKey()
+  static const introKey = Key('intro');
+
   @override
   ConsumerState<IntroForm> createState() => _IntroFormState();
 }
 
 class _IntroFormState extends ConsumerState<IntroForm> {
   final _formKey = GlobalKey<FormState>();
-  final _introTextController = TextEditingController();
+
+  final _introController = TextEditingController();
   bool _hasPrefilled = false;
 
   @override
   void dispose() {
-    _introTextController.dispose();
+    _introController.dispose();
     super.dispose();
   }
 
-  Future<void> _save() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
 
-    final text = _introTextController.text.trim();
+    FocusScope.of(context).unfocus();
+
+    final text = _introController.text.trim();
     final notifier = ref.read(introActionControllerProvider.notifier);
 
     await notifier.upsertIntro(Intro(value: text));
-
-    if (!mounted) return;
-
-    final actionState = ref.read(introActionControllerProvider);
-    if (actionState.hasError) {
-      final err = actionState.error;
-      IntroDialogs.showSnack(context, 'Failed to save: $err'.hardcoded);
-      return;
-    }
-
-    // Success handled by IntroPage listener; just pop
-    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(introActionControllerProvider, (prev, next) {
+      next.whenOrNull(
+        data: (_) => Navigator.pop(context),
+        error: (e, _) => IntroDialogs.showSnack(context, "Failed to save: $e"),
+      );
+    });
+
     final actionState = ref.watch(introActionControllerProvider);
     final introAsync = ref.watch(introControllerProvider);
 
@@ -56,7 +57,7 @@ class _IntroFormState extends ConsumerState<IntroForm> {
     final existing = introAsync.asData?.value;
     if (!_hasPrefilled && existing != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _introTextController.text = existing.value;
+        _introController.text = existing.value;
         setState(() {
           _hasPrefilled = true;
         });
@@ -64,7 +65,7 @@ class _IntroFormState extends ConsumerState<IntroForm> {
     }
 
     final isSaving = actionState.isLoading;
-    final trimmed = _introTextController.text.trim();
+    final trimmed = _introController.text.trim();
     final hasContent = trimmed.isNotEmpty;
     final existingText = existing?.value ?? '';
     final hasChanges = trimmed != existingText.trim();
@@ -74,7 +75,7 @@ class _IntroFormState extends ConsumerState<IntroForm> {
       appBar: AppBar(
         title: Text((existing != null) ? 'Edit Intro'.hardcoded : 'New Intro'.hardcoded),
         actions: [
-          _SaveButton(onPressed: isSaveEnabled ? _save : null, isLoading: isSaving),
+          _SaveButton(onPressed: isSaveEnabled ? _submit : null, isLoading: isSaving),
         ],
       ),
       body: SingleChildScrollView(
@@ -87,8 +88,7 @@ class _IntroFormState extends ConsumerState<IntroForm> {
             child: Form(
               key: _formKey,
               child: _IntroFormCard(
-                isEditing: existing != null,
-                controller: _introTextController,
+                controller: _introController,
                 isLoading: isSaving,
                 onChanged: (_) => setState(() {}),
               ),
@@ -102,13 +102,11 @@ class _IntroFormState extends ConsumerState<IntroForm> {
 
 class _IntroFormCard extends StatelessWidget {
   const _IntroFormCard({
-    required this.isEditing,
     required this.controller,
     required this.isLoading,
     required this.onChanged,
   });
 
-  final bool isEditing;
   final TextEditingController controller;
   final bool isLoading;
   final ValueChanged<String> onChanged;
@@ -136,31 +134,48 @@ class _IntroFormCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             gapH20,
-            TextFormField(
+            IntroTextFormField(
               controller: controller,
-              minLines: 6,
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-              enabled: !isLoading,
+              isLoading: isLoading,
               onChanged: onChanged,
-              validator: (value) => (value ?? '').trim().isEmpty
-                  ? 'Please enter an introduction'.hardcoded
-                  : null,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              decoration: InputDecoration(
-                hintText:
-                    "E.g. I'm a Flutter developer building delightful apps.".hardcoded,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 2,
-                  ),
-                ),
-              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class IntroTextFormField extends StatelessWidget {
+  const IntroTextFormField({
+    super.key,
+    required this.controller,
+    required this.isLoading,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final bool isLoading;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      minLines: 6,
+      maxLines: null,
+      keyboardType: TextInputType.multiline,
+      enabled: !isLoading,
+      onChanged: onChanged,
+      validator: (value) =>
+          (value ?? '').trim().isEmpty ? 'Please enter an introduction'.hardcoded : null,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        hintText: "E.g. I'm a Flutter developer building delightful apps.".hardcoded,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
         ),
       ),
     );
