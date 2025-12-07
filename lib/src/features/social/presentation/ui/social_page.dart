@@ -72,7 +72,7 @@ class SocialSuccessView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final action = ref.watch(socialActionControllerProvider);
+    final action = ref.watch(socialControllerProvider);
 
     Future<void> deleteItem(SocialLink s) async {
       final confirm =
@@ -94,7 +94,7 @@ class SocialSuccessView extends ConsumerWidget {
           ) ??
           false;
       if (!confirm) return;
-      await ref.read(socialActionControllerProvider.notifier).deleteSocial(s.id!);
+      await ref.read(socialControllerProvider.notifier).deleteSocial(s.id!);
     }
 
     void editItem(SocialLink s) => context.goNamed(AppRoute.socialEdit.name, extra: s);

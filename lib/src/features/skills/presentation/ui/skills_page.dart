@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/features/skills/data/skills_repository.dart';
 import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
 import 'package:portfolio_admin_panel/src/features/skills/presentation/controller/skills_controller.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
@@ -72,7 +73,7 @@ class SkillSuccessView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final action = ref.watch(skillsActionControllerProvider);
+    final action = ref.watch(skillListProvider);
 
     Future<void> deleteItem(Skill s) async {
       final confirm =
@@ -94,7 +95,7 @@ class SkillSuccessView extends ConsumerWidget {
           ) ??
           false;
       if (!confirm) return;
-      await ref.read(skillsActionControllerProvider.notifier).deleteSkill(s.id!);
+      await ref.read(skillsControllerProvider.notifier).deleteSkill(s.id!);
     }
 
     void editItem(Skill s) => context.goNamed(AppRoute.skillEdit.name, extra: s);

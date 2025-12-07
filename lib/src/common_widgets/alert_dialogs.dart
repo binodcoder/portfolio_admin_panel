@@ -13,50 +13,52 @@ Future<bool?> showAlertDialog({
   String? cancelActionText,
   String defaultActionText = 'OK',
 }) async {
-  final isCupertino = !kIsWeb &&
+  final isCupertino =
+      !kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.iOS ||
           defaultTargetPlatform == TargetPlatform.macOS);
 
   return showDialog(
-      context: context,
-      barrierDismissible: cancelActionText != null,
-      builder: (context) {
-        if (isCupertino) {
-          return CupertinoAlertDialog(
-            title: Text(title),
-            content: content != null ? Text(content) : null,
-            actions: <Widget>[
-              if (cancelActionText != null)
-                CupertinoDialogAction(
-                  child: Text(cancelActionText),
-                  onPressed: () => Navigator.of(context).pop(false),
-                ),
-              CupertinoDialogAction(
-                key: kDialogDefaultKey,
-                child: Text(defaultActionText),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ],
-          );
-        }
-        // Material/browser style
-        return AlertDialog(
+    context: context,
+    barrierDismissible: cancelActionText != null,
+    builder: (context) {
+      if (isCupertino) {
+        return CupertinoAlertDialog(
           title: Text(title),
           content: content != null ? Text(content) : null,
           actions: <Widget>[
             if (cancelActionText != null)
-              TextButton(
+              CupertinoDialogAction(
                 child: Text(cancelActionText),
                 onPressed: () => Navigator.of(context).pop(false),
               ),
-            TextButton(
+            CupertinoDialogAction(
               key: kDialogDefaultKey,
               child: Text(defaultActionText),
               onPressed: () => Navigator.of(context).pop(true),
             ),
           ],
         );
-      });
+      }
+      // Material/browser style
+      return AlertDialog(
+        title: Text(title),
+        content: content != null ? Text(content) : null,
+        actions: <Widget>[
+          if (cancelActionText != null)
+            TextButton(
+              child: Text(cancelActionText),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+          TextButton(
+            key: kDialogDefaultKey,
+            child: Text(defaultActionText),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 /// Generic function to show a platform-aware Material or Cupertino error dialog

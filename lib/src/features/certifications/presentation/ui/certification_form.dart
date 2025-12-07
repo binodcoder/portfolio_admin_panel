@@ -85,7 +85,7 @@ class _CertificationFormState extends ConsumerState<CertificationForm> {
           ? null
           : credentialUrlController.text.trim(),
     );
-    final notifier = ref.read(certificationsActionControllerProvider.notifier);
+    final notifier = ref.read(certificationControllerProvider.notifier);
     if (_id == null) {
       await notifier.createCertification(data);
     } else {
@@ -97,7 +97,7 @@ class _CertificationFormState extends ConsumerState<CertificationForm> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(certificationsActionControllerProvider);
+    final async = ref.watch(certificationControllerProvider);
     final canSave = !async.isLoading && nameController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(

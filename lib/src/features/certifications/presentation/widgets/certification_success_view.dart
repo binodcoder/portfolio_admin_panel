@@ -17,10 +17,10 @@ class CertificationSuccessView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final action = ref.watch(certificationsActionControllerProvider);
+    final action = ref.watch(certificationControllerProvider);
 
     // Listen for action errors and show a SnackBar
-    ref.listen(certificationsActionControllerProvider, (prev, next) {
+    ref.listen(certificationControllerProvider, (prev, next) {
       next.whenOrNull(
         error: (e, _) => ScaffoldMessenger.of(
           context,
@@ -48,9 +48,7 @@ class CertificationSuccessView extends ConsumerWidget {
           ) ??
           false;
       if (!confirm) return;
-      await ref
-          .read(certificationsActionControllerProvider.notifier)
-          .deleteCertification(c.id!);
+      await ref.read(certificationControllerProvider.notifier).deleteCertification(c.id!);
     }
 
     void editItem(Certification c) =>

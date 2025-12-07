@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/features/contact/data/contact_repository.dart';
 import 'package:portfolio_admin_panel/src/features/contact/domain/contact_info.dart';
 import 'package:portfolio_admin_panel/src/features/contact/presentation/controller/contact_controller.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
@@ -25,8 +26,8 @@ class _AppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final action = ref.watch(contactActionControllerProvider);
-    final state = ref.watch(contactControllerProvider);
+    final action = ref.watch(contactControllerProvider);
+    final state = ref.watch(contactInfoListProvider);
 
     Future<void> deleteItem() async {
       final items = state.asData?.value ?? const <ContactInfo>[];
@@ -55,9 +56,7 @@ class _AppBar extends ConsumerWidget implements PreferredSizeWidget {
           ) ??
           false;
       if (!confirm) return;
-      await ref
-          .read(contactActionControllerProvider.notifier)
-          .deleteContact(items.first.id!);
+      await ref.read(contactControllerProvider.notifier).deleteContact(items.first.id!);
     }
 
     void editItem() {

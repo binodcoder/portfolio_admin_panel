@@ -84,7 +84,7 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
           : descriptionController.text.trim(),
       technologies: techs,
     );
-    final notifier = ref.read(experienceActionControllerProvider.notifier);
+    final notifier = ref.read(experienceControllerProvider.notifier);
     if (_id == null) {
       await notifier.createExperience(data);
     } else {
@@ -96,7 +96,7 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(experienceActionControllerProvider);
+    final async = ref.watch(experienceControllerProvider);
     final canSave =
         !async.isLoading &&
         companyController.text.trim().isNotEmpty &&

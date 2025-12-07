@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'intro_repository.g.dart';
 
 class IntroRepository {
   IntroRepository(this._firestore);
@@ -35,7 +33,11 @@ class IntroRepository {
   }
 }
 
-@Riverpod(keepAlive: true)
-IntroRepository introRepository(Ref ref) {
+final introRepositoryProvider = Provider<IntroRepository>((ref) {
   return IntroRepository(FirebaseFirestore.instance);
-}
+});
+
+final watchIntroProvider = StreamProvider.autoDispose<Intro?>((ref) {
+  final introRepository = ref.watch(introRepositoryProvider);
+  return introRepository.watchIntro();
+});

@@ -73,7 +73,7 @@ class ExperienceSuccessView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final action = ref.watch(experienceActionControllerProvider);
+    final action = ref.watch(experienceControllerProvider);
 
     Future<void> deleteItem(Experience e) async {
       final confirm =
@@ -95,7 +95,7 @@ class ExperienceSuccessView extends ConsumerWidget {
           ) ??
           false;
       if (!confirm) return;
-      await ref.read(experienceActionControllerProvider.notifier).deleteExperience(e.id!);
+      await ref.read(experienceControllerProvider.notifier).deleteExperience(e.id!);
     }
 
     void editItem(Experience e) =>

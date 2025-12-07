@@ -46,7 +46,7 @@ class _SocialFormState extends ConsumerState<SocialForm> {
       platform: platformController.text.trim(),
       url: urlController.text.trim(),
     );
-    final notifier = ref.read(socialActionControllerProvider.notifier);
+    final notifier = ref.read(socialControllerProvider.notifier);
     if (_id == null) {
       await notifier.createSocial(data);
     } else {
@@ -58,7 +58,7 @@ class _SocialFormState extends ConsumerState<SocialForm> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(socialActionControllerProvider);
+    final async = ref.watch(socialControllerProvider);
     final canSave =
         !async.isLoading &&
         platformController.text.trim().isNotEmpty &&

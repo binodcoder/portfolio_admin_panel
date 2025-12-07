@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/features/intro/data/intro_repository.dart';
 import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/controller/intro_controller.dart';
-import 'package:portfolio_admin_panel/src/features/intro/presentation/widgets/intro_dialogs.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:portfolio_admin_panel/src/utils/async_value_ui.dart';
 
 class IntroForm extends ConsumerStatefulWidget {
   const IntroForm({super.key, this.introId});
@@ -32,26 +34,27 @@ class _IntroFormState extends ConsumerState<IntroForm> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-
+    final goRouter = GoRouter.of(context);
     FocusScope.of(context).unfocus();
 
     final text = _introController.text.trim();
     final notifier = ref.read(introActionControllerProvider.notifier);
 
-    await notifier.upsertIntro(Intro(value: text));
+    bool success = await notifier.upsertIntro(Intro(value: text));
+    if (success) {
+      goRouter.pop();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(introActionControllerProvider, (prev, next) {
-      next.whenOrNull(
-        data: (_) => Navigator.pop(context),
-        error: (e, _) => IntroDialogs.showSnack(context, "Failed to save: $e"),
-      );
-    });
+    ref.listen(
+      introActionControllerProvider,
+      (_, state) => state.showAlertDialogOnError(context),
+    );
 
     final actionState = ref.watch(introActionControllerProvider);
-    final introAsync = ref.watch(introControllerProvider);
+    final introAsync = ref.watch(watchIntroProvider);
 
     // Prefill from the single intro doc once
     final existing = introAsync.asData?.value;

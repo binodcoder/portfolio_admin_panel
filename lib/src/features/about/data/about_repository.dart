@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
-
-part 'about_repository.g.dart';
 
 class AboutRepository {
   AboutRepository(this._firestore);
@@ -24,7 +22,11 @@ class AboutRepository {
   Future<void> delete(String id) => _collection.doc(id).delete();
 }
 
-@Riverpod(keepAlive: true)
-AboutRepository aboutRepository(Ref ref) {
+final aboutRepositoryProvider = Provider<AboutRepository>((ref) {
   return AboutRepository(FirebaseFirestore.instance);
-}
+});
+
+final aboutListProvider = StreamProvider.autoDispose<List<About>>((ref) {
+  final aboutRepository = ref.watch(aboutRepositoryProvider);
+  return aboutRepository.watch();
+});

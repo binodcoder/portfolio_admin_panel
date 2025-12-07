@@ -72,7 +72,7 @@ class ProjectSuccessView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final action = ref.watch(projectsActionControllerProvider);
+    final action = ref.watch(projectsControllerProvider);
 
     Future<void> deleteItem(Project p) async {
       final confirm =
@@ -94,7 +94,7 @@ class ProjectSuccessView extends ConsumerWidget {
           ) ??
           false;
       if (!confirm) return;
-      await ref.read(projectsActionControllerProvider.notifier).deleteProject(p.id!);
+      await ref.read(projectsControllerProvider.notifier).deleteProject(p.id!);
     }
 
     void editItem(Project p) => context.goNamed(AppRoute.projectEdit.name, extra: p);

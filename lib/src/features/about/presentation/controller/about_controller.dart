@@ -1,38 +1,31 @@
+import 'package:riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:portfolio_admin_panel/src/features/about/data/about_repository.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 
-part 'about_controller.g.dart';
+class AboutController extends StateNotifier<AsyncValue> {
+  AboutController({required this.aboutRepository}) : super(AsyncValue.data(null));
 
-@riverpod
-class AboutController extends _$AboutController {
-  @override
-  Stream<List<About>> build() {
-    final repo = ref.watch(aboutRepositoryProvider);
-    return repo.watch();
-  }
-}
-
-@riverpod
-class AboutActionController extends _$AboutActionController {
-  @override
-  FutureOr<void> build() {}
+  AboutRepository aboutRepository;
 
   Future<void> createAbout(About data) async {
-    final repo = ref.read(aboutRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.create(data));
+    state = await AsyncValue.guard(() => aboutRepository.create(data));
   }
 
   Future<void> updateAbout(String id, About data) async {
-    final repo = ref.read(aboutRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.update(id, data));
+    state = await AsyncValue.guard(() => aboutRepository.update(id, data));
   }
 
   Future<void> deleteAbout(String id) async {
-    final repo = ref.read(aboutRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.delete(id));
+    state = await AsyncValue.guard(() => aboutRepository.delete(id));
   }
 }
+
+final aboutControllerProvider =
+    StateNotifierProvider.autoDispose<AboutController, AsyncValue>((ref) {
+      final aboutRepository = ref.watch(aboutRepositoryProvider);
+      return AboutController(aboutRepository: aboutRepository);
+    });

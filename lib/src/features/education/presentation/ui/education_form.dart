@@ -79,7 +79,7 @@ class _EducationFormState extends ConsumerState<EducationForm> {
           ? null
           : descriptionController.text.trim(),
     );
-    final notifier = ref.read(educationActionControllerProvider.notifier);
+    final notifier = ref.read(educationControllerProvider.notifier);
     if (_id == null) {
       await notifier.createEducation(data);
     } else {
@@ -91,7 +91,7 @@ class _EducationFormState extends ConsumerState<EducationForm> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(educationActionControllerProvider);
+    final async = ref.watch(educationControllerProvider);
     final canSave = !async.isLoading && institutionController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(

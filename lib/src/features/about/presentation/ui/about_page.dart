@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/features/about/data/about_repository.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 import 'package:portfolio_admin_panel/src/features/about/presentation/controller/about_controller.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
@@ -26,8 +27,8 @@ class _AppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final aboutActionState = ref.watch(aboutActionControllerProvider);
-    final aboutState = ref.watch(aboutControllerProvider);
+    final aboutActionState = ref.watch(aboutControllerProvider);
+    final aboutState = ref.watch(aboutListProvider);
 
     Future<void> deleteItem() async {
       final items = aboutState.asData?.value ?? const <About>[];
@@ -57,9 +58,9 @@ class _AppBar extends ConsumerWidget implements PreferredSizeWidget {
           ) ??
           false;
       if (!confirmed) return;
-      await ref.read(aboutActionControllerProvider.notifier).deleteAbout(items.first.id!);
+      await ref.read(aboutControllerProvider.notifier).deleteAbout(items.first.id!);
       if (!context.mounted) return;
-      if (ref.read(aboutActionControllerProvider).hasError) {
+      if (ref.read(aboutControllerProvider).hasError) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Failed to delete')));
@@ -103,7 +104,7 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final aboutValue = ref.watch(aboutControllerProvider);
+    final aboutValue = ref.watch(aboutListProvider);
     return SingleChildScrollView(
       child: ResponsiveCenter(
         child: AsyncValueWidget<List<About>>(

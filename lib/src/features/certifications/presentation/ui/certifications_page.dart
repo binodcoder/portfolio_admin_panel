@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/constants/breakpoints.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/presentation/controller/certifications_controller.dart';
+import 'package:portfolio_admin_panel/src/features/certifications/data/certifications_repository.dart';
 import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/certification_success_view.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
@@ -52,12 +52,12 @@ class _Body extends ConsumerWidget {
   final VoidCallback onCreate;
 
   void refresh(WidgetRef ref) {
-    ref.invalidate(certificationsControllerProvider);
+    ref.invalidate(certificationListProvider);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(certificationsControllerProvider);
+    final state = ref.watch(certificationListProvider);
 
     return Align(
       alignment: Alignment.topCenter,

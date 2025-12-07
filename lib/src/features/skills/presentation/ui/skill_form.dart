@@ -51,7 +51,7 @@ class _SkillFormState extends ConsumerState<SkillForm> {
           ? null
           : categoryController.text.trim(),
     );
-    final notifier = ref.read(skillsActionControllerProvider.notifier);
+    final notifier = ref.read(skillsControllerProvider.notifier);
     if (_id == null) {
       await notifier.createSkill(data);
     } else {
@@ -63,7 +63,7 @@ class _SkillFormState extends ConsumerState<SkillForm> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(skillsActionControllerProvider);
+    final async = ref.watch(skillsControllerProvider);
     final canSave = !async.isLoading && nameController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(

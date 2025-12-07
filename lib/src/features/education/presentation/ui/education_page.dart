@@ -73,7 +73,7 @@ class EducationSuccessView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final action = ref.watch(educationActionControllerProvider);
+    final action = ref.watch(educationControllerProvider);
 
     Future<void> deleteItem(Education e) async {
       final confirm =
@@ -95,7 +95,7 @@ class EducationSuccessView extends ConsumerWidget {
           ) ??
           false;
       if (!confirm) return;
-      await ref.read(educationActionControllerProvider.notifier).deleteEducation(e.id!);
+      await ref.read(educationControllerProvider.notifier).deleteEducation(e.id!);
     }
 
     void editItem(Education e) => context.goNamed(AppRoute.educationEdit.name, extra: e);

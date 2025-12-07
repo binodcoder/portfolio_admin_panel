@@ -65,7 +65,7 @@ class _ProjectFormState extends ConsumerState<ProjectForm> {
       liveUrl: liveController.text.trim().isNotEmpty ? liveController.text.trim() : null,
       tags: tags,
     );
-    final notifier = ref.read(projectsActionControllerProvider.notifier);
+    final notifier = ref.read(projectsControllerProvider.notifier);
     if (_id == null) {
       await notifier.createProject(data);
     } else {
@@ -77,7 +77,7 @@ class _ProjectFormState extends ConsumerState<ProjectForm> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(projectsActionControllerProvider);
+    final async = ref.watch(projectsControllerProvider);
     final canSave = !async.isLoading && titleController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(

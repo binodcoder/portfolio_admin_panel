@@ -34,7 +34,7 @@ class _AboutFormState extends ConsumerState<AboutForm> {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
     final text = textController.text.trim();
-    final notifier = ref.read(aboutActionControllerProvider.notifier);
+    final notifier = ref.read(aboutControllerProvider.notifier);
     if (_id == null) {
       await notifier.createAbout(About(value: text));
     } else {
@@ -46,7 +46,7 @@ class _AboutFormState extends ConsumerState<AboutForm> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(aboutActionControllerProvider);
+    final async = ref.watch(aboutControllerProvider);
     final canSave = !async.isLoading && textController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(

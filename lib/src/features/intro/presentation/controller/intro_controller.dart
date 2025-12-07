@@ -1,55 +1,29 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/features/intro/data/intro_repository.dart';
 import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
-import 'package:portfolio_admin_panel/src/features/intro/presentation/widgets/intro_dialogs.dart';
-import 'package:portfolio_admin_panel/src/routing/app_router.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'intro_controller.g.dart';
+import 'package:riverpod/legacy.dart';
 
-enum IntroActionKind { save, delete }
+class IntroActionController extends StateNotifier<AsyncValue> {
+  IntroActionController({required this.introRepository}) : super(AsyncValue.data(null));
 
-@riverpod
-Stream<Intro?> introController(Ref ref) {
-  final repo = ref.watch(introRepositoryProvider);
-  return repo.watchIntro();
+  final IntroRepository introRepository;
+
+  Future<bool> upsertIntro(Intro data) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => introRepository.setIntro(data));
+    return state.hasError == false;
+  }
+
+  Future<void> deleteIntro() async {
+    state = AsyncValue.loading();
+    state = await AsyncValue.guard(() => introRepository.deleteIntro());
+  }
 }
 
-@riverpod
-class IntroActionController extends _$IntroActionController {
-  IntroActionKind? _lastAction;
-  IntroActionKind? get lastAction => _lastAction;
-
-  @override
-  FutureOr<void> build() {}
-
-  Future<void> upsertIntro(Intro data) async {
-    final repo = ref.read(introRepositoryProvider);
-    _lastAction = IntroActionKind.save;
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.setIntro(data));
-  }
-
-  /// Navigate to edit page (single-doc: always "current")
-  void goToEdit(BuildContext context, Intro? intro) {
-    const id = 'current';
-    context.goNamed(AppRoute.introEdit.name, pathParameters: {'id': id});
-  }
-
-  /// Delete the current intro after confirmation (single-doc)
-  Future<void> deleteIntro(BuildContext context) async {
-    final repo = ref.read(introRepositoryProvider);
-
-    final confirmed = await IntroDialogs.confirmDelete(context);
-    if (!confirmed) return;
-
-    _lastAction = IntroActionKind.delete;
-    state = const AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
-      await repo.deleteIntro();
+final introActionControllerProvider =
+    StateNotifierProvider.autoDispose<IntroActionController, AsyncValue>((ref) {
+      final introRepository = ref.watch(introRepositoryProvider);
+      return IntroActionController(introRepository: introRepository);
     });
-  }
-}
 
-// single-doc model eliminates the need for an id-based provider
+ 

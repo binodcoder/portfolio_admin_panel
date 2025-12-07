@@ -1,38 +1,31 @@
+import 'package:riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:portfolio_admin_panel/src/features/education/data/education_repository.dart';
 import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
 
-part 'education_controller.g.dart';
+class EducationController extends StateNotifier<AsyncValue> {
+  EducationController({required this.educationRepository}) : super(AsyncValue.data(null));
 
-@riverpod
-class EducationController extends _$EducationController {
-  @override
-  Stream<List<Education>> build() {
-    final repo = ref.watch(educationRepositoryProvider);
-    return repo.watch();
-  }
-}
-
-@riverpod
-class EducationActionController extends _$EducationActionController {
-  @override
-  FutureOr<void> build() {}
+  final EducationRepository educationRepository;
 
   Future<void> createEducation(Education data) async {
-    final repo = ref.read(educationRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.create(data));
+    state = await AsyncValue.guard(() => educationRepository.create(data));
   }
 
   Future<void> updateEducation(String id, Education data) async {
-    final repo = ref.read(educationRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.update(id, data));
+    state = await AsyncValue.guard(() => educationRepository.update(id, data));
   }
 
   Future<void> deleteEducation(String id) async {
-    final repo = ref.read(educationRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.delete(id));
+    state = await AsyncValue.guard(() => educationRepository.delete(id));
   }
 }
+
+final educationControllerProvider =
+    StateNotifierProvider.autoDispose<EducationController, AsyncValue>((ref) {
+      final educationRepository = ref.watch(educationRepositoryProvider);
+      return EducationController(educationRepository: educationRepository);
+    });

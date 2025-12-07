@@ -63,7 +63,7 @@ class _ContactFormState extends ConsumerState<ContactForm> {
           ? null
           : messageController.text.trim(),
     );
-    final notifier = ref.read(contactActionControllerProvider.notifier);
+    final notifier = ref.read(contactControllerProvider.notifier);
     if (_id == null) {
       await notifier.createContact(data);
     } else {
@@ -75,7 +75,7 @@ class _ContactFormState extends ConsumerState<ContactForm> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(contactActionControllerProvider);
+    final async = ref.watch(contactControllerProvider);
     final canSave = !async.isLoading; // all fields optional
     final isEditing = _id != null;
     return Scaffold(

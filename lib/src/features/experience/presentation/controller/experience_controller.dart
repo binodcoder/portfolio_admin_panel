@@ -1,38 +1,32 @@
+import 'package:riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:portfolio_admin_panel/src/features/experience/data/experience_repository.dart';
 import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
 
-part 'experience_controller.g.dart';
+class ExperienceController extends StateNotifier<AsyncValue> {
+  ExperienceController({required this.experienceRepository})
+    : super(AsyncValue.data(null));
 
-@riverpod
-class ExperienceController extends _$ExperienceController {
-  @override
-  Stream<List<Experience>> build() {
-    final repo = ref.watch(experienceRepositoryProvider);
-    return repo.watch();
-  }
-}
-
-@riverpod
-class ExperienceActionController extends _$ExperienceActionController {
-  @override
-  FutureOr<void> build() {}
+  final ExperienceRepository experienceRepository;
 
   Future<void> createExperience(Experience data) async {
-    final repo = ref.read(experienceRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.create(data));
+    state = await AsyncValue.guard(() => experienceRepository.create(data));
   }
 
   Future<void> updateExperience(String id, Experience data) async {
-    final repo = ref.read(experienceRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.update(id, data));
+    state = await AsyncValue.guard(() => experienceRepository.update(id, data));
   }
 
   Future<void> deleteExperience(String id) async {
-    final repo = ref.read(experienceRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => repo.delete(id));
+    state = await AsyncValue.guard(() => experienceRepository.delete(id));
   }
 }
+
+final experienceControllerProvider =
+    StateNotifierProvider.autoDispose<ExperienceController, AsyncValue>((ref) {
+      final experienceRepository = ref.watch(experienceRepositoryProvider);
+      return ExperienceController(experienceRepository: experienceRepository);
+    });
