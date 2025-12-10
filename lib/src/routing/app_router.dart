@@ -7,7 +7,6 @@ import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/
 import 'package:portfolio_admin_panel/src/features/intro/presentation/pages/intro_form.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/pages/intro_page.dart';
 import 'package:portfolio_admin_panel/src/features/home/home.dart';
-import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 import 'package:portfolio_admin_panel/src/features/about/presentation/ui/about_form.dart';
 import 'package:portfolio_admin_panel/src/features/about/presentation/ui/about_page.dart';
 import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
@@ -47,9 +46,9 @@ enum AppRoute {
   account,
   signIn,
   intro,
-  introEdit,
+  introForm,
   about,
-  aboutEdit,
+  aboutForm,
   skills,
   skillEdit,
   projects,
@@ -122,10 +121,10 @@ GoRouter goRouter(Ref ref) {
             routes: [
               GoRoute(
                 path: 'edit/:id',
-                name: AppRoute.introEdit.name,
+                name: AppRoute.introForm.name,
                 pageBuilder: (context, state) => MaterialPage(
                   // fullscreenDialog: true,
-                  child: IntroForm(introId: state.pathParameters['id']),
+                  child: IntroForm(),
                 ),
               ),
             ],
@@ -136,11 +135,10 @@ GoRouter goRouter(Ref ref) {
             builder: (context, state) => const AboutPage(),
             routes: [
               GoRoute(
-                path: 'edit',
-                name: AppRoute.aboutEdit.name,
-                pageBuilder: (context, state) => MaterialPage(
-                  // fullscreenDialog: true,
-                  child: AboutForm(item: state.extra as About?),
+                path: 'aboutForm',
+                name: AppRoute.aboutForm.name,
+                pageBuilder: (context, state) => const MaterialPage(
+                  child: AboutForm(),
                 ),
               ),
             ],

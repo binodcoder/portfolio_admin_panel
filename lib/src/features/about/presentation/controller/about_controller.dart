@@ -8,14 +8,16 @@ class AboutController extends StateNotifier<AsyncValue> {
 
   AboutRepository aboutRepository;
 
-  Future<void> createAbout(About data) async {
+  Future<bool> createAbout(About data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => aboutRepository.create(data));
+    return state.hasError == false;
   }
 
-  Future<void> updateAbout(String id, About data) async {
+  Future<bool> updateAbout(String id, About data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => aboutRepository.update(id, data));
+    return state.hasError == false;
   }
 
   Future<void> deleteAbout(String id) async {

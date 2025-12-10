@@ -10,8 +10,7 @@ import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/utils/async_value_ui.dart';
 
 class IntroForm extends ConsumerStatefulWidget {
-  const IntroForm({super.key, this.introId});
-  final String? introId;
+  const IntroForm({super.key});
 
   // * Keys for testing using find.byKey()
   static const introKey = Key('intro');
