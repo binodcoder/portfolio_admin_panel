@@ -17,14 +17,17 @@ class AboutAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final aboutList = ref.watch(aboutListProvider);
-    final List<About> existing = aboutList.asData?.value ?? const [];
+    final List<About?> existing = aboutList.asData?.value ?? const [];
     final hasItem = existing.isNotEmpty;
+    final aboutController = ref.watch(aboutControllerProvider);
 
     return AppBar(
       title: const Text('About'),
       actions: [
         TextButton.icon(
-          onPressed: () => context.goNamed(AppRoute.aboutForm.name),
+          onPressed: () => hasItem
+              ? context.goNamed(AppRoute.aboutForm.name, extra: existing.first)
+              : context.goNamed(AppRoute.aboutForm.name, extra: null),
           icon: hasItem
               ? const Icon(Icons.edit_outlined)
               : const Icon(Icons.add_outlined),
@@ -32,7 +35,7 @@ class AboutAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
         const SizedBox(width: 4),
         TextButton.icon(
-          onPressed: !hasItem
+          onPressed: (aboutController.isLoading || !hasItem)
               ? null
               : () async {
                   final delete = await showAlertDialog(
@@ -44,7 +47,7 @@ class AboutAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   if (delete == true) {
                     await ref
                         .read(aboutControllerProvider.notifier)
-                        .deleteAbout(existing.first.id!);
+                        .deleteAbout(existing.first!.id!);
                   }
                 },
           icon: const Icon(Icons.delete_outline),

@@ -15,7 +15,7 @@ class AboutBody extends ConsumerWidget {
     final aboutValue = ref.watch(aboutListProvider);
     return SingleChildScrollView(
       child: ResponsiveCenter(
-        child: AsyncValueWidget<List<About>>(
+        child: AsyncValueWidget<List<About?>>(
           value: aboutValue,
           data: (items) {
             final item = items.isEmpty ? null : items.first;

@@ -11,22 +11,34 @@ class AboutRepository {
 
   Future<void> create(About data) => _collection.add(data.toMap());
 
-  Stream<List<About>> watch() {
-    return _collection.snapshots().map(
-      (snapshot) =>
-          snapshot.docs.map((d) => About.fromMap({...d.data(), 'id': d.id})).toList(),
-    );
+  Stream<List<About?>> watch() => _collection.snapshots().map(
+    (snapshot) =>
+        snapshot.docs.map((d) => About.fromMap({...d.data(), 'id': d.id})).toList(),
+  );
+
+  Stream<About?> watchAbout(String id) {
+    return _collection.doc(id).snapshots().map((doc) => About.fromMap(doc.data()!));
   }
 
-  Future<void> update(String id, About data) => _collection.doc(id).update(data.toMap());
-  Future<void> delete(String id) => _collection.doc(id).delete();
+  Future<void> update(String id, About data) async {
+    return _collection.doc(id).update(data.toMap());
+  }
+
+  Future<void> delete(String id) async {
+    return _collection.doc(id).delete();
+  }
 }
 
 final aboutRepositoryProvider = Provider<AboutRepository>((ref) {
   return AboutRepository(FirebaseFirestore.instance);
 });
 
-final aboutListProvider = StreamProvider.autoDispose<List<About>>((ref) {
+final aboutListProvider = StreamProvider.autoDispose<List<About?>>((ref) {
   final aboutRepository = ref.watch(aboutRepositoryProvider);
   return aboutRepository.watch();
+});
+
+final watchAboutProvider = StreamProvider.autoDispose.family<About?, String>((ref, id) {
+  final aboutRepository = ref.watch(aboutRepositoryProvider);
+  return aboutRepository.watchAbout(id);
 });

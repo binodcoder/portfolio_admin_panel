@@ -3,27 +3,33 @@ import 'package:portfolio_admin_panel/src/features/intro/data/intro_repository.d
 import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:riverpod/legacy.dart';
 
-class IntroActionController extends StateNotifier<AsyncValue> {
-  IntroActionController({required this.introRepository}) : super(AsyncValue.data(null));
+class IntroController extends StateNotifier<AsyncValue> {
+  IntroController({required this.introRepository}) : super(AsyncValue.data(null));
 
   final IntroRepository introRepository;
 
-  Future<bool> upsertIntro(Intro data) async {
+  Future<bool> createIntro(Intro intro) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => introRepository.setIntro(data));
+    state = await AsyncValue.guard(() => introRepository.create(intro));
     return state.hasError == false;
   }
 
-  Future<void> deleteIntro() async {
+  Future<bool> updateIntro(String id, Intro data) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => introRepository.updateIntro(id, data));
+    return state.hasError == false;
+  }
+
+  Future<void> deleteIntro(String id) async {
     state = AsyncValue.loading();
-    state = await AsyncValue.guard(() => introRepository.deleteIntro());
+    state = await AsyncValue.guard(() => introRepository.deleteIntro(id));
   }
 }
 
-final introActionControllerProvider =
-    StateNotifierProvider.autoDispose<IntroActionController, AsyncValue>((ref) {
+final introControllerProvider =
+    StateNotifierProvider.autoDispose<IntroController, AsyncValue>((ref) {
       final introRepository = ref.watch(introRepositoryProvider);
-      return IntroActionController(introRepository: introRepository);
+      return IntroController(introRepository: introRepository);
     });
 
- 
+final introCanSaveProvider = StateProvider.autoDispose<bool>((ref) => false);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
 import 'package:portfolio_admin_panel/src/features/intro/data/intro_repository.dart';
+import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/controller/intro_controller.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
@@ -15,24 +16,26 @@ class IntroAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final actionState = ref.watch(introActionControllerProvider);
-    final introState = ref.watch(watchIntroProvider);
-
-    final currentIntro = introState.asData?.value;
+    final introList = ref.watch(watchIntrosProvider);
+    final List<Intro?> existing = introList.asData?.value ?? const [];
+    final hasItem = existing.isNotEmpty;
+    final actionState = ref.watch(introControllerProvider);
+    // final introState = ref.watch(watchIntrosProvider);
 
     return AppBar(
       title: Text('Intro'.hardcoded),
       actions: [
         TextButton.icon(
-          onPressed: () {
-            context.goNamed(AppRoute.introForm.name, pathParameters: {'id': 'current'});
-          },
-          icon: Icon(currentIntro == null ? Icons.add_outlined : Icons.edit_outlined),
-          label: Text(currentIntro == null ? 'Add'.hardcoded : 'Edit'.hardcoded),
+          onPressed: () => hasItem
+              ? context.goNamed(AppRoute.introForm.name, extra: existing.first)
+              : context.goNamed(AppRoute.introForm.name, extra: null),
+
+          icon: Icon(hasItem ? Icons.edit_outlined : Icons.add_outlined),
+          label: Text(hasItem ? 'Edit'.hardcoded : 'Add'.hardcoded),
         ),
         const SizedBox(width: 4),
         TextButton.icon(
-          onPressed: (actionState.isLoading || currentIntro == null)
+          onPressed: (actionState.isLoading || !hasItem)
               ? null
               : () async {
                   final delete = await showAlertDialog(
@@ -42,7 +45,9 @@ class IntroAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     defaultActionText: 'Delete'.hardcoded,
                   );
                   if (delete == true) {
-                    await ref.read(introActionControllerProvider.notifier).deleteIntro();
+                    await ref
+                        .read(introControllerProvider.notifier)
+                        .deleteIntro(existing.first!.id!);
                   }
                 },
 

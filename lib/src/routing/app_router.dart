@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 import 'package:portfolio_admin_panel/src/features/auth/data/auth_repository.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/account/account_screen.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_form_type.dart';
 import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_screen.dart';
+import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/pages/intro_form.dart';
 import 'package:portfolio_admin_panel/src/features/intro/presentation/pages/intro_page.dart';
 import 'package:portfolio_admin_panel/src/features/home/home.dart';
@@ -120,12 +122,12 @@ GoRouter goRouter(Ref ref) {
             builder: (context, state) => const IntroPage(),
             routes: [
               GoRoute(
-                path: 'edit/:id',
+                path: 'form',
                 name: AppRoute.introForm.name,
-                pageBuilder: (context, state) => MaterialPage(
-                  // fullscreenDialog: true,
-                  child: IntroForm(),
-                ),
+                pageBuilder: (context, state) {
+                  final intro = state.extra as Intro?;
+                  return MaterialPage(child: IntroForm(intro: intro));
+                },
               ),
             ],
           ),
@@ -135,11 +137,12 @@ GoRouter goRouter(Ref ref) {
             builder: (context, state) => const AboutPage(),
             routes: [
               GoRoute(
-                path: 'aboutForm',
+                path: 'form',
                 name: AppRoute.aboutForm.name,
-                pageBuilder: (context, state) => const MaterialPage(
-                  child: AboutForm(),
-                ),
+                pageBuilder: (context, state) {
+                  final about = state.extra as About?;
+                  return MaterialPage(child: AboutForm(about: about));
+                },
               ),
             ],
           ),

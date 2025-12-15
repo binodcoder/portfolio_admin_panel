@@ -6,7 +6,7 @@ import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 class AboutController extends StateNotifier<AsyncValue> {
   AboutController({required this.aboutRepository}) : super(AsyncValue.data(null));
 
-  AboutRepository aboutRepository;
+  final AboutRepository aboutRepository;
 
   Future<bool> createAbout(About data) async {
     state = const AsyncLoading();
@@ -31,3 +31,5 @@ final aboutControllerProvider =
       final aboutRepository = ref.watch(aboutRepositoryProvider);
       return AboutController(aboutRepository: aboutRepository);
     });
+
+final aboutCanSaveProvider = StateProvider<bool>((ref) => false);

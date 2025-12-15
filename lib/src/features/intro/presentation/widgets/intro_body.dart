@@ -14,19 +14,24 @@ class IntroBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final introValue = ref.watch(watchIntroProvider);
+    final introValue = ref.watch(watchIntrosProvider);
 
     return SingleChildScrollView(
       child: ResponsiveCenter(
-        child: AsyncValueWidget<Intro?>(
+        child: AsyncValueWidget<List<Intro?>>(
           value: introValue,
-          data: (item) => item == null
-              ? EmptyState(
-                  title: 'No introduction yet'.hardcoded,
-                  subTitle:
-                      'Add a short introduction to show on your portfolio.'.hardcoded,
-                )
-              : IntroSuccessView(item: item),
+          data: (items) {
+            final item = items.isEmpty ? null : items.first;
+
+            if (item == null) {
+              return EmptyState(
+                title: 'No introduction yet'.hardcoded,
+                subTitle: 'Add a short introduction to show on your portfolio.'.hardcoded,
+              );
+            }
+
+            return IntroSuccessView(item: item);
+          },
         ),
       ),
     );
