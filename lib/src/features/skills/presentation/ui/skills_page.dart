@@ -46,7 +46,7 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(skillsControllerProvider);
+    final state = ref.watch(skillListProvider);
 
     return Align(
       alignment: Alignment.topCenter,

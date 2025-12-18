@@ -92,7 +92,7 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(contactControllerProvider);
+    final state = ref.watch(contactInfoListProvider);
 
     return Align(
       alignment: Alignment.topCenter,

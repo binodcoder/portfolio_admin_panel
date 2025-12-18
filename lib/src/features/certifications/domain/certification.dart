@@ -18,22 +18,21 @@ class Certification {
   final String? credentialUrl;
 
   Map<String, dynamic> toMap() => {
-        'name': name,
-        'issuer': issuer,
-        'issueDate': issueDate,
-        'expiryDate': expiryDate,
-        'credentialId': credentialId,
-        'credentialUrl': credentialUrl,
-      };
+    'name': name,
+    'issuer': issuer,
+    'issueDate': issueDate,
+    'expiryDate': expiryDate,
+    'credentialId': credentialId,
+    'credentialUrl': credentialUrl,
+  };
 
   factory Certification.fromMap(Map<String, dynamic> map) => Certification(
-        id: map['id'] as String?,
-        name: (map['name'] ?? '').toString(),
-        issuer: map['issuer']?.toString(),
-        issueDate: map['issueDate']?.toString(),
-        expiryDate: map['expiryDate']?.toString(),
-        credentialId: map['credentialId']?.toString(),
-        credentialUrl: map['credentialUrl']?.toString(),
-      );
+    id: map['id'] as String?,
+    name: (map['name'] ?? '').toString(),
+    issuer: map['issuer']?.toString(),
+    issueDate: map['issueDate']?.toString(),
+    expiryDate: map['expiryDate']?.toString(),
+    credentialId: map['credentialId']?.toString(),
+    credentialUrl: map['credentialUrl']?.toString(),
+  );
 }
-

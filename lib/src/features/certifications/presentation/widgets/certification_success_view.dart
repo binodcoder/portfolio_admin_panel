@@ -1,55 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
 import 'package:portfolio_admin_panel/src/features/certifications/domain/certification.dart';
 import 'package:portfolio_admin_panel/src/features/certifications/presentation/controller/certifications_controller.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
+import 'package:portfolio_admin_panel/src/utils/async_value_ui.dart';
 
 class CertificationSuccessView extends ConsumerWidget {
-  const CertificationSuccessView({
-    super.key,
-    required this.items,
-    required this.onCreate,
-  });
+  const CertificationSuccessView({super.key, required this.items});
 
   final List<Certification> items;
-  final VoidCallback onCreate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final action = ref.watch(certificationControllerProvider);
 
-    // Listen for action errors and show a SnackBar
-    ref.listen(certificationControllerProvider, (prev, next) {
-      next.whenOrNull(
-        error: (e, _) => ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Operation failed: $e'))),
-      );
-    });
-
-    Future<void> deleteItem(Certification c) async {
-      final confirm =
-          await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Delete certification?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          ) ??
-          false;
-      if (!confirm) return;
-      await ref.read(certificationControllerProvider.notifier).deleteCertification(c.id!);
-    }
+    ref.listen(
+      certificationControllerProvider,
+      (_, state) => state.showAlertDialogOnError(context),
+    );
 
     void editItem(Certification c) =>
         context.goNamed(AppRoute.certificationEdit.name, extra: c);
@@ -76,15 +47,28 @@ class CertificationSuccessView extends ConsumerWidget {
                 spacing: 8,
                 children: [
                   IconButton(
-                    tooltip: 'Edit',
+                    tooltip: 'Edit'.hardcoded,
                     onPressed: () => editItem(c),
                     icon: const Icon(Icons.edit_outlined),
                   ),
                   IconButton(
-                    tooltip: 'Delete',
+                    tooltip: 'Delete'.hardcoded,
                     onPressed: action.isLoading || c.id == null
                         ? null
-                        : () => deleteItem(c),
+                        : () async {
+                            final delete = await showAlertDialog(
+                              context: context,
+                              title: 'Are you sure?'.hardcoded,
+                              cancelActionText: 'Cancel'.hardcoded,
+                              defaultActionText: 'Delete'.hardcoded,
+                            );
+                            if (delete == true) {
+                              await ref
+                                  .read(certificationControllerProvider.notifier)
+                                  .deleteCertification(c.id!);
+                            }
+                          },
+
                     icon: const Icon(Icons.delete_outline),
                   ),
                 ],

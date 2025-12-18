@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/features/projects/data/projects_repository.dart';
 import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
 import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/projects_controller.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
@@ -45,7 +46,7 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(projectsControllerProvider);
+    final state = ref.watch(projectListProvider);
 
     return Align(
       alignment: Alignment.topCenter,

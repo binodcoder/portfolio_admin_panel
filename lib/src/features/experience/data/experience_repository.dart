@@ -22,3 +22,8 @@ class ExperienceRepository {
 final experienceRepositoryProvider = Provider<ExperienceRepository>((ref) {
   return ExperienceRepository(FirebaseFirestore.instance);
 });
+
+final experienceListProvider = StreamProvider.autoDispose<List<Experience>>((ref) {
+  final experienceRepository = ref.watch(experienceRepositoryProvider);
+  return experienceRepository.watch();
+});

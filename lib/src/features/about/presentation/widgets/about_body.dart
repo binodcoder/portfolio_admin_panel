@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/text_area_card.dart';
+import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/features/about/data/about_repository.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
@@ -41,15 +43,8 @@ class AboutSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: SelectionArea(
-            child: Text(item.value, style: Theme.of(context).textTheme.titleMedium),
-          ),
-        ),
-      ),
+      padding: const EdgeInsets.all(Sizes.p4),
+      child: TextAreaCard(text: item.value, padding: const EdgeInsets.all(Sizes.p4)),
     );
   }
 }

@@ -12,11 +12,11 @@ class ContactForm extends ConsumerStatefulWidget {
 
 class _ContactFormState extends ConsumerState<ContactForm> {
   final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
-  final locationController = TextEditingController();
-  final websiteController = TextEditingController();
-  final messageController = TextEditingController();
+  late final TextEditingController _emailController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _locationController;
+  late final TextEditingController _websiteController;
+  late final TextEditingController _messageController;
   bool openToWork = true;
 
   String? get _id => widget.item?.id;
@@ -24,24 +24,22 @@ class _ContactFormState extends ConsumerState<ContactForm> {
   @override
   void initState() {
     super.initState();
-    final c = widget.item;
-    if (c != null) {
-      emailController.text = c.email ?? '';
-      phoneController.text = c.phone ?? '';
-      locationController.text = c.location ?? '';
-      websiteController.text = c.website ?? '';
-      messageController.text = c.message ?? '';
-      openToWork = c.openToWork;
-    }
+    final ContactInfo? contactInfo = widget.item;
+    _emailController = TextEditingController(text: contactInfo?.email);
+    _phoneController = TextEditingController(text: contactInfo?.phone);
+    _locationController = TextEditingController(text: contactInfo?.location);
+    _websiteController = TextEditingController(text: contactInfo?.website);
+    _messageController = TextEditingController(text: contactInfo?.message);
+    openToWork = contactInfo == null ? true : contactInfo.openToWork;
   }
 
   @override
   void dispose() {
-    emailController.dispose();
-    phoneController.dispose();
-    locationController.dispose();
-    websiteController.dispose();
-    messageController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _locationController.dispose();
+    _websiteController.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
@@ -50,18 +48,18 @@ class _ContactFormState extends ConsumerState<ContactForm> {
     if (!isValid) return;
     final data = ContactInfo(
       id: _id,
-      email: emailController.text.trim().isEmpty ? null : emailController.text.trim(),
-      phone: phoneController.text.trim().isEmpty ? null : phoneController.text.trim(),
-      location: locationController.text.trim().isEmpty
+      email: _emailController.text.trim().isEmpty ? null : _emailController.text.trim(),
+      phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
+      location: _locationController.text.trim().isEmpty
           ? null
-          : locationController.text.trim(),
-      website: websiteController.text.trim().isEmpty
+          : _locationController.text.trim(),
+      website: _websiteController.text.trim().isEmpty
           ? null
-          : websiteController.text.trim(),
+          : _websiteController.text.trim(),
       openToWork: openToWork,
-      message: messageController.text.trim().isEmpty
+      message: _messageController.text.trim().isEmpty
           ? null
-          : messageController.text.trim(),
+          : _messageController.text.trim(),
     );
     final notifier = ref.read(contactControllerProvider.notifier);
     if (_id == null) {
@@ -110,7 +108,7 @@ class _ContactFormState extends ConsumerState<ContactForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextFormField(
-                        controller: emailController,
+                        controller: _emailController,
                         decoration: const InputDecoration(labelText: 'Email'),
                       ),
                       const SizedBox(height: 12),
@@ -118,14 +116,14 @@ class _ContactFormState extends ConsumerState<ContactForm> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              controller: phoneController,
+                              controller: _phoneController,
                               decoration: const InputDecoration(labelText: 'Phone'),
                             ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: TextFormField(
-                              controller: locationController,
+                              controller: _locationController,
                               decoration: const InputDecoration(labelText: 'Location'),
                             ),
                           ),
@@ -133,7 +131,7 @@ class _ContactFormState extends ConsumerState<ContactForm> {
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
-                        controller: websiteController,
+                        controller: _websiteController,
                         decoration: const InputDecoration(labelText: 'Website'),
                       ),
                       const SizedBox(height: 8),
@@ -149,7 +147,7 @@ class _ContactFormState extends ConsumerState<ContactForm> {
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
-                        controller: messageController,
+                        controller: _messageController,
                         minLines: 3,
                         maxLines: null,
                         decoration: const InputDecoration(

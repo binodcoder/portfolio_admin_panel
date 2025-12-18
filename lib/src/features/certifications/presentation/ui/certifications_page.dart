@@ -33,7 +33,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Text('Certifications'),
+      title: Text('Certifications'.hardcoded),
       actions: [
         TextButton.icon(
           onPressed: onCreate,
@@ -51,10 +51,6 @@ class _Body extends ConsumerWidget {
 
   final VoidCallback onCreate;
 
-  void refresh(WidgetRef ref) {
-    ref.invalidate(certificationListProvider);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(certificationListProvider);
@@ -70,7 +66,7 @@ class _Body extends ConsumerWidget {
                   title: "No certifications yet".hardcoded,
                   subTitle: "Trying adding".hardcoded,
                 )
-              : CertificationSuccessView(items: items, onCreate: onCreate),
+              : CertificationSuccessView(items: items),
         ),
       ),
     );

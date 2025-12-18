@@ -88,6 +88,8 @@ class _AboutFormState extends ConsumerState<AboutForm> {
               key: _formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: FormCard(
+                title: 'About'.hardcoded,
+                subTitle: 'This appears on your portfolio about section'.hardcoded,
                 controller: aboutController,
                 onChanged: _onTextChanged,
                 isLoading: isLoading,

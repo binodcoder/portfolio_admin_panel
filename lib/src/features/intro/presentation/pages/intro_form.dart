@@ -29,7 +29,7 @@ class _IntroFormState extends ConsumerState<IntroForm> {
   @override
   void initState() {
     super.initState();
-    _introController = TextEditingController(text: widget.intro?.value);
+    _introController = TextEditingController(text: widget.intro?.value.trim() ?? '');
   }
 
   @override
@@ -89,6 +89,8 @@ class _IntroFormState extends ConsumerState<IntroForm> {
               key: _formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: FormCard(
+                title: 'Introduction'.hardcoded,
+                subTitle: 'This appears on your portfolio landing page.'.hardcoded,
                 controller: _introController,
                 isLoading: isLoading,
                 onChanged: _onTextChanged,

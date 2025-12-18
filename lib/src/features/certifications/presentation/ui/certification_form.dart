@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/features/certifications/domain/certification.dart';
 import 'package:portfolio_admin_panel/src/features/certifications/presentation/controller/certifications_controller.dart';
+import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/custom_text_form_field.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
 class CertificationForm extends ConsumerStatefulWidget {
   const CertificationForm({super.key, this.item});
@@ -12,56 +16,35 @@ class CertificationForm extends ConsumerStatefulWidget {
 
 class _CertificationFormState extends ConsumerState<CertificationForm> {
   final _formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final issuerController = TextEditingController();
-  final issueDateController = TextEditingController();
-  final expiryDateController = TextEditingController();
-  final credentialIdController = TextEditingController();
-  final credentialUrlController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _issuerController;
+  late final TextEditingController _issueDateController;
+  late final TextEditingController _expiryDateController;
+  late final TextEditingController _credentialIdController;
+  late final TextEditingController _credentialUrlController;
 
   String? get _id => widget.item?.id;
 
   @override
   void initState() {
     super.initState();
-    final c = widget.item;
-    if (c != null) {
-      nameController.text = c.name;
-      issuerController.text = c.issuer ?? '';
-      issueDateController.text = c.issueDate ?? '';
-      expiryDateController.text = c.expiryDate ?? '';
-      credentialIdController.text = c.credentialId ?? '';
-      credentialUrlController.text = c.credentialUrl ?? '';
-    }
-    // Rebuild when fields change so Save button updates
-    nameController.addListener(() => setState(() {}));
-    issuerController.addListener(() => setState(() {}));
-    issueDateController.addListener(() => setState(() {}));
-    expiryDateController.addListener(() => setState(() {}));
-    credentialIdController.addListener(() => setState(() {}));
-    credentialUrlController.addListener(() => setState(() {}));
-
-    // Listen for action errors and show a SnackBar
-    // ref.listen(certificationsActionControllerProvider, (prev, next) {
-    //   next.whenOrNull(
-    //     error: (e, _) {
-    //       if (!mounted) return;
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(content: Text('Save failed: $e')),
-    //       );
-    //     },
-    //   );
-    // });
+    final Certification? certification = widget.item;
+    _nameController = TextEditingController(text: certification?.name);
+    _issuerController = TextEditingController(text: certification?.issuer);
+    _issueDateController = TextEditingController(text: certification?.issueDate);
+    _expiryDateController = TextEditingController(text: certification?.expiryDate);
+    _credentialIdController = TextEditingController(text: certification?.expiryDate);
+    _credentialUrlController = TextEditingController(text: certification?.credentialUrl);
   }
 
   @override
   void dispose() {
-    nameController.dispose();
-    issuerController.dispose();
-    issueDateController.dispose();
-    expiryDateController.dispose();
-    credentialIdController.dispose();
-    credentialUrlController.dispose();
+    _nameController.dispose();
+    _issuerController.dispose();
+    _issueDateController.dispose();
+    _expiryDateController.dispose();
+    _credentialIdController.dispose();
+    _credentialUrlController.dispose();
     super.dispose();
   }
 
@@ -70,20 +53,22 @@ class _CertificationFormState extends ConsumerState<CertificationForm> {
     if (!isValid) return;
     final data = Certification(
       id: _id,
-      name: nameController.text.trim(),
-      issuer: issuerController.text.trim().isEmpty ? null : issuerController.text.trim(),
-      issueDate: issueDateController.text.trim().isEmpty
+      name: _nameController.text.trim(),
+      issuer: _issuerController.text.trim().isEmpty
           ? null
-          : issueDateController.text.trim(),
-      expiryDate: expiryDateController.text.trim().isEmpty
+          : _issuerController.text.trim(),
+      issueDate: _issueDateController.text.trim().isEmpty
           ? null
-          : expiryDateController.text.trim(),
-      credentialId: credentialIdController.text.trim().isEmpty
+          : _issueDateController.text.trim(),
+      expiryDate: _expiryDateController.text.trim().isEmpty
           ? null
-          : credentialIdController.text.trim(),
-      credentialUrl: credentialUrlController.text.trim().isEmpty
+          : _expiryDateController.text.trim(),
+      credentialId: _credentialIdController.text.trim().isEmpty
           ? null
-          : credentialUrlController.text.trim(),
+          : _credentialIdController.text.trim(),
+      credentialUrl: _credentialUrlController.text.trim().isEmpty
+          ? null
+          : _credentialUrlController.text.trim(),
     );
     final notifier = ref.read(certificationControllerProvider.notifier);
     if (_id == null) {
@@ -98,14 +83,14 @@ class _CertificationFormState extends ConsumerState<CertificationForm> {
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(certificationControllerProvider);
-    final canSave = !async.isLoading && nameController.text.trim().isNotEmpty;
+    //  final canSave = !async.isLoading && _nameController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Certification' : 'New Certification'),
         actions: [
           TextButton.icon(
-            onPressed: canSave ? _save : null,
+            onPressed: _save,
             icon: async.isLoading
                 ? const SizedBox(
                     width: 16,
@@ -117,80 +102,47 @@ class _CertificationFormState extends ConsumerState<CertificationForm> {
           ),
         ],
       ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: nameController,
-                        validator: (v) => (v ?? '').trim().isEmpty ? 'Enter name' : null,
-                        decoration: const InputDecoration(labelText: 'Name'),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: issuerController,
-                              decoration: const InputDecoration(
-                                labelText: 'Issuer (optional)',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextFormField(
-                              controller: issueDateController,
-                              decoration: const InputDecoration(
-                                labelText: 'Issue (YYYY-MM)',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextFormField(
-                              controller: expiryDateController,
-                              decoration: const InputDecoration(
-                                labelText: 'Expiry (YYYY-MM, optional)',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: credentialIdController,
-                              decoration: const InputDecoration(
-                                labelText: 'Credential ID (optional)',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextFormField(
-                              controller: credentialUrlController,
-                              decoration: const InputDecoration(
-                                labelText: 'Credential URL (optional)',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+      body: ResponsiveCenter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Sizes.p4, vertical: Sizes.p24),
+          child: Form(
+            key: _formKey,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextFormField(
+                      controller: _nameController,
+                      labelText: 'Name'.hardcoded,
+                      validator: (v) => (v ?? '').trim().isEmpty ? 'Enter name' : null,
+                    ),
+
+                    gapH12,
+                    CustomTextFormField(
+                      controller: _issuerController,
+                      labelText: 'Issuer (optional)'.hardcoded,
+                    ),
+
+                    gapH12,
+
+                    CustomTextFormField(
+                      controller: _issueDateController,
+                      labelText: 'Issue (YYYY-MM)'.hardcoded,
+                    ),
+
+                    gapH12,
+                    CustomTextFormField(
+                      controller: _expiryDateController,
+                      labelText: 'Expiry (YYYY-MM, optional)'.hardcoded,
+                    ),
+                    gapH12,
+                    CustomTextFormField(
+                      controller: _credentialUrlController,
+                      labelText: 'Credential URL (optional)'.hardcoded,
+                    ),
+                  ],
                 ),
               ),
             ),

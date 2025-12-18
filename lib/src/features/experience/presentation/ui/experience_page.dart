@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/features/experience/data/experience_repository.dart';
 import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
 import 'package:portfolio_admin_panel/src/features/experience/presentation/controller/experience_controller.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
@@ -46,7 +47,7 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(experienceControllerProvider);
+    final state = ref.watch(experienceListProvider);
 
     return Align(
       alignment: Alignment.topCenter,
