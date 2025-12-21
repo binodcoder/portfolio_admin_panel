@@ -24,8 +24,9 @@ class ContactController extends StateNotifier<AsyncValue> {
   }
 }
 
-final contactControllerProvider =
-    StateNotifierProvider.autoDispose<ContactController, AsyncValue>((ref) {
-      final contactRepository = ref.watch(contactRepositoryProvider);
-      return ContactController(contactRepository: contactRepository);
-    });
+final contactControllerProvider = StateNotifierProvider<ContactController, AsyncValue>((
+  ref,
+) {
+  final contactRepository = ref.watch(contactRepositoryProvider);
+  return ContactController(contactRepository: contactRepository);
+});

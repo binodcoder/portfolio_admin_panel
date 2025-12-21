@@ -26,7 +26,7 @@ class ExperienceController extends StateNotifier<AsyncValue> {
 }
 
 final experienceControllerProvider =
-    StateNotifierProvider.autoDispose<ExperienceController, AsyncValue>((ref) {
+    StateNotifierProvider<ExperienceController, AsyncValue>((ref) {
       final experienceRepository = ref.watch(experienceRepositoryProvider);
       return ExperienceController(experienceRepository: experienceRepository);
     });

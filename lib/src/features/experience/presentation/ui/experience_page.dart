@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/experience/data/experience_repository.dart';
 import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
 import 'package:portfolio_admin_panel/src/features/experience/presentation/controller/experience_controller.dart';
@@ -49,10 +51,8 @@ class _Body extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(experienceListProvider);
 
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1100),
+    return SingleChildScrollView(
+      child: ResponsiveCenter(
         child: AsyncValueWidget(
           value: state,
           data: (items) => items.isEmpty
@@ -72,35 +72,23 @@ class ExperienceSuccessView extends ConsumerWidget {
 
   final List<Experience> items;
 
+  Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref, String id) async {
+    final confirm = await showAlertDialog(
+      context: context,
+      title: 'Are you sure?'.hardcoded,
+      cancelActionText: 'Cancel'.hardcoded,
+      defaultActionText: 'Delete'.hardcoded,
+    );
+
+    if (confirm == true) {
+      await ref.read(experienceControllerProvider.notifier).deleteExperience(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final action = ref.watch(experienceControllerProvider);
 
-    Future<void> deleteItem(Experience e) async {
-      final confirm =
-          await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Delete experience?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          ) ??
-          false;
-      if (!confirm) return;
-      await ref.read(experienceControllerProvider.notifier).deleteExperience(e.id!);
-    }
-
-    void editItem(Experience e) =>
-        context.goNamed(AppRoute.experienceEdit.name, extra: e);
     if (items.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(24),
@@ -134,13 +122,14 @@ class ExperienceSuccessView extends ConsumerWidget {
                   spacing: 8,
                   children: [
                     IconButton(
-                      onPressed: () => editItem(e),
+                      onPressed: () =>
+                          context.goNamed(AppRoute.experienceEdit.name, extra: e),
                       icon: const Icon(Icons.edit_outlined),
                     ),
                     IconButton(
-                      onPressed: action.isLoading || e.id == null
+                      onPressed: (action.isLoading || e.id == null)
                           ? null
-                          : () => deleteItem(e),
+                          : () => _confirmAndDelete(context, ref, e.id!),
                       icon: const Icon(Icons.delete_outline),
                     ),
                   ],

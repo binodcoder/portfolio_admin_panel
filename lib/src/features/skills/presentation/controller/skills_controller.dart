@@ -24,8 +24,9 @@ class SkillsController extends StateNotifier<AsyncValue> {
   }
 }
 
-final skillsControllerProvider =
-    StateNotifierProvider.autoDispose<SkillsController, AsyncValue>((ref) {
-      final skillsRepository = ref.watch(skillsRepositoryProvider);
-      return SkillsController(skillsRepository: skillsRepository);
-    });
+final skillsControllerProvider = StateNotifierProvider<SkillsController, AsyncValue>((
+  ref,
+) {
+  final skillsRepository = ref.watch(skillsRepositoryProvider);
+  return SkillsController(skillsRepository: skillsRepository);
+});

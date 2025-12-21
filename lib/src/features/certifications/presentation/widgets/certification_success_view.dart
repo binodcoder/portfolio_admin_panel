@@ -13,6 +13,18 @@ class CertificationSuccessView extends ConsumerWidget {
 
   final List<Certification> items;
 
+  Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref, String id) async {
+    final delete = await showAlertDialog(
+      context: context,
+      title: 'Are you sure?'.hardcoded,
+      cancelActionText: 'Cancel'.hardcoded,
+      defaultActionText: 'Delete'.hardcoded,
+    );
+    if (delete == true) {
+      await ref.read(certificationControllerProvider.notifier).deleteCertification(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final action = ref.watch(certificationControllerProvider);
@@ -53,21 +65,9 @@ class CertificationSuccessView extends ConsumerWidget {
                   ),
                   IconButton(
                     tooltip: 'Delete'.hardcoded,
-                    onPressed: action.isLoading || c.id == null
+                    onPressed: (action.isLoading || c.id == null)
                         ? null
-                        : () async {
-                            final delete = await showAlertDialog(
-                              context: context,
-                              title: 'Are you sure?'.hardcoded,
-                              cancelActionText: 'Cancel'.hardcoded,
-                              defaultActionText: 'Delete'.hardcoded,
-                            );
-                            if (delete == true) {
-                              await ref
-                                  .read(certificationControllerProvider.notifier)
-                                  .deleteCertification(c.id!);
-                            }
-                          },
+                        : () => _confirmAndDelete(context, ref, c.id!),
 
                     icon: const Icon(Icons.delete_outline),
                   ),

@@ -26,7 +26,7 @@ class CertificationsController extends StateNotifier<AsyncValue> {
 }
 
 final certificationControllerProvider =
-    StateNotifierProvider.autoDispose<CertificationsController, AsyncValue>((ref) {
+    StateNotifierProvider<CertificationsController, AsyncValue>((ref) {
       final certificationsRepository = ref.watch(certificationRepositoryProvider);
       return CertificationsController(certificationsRepository: certificationsRepository);
     });

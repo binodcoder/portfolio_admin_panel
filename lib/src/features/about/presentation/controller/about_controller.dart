@@ -26,10 +26,9 @@ class AboutController extends StateNotifier<AsyncValue> {
   }
 }
 
-final aboutControllerProvider =
-    StateNotifierProvider.autoDispose<AboutController, AsyncValue>((ref) {
-      final aboutRepository = ref.watch(aboutRepositoryProvider);
-      return AboutController(aboutRepository: aboutRepository);
-    });
+final aboutControllerProvider = StateNotifierProvider<AboutController, AsyncValue>((ref) {
+  final aboutRepository = ref.watch(aboutRepositoryProvider);
+  return AboutController(aboutRepository: aboutRepository);
+});
 
 final aboutCanSaveProvider = StateProvider<bool>((ref) => false);

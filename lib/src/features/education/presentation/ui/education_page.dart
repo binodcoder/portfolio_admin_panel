@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/education/data/education_repository.dart';
 import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
 import 'package:portfolio_admin_panel/src/features/education/presentation/controller/education_controller.dart';
@@ -26,13 +28,11 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    void createNew() => context.goNamed(AppRoute.educationEdit.name, extra: null);
-
     return AppBar(
       title: const Text('Education'),
       actions: [
         TextButton.icon(
-          onPressed: createNew,
+          onPressed: () => context.goNamed(AppRoute.educationEdit.name, extra: null),
           icon: const Icon(Icons.add_outlined),
           label: const Text('New'),
         ),
@@ -49,10 +49,8 @@ class _Body extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(educationListProvider);
 
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1100),
+    return SingleChildScrollView(
+      child: ResponsiveCenter(
         child: AsyncValueWidget(
           value: state,
           data: (items) => items.isEmpty
@@ -72,34 +70,26 @@ class EducationSuccessView extends ConsumerWidget {
 
   final List<Education> items;
 
+  Future<void> _confirmAndDeleteItem(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+  ) async {
+    final confirm = await showAlertDialog(
+      context: context,
+      title: 'Are you sure?'.hardcoded,
+      cancelActionText: 'Cancel'.hardcoded,
+      defaultActionText: 'Delete'.hardcoded,
+    );
+
+    if (confirm == true) {
+      await ref.read(educationControllerProvider.notifier).deleteEducation(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final action = ref.watch(educationControllerProvider);
-
-    Future<void> deleteItem(Education e) async {
-      final confirm =
-          await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Delete education?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          ) ??
-          false;
-      if (!confirm) return;
-      await ref.read(educationControllerProvider.notifier).deleteEducation(e.id!);
-    }
-
-    void editItem(Education e) => context.goNamed(AppRoute.educationEdit.name, extra: e);
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -117,13 +107,14 @@ class EducationSuccessView extends ConsumerWidget {
                   spacing: 8,
                   children: [
                     IconButton(
-                      onPressed: () => editItem(e),
+                      onPressed: () =>
+                          context.goNamed(AppRoute.educationEdit.name, extra: e),
                       icon: const Icon(Icons.edit_outlined),
                     ),
                     IconButton(
-                      onPressed: action.isLoading || e.id == null
+                      onPressed: (action.isLoading || e.id == null)
                           ? null
-                          : () => deleteItem(e),
+                          : () => _confirmAndDeleteItem(context, ref, e.id!),
                       icon: const Icon(Icons.delete_outline),
                     ),
                   ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/features/contact/domain/contact_info.dart';
 import 'package:portfolio_admin_panel/src/features/contact/presentation/controller/contact_controller.dart';
 
@@ -93,12 +95,13 @@ class _ContactFormState extends ConsumerState<ContactForm> {
           ),
         ],
       ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+      body: SingleChildScrollView(
+        child: ResponsiveCenter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Sizes.p4,
+              vertical: Sizes.p24,
+            ),
             child: Form(
               key: _formKey,
               child: Card(

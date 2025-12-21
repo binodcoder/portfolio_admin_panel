@@ -23,8 +23,9 @@ class ProjectsController extends StateNotifier<AsyncValue> {
   }
 }
 
-final projectsControllerProvider =
-    StateNotifierProvider.autoDispose<ProjectsController, AsyncValue>((ref) {
-      final projectsRepository = ref.watch(projectRepositoryProvider);
-      return ProjectsController(projectsRepository: projectsRepository);
-    });
+final projectsControllerProvider = StateNotifierProvider<ProjectsController, AsyncValue>((
+  ref,
+) {
+  final projectsRepository = ref.watch(projectRepositoryProvider);
+  return ProjectsController(projectsRepository: projectsRepository);
+});

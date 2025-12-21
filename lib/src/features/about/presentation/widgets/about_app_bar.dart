@@ -14,6 +14,18 @@ class AboutAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(65);
 
+  Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref, String id) async {
+    final delete = await showAlertDialog(
+      context: context,
+      title: 'Are you sure?'.hardcoded,
+      cancelActionText: 'Cancel'.hardcoded,
+      defaultActionText: 'Delete'.hardcoded,
+    );
+    if (delete == true) {
+      await ref.read(aboutControllerProvider.notifier).deleteAbout(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final aboutList = ref.watch(aboutListProvider);
@@ -37,19 +49,8 @@ class AboutAppBar extends ConsumerWidget implements PreferredSizeWidget {
         TextButton.icon(
           onPressed: (aboutController.isLoading || !hasItem)
               ? null
-              : () async {
-                  final delete = await showAlertDialog(
-                    context: context,
-                    title: 'Are you sure?'.hardcoded,
-                    cancelActionText: 'Cancel'.hardcoded,
-                    defaultActionText: 'Delete'.hardcoded,
-                  );
-                  if (delete == true) {
-                    await ref
-                        .read(aboutControllerProvider.notifier)
-                        .deleteAbout(existing.first!.id!);
-                  }
-                },
+              : () => _confirmAndDelete(context, ref, existing.first!.id!),
+
           icon: const Icon(Icons.delete_outline),
           label: const Text('Delete'),
         ),

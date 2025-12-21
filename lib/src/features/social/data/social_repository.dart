@@ -12,8 +12,10 @@ class SocialRepository {
     (s) => s.docs.map((d) => SocialLink.fromMap({...d.data(), 'id': d.id})).toList(),
   );
   Future<void> create(SocialLink data) => _collection.add(data.toMap());
+
   Future<void> update(String id, SocialLink data) =>
       _collection.doc(id).update(data.toMap());
+
   Future<void> delete(String id) => _collection.doc(id).delete();
 }
 

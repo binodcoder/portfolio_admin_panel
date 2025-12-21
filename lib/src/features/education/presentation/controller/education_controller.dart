@@ -25,7 +25,7 @@ class EducationController extends StateNotifier<AsyncValue> {
 }
 
 final educationControllerProvider =
-    StateNotifierProvider.autoDispose<EducationController, AsyncValue>((ref) {
+    StateNotifierProvider<EducationController, AsyncValue>((ref) {
       final educationRepository = ref.watch(educationRepositoryProvider);
       return EducationController(educationRepository: educationRepository);
     });

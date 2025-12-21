@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
 import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/projects_controller.dart';
 
@@ -12,57 +13,56 @@ class ProjectForm extends ConsumerStatefulWidget {
 
 class _ProjectFormState extends ConsumerState<ProjectForm> {
   final _formKey = GlobalKey<FormState>();
-  final titleController = TextEditingController();
-  final descController = TextEditingController();
-  final repoController = TextEditingController();
-  final liveController = TextEditingController();
-  final tagsController = TextEditingController();
+  late final TextEditingController _titleController;
+  late final TextEditingController _descController;
+  late final TextEditingController _repoController;
+  late final TextEditingController _liveController;
+  late final TextEditingController _tagsController;
 
   String? get _id => widget.item?.id;
 
   @override
   void initState() {
     super.initState();
-    final p = widget.item;
-    if (p != null) {
-      titleController.text = p.title;
-      descController.text = p.description ?? '';
-      repoController.text = p.repoUrl ?? '';
-      liveController.text = p.liveUrl ?? '';
-      tagsController.text = p.tags.join(', ');
-    }
-    // Rebuild when fields change so Save button updates
-    titleController.addListener(() => setState(() {}));
-    descController.addListener(() => setState(() {}));
-    repoController.addListener(() => setState(() {}));
-    liveController.addListener(() => setState(() {}));
-    tagsController.addListener(() => setState(() {}));
+    final Project? project = widget.item;
+
+    _titleController = TextEditingController(text: project?.title);
+    _descController = TextEditingController(text: project?.description);
+    _repoController = TextEditingController(text: project?.repoUrl);
+    _liveController = TextEditingController(text: project?.liveUrl);
+    _tagsController = TextEditingController(text: project?.tags.join(', ') ?? '');
   }
 
   @override
   void dispose() {
-    titleController.dispose();
-    descController.dispose();
-    repoController.dispose();
-    liveController.dispose();
-    tagsController.dispose();
+    _titleController.dispose();
+    _descController.dispose();
+    _repoController.dispose();
+    _liveController.dispose();
+    _tagsController.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
-    final tags = tagsController.text
+    final tags = _tagsController.text
         .split(',')
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
     final data = Project(
       id: _id,
-      title: titleController.text.trim(),
-      description: descController.text.trim().isEmpty ? null : descController.text.trim(),
-      repoUrl: repoController.text.trim().isNotEmpty ? repoController.text.trim() : null,
-      liveUrl: liveController.text.trim().isNotEmpty ? liveController.text.trim() : null,
+      title: _titleController.text.trim(),
+      description: _descController.text.trim().isEmpty
+          ? null
+          : _descController.text.trim(),
+      repoUrl: _repoController.text.trim().isNotEmpty
+          ? _repoController.text.trim()
+          : null,
+      liveUrl: _liveController.text.trim().isNotEmpty
+          ? _liveController.text.trim()
+          : null,
       tags: tags,
     );
     final notifier = ref.read(projectsControllerProvider.notifier);
@@ -78,14 +78,14 @@ class _ProjectFormState extends ConsumerState<ProjectForm> {
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(projectsControllerProvider);
-    final canSave = !async.isLoading && titleController.text.trim().isNotEmpty;
+    // final canSave = !async.isLoading && _titleController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Project' : 'New Project'),
         actions: [
           TextButton.icon(
-            onPressed: canSave ? _save : null,
+            onPressed: _save,
             icon: async.isLoading
                 ? const SizedBox(
                     width: 16,
@@ -97,55 +97,48 @@ class _ProjectFormState extends ConsumerState<ProjectForm> {
           ),
         ],
       ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1000),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: titleController,
-                        validator: (v) => (v ?? '').trim().isEmpty ? 'Enter title' : null,
-                        decoration: const InputDecoration(labelText: 'Title'),
+      body: SingleChildScrollView(
+        child: ResponsiveCenter(
+          child: Form(
+            key: _formKey,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _titleController,
+                      validator: (v) => (v ?? '').trim().isEmpty ? 'Enter title' : null,
+                      decoration: const InputDecoration(labelText: 'Title'),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _descController,
+                      minLines: 4,
+                      maxLines: null,
+                      decoration: const InputDecoration(labelText: 'Description'),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _repoController,
+                      decoration: const InputDecoration(
+                        labelText: 'Repository URL (optional)',
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: descController,
-                        minLines: 4,
-                        maxLines: null,
-                        decoration: const InputDecoration(labelText: 'Description'),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _liveController,
+                      decoration: const InputDecoration(labelText: 'Live URL (optional)'),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _tagsController,
+                      decoration: const InputDecoration(
+                        labelText: 'Tags (comma separated)',
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: repoController,
-                        decoration: const InputDecoration(
-                          labelText: 'Repository URL (optional)',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: liveController,
-                        decoration: const InputDecoration(
-                          labelText: 'Live URL (optional)',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: tagsController,
-                        decoration: const InputDecoration(
-                          labelText: 'Tags (comma separated)',
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

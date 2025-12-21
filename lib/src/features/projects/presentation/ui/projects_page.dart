@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/projects/data/projects_repository.dart';
 import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
 import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/projects_controller.dart';
@@ -26,12 +28,11 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    void createNew() => context.goNamed(AppRoute.projectEdit.name, extra: null);
     return AppBar(
       title: const Text('Projects'),
       actions: [
         TextButton.icon(
-          onPressed: createNew,
+          onPressed: () => context.goNamed(AppRoute.projectEdit.name, extra: null),
           icon: const Icon(Icons.add_outlined),
           label: const Text('New'),
         ),
@@ -48,10 +49,8 @@ class _Body extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(projectListProvider);
 
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1100),
+    return SingleChildScrollView(
+      child: ResponsiveCenter(
         child: AsyncValueWidget(
           value: state,
           data: (items) => items.isEmpty
@@ -71,34 +70,22 @@ class ProjectSuccessView extends ConsumerWidget {
 
   final List<Project> items;
 
+  Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref, String id) async {
+    final confirm = await showAlertDialog(
+      context: context,
+      title: 'Are you sure?'.hardcoded,
+      cancelActionText: 'Cancel'.hardcoded,
+      defaultActionText: 'Delete'.hardcoded,
+    );
+
+    if (confirm == true) {
+      await ref.read(projectsControllerProvider.notifier).deleteProject(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final action = ref.watch(projectsControllerProvider);
-
-    Future<void> deleteItem(Project p) async {
-      final confirm =
-          await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Delete project?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          ) ??
-          false;
-      if (!confirm) return;
-      await ref.read(projectsControllerProvider.notifier).deleteProject(p.id!);
-    }
-
-    void editItem(Project p) => context.goNamed(AppRoute.projectEdit.name, extra: p);
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -114,13 +101,14 @@ class ProjectSuccessView extends ConsumerWidget {
                   spacing: 8,
                   children: [
                     IconButton(
-                      onPressed: () => editItem(p),
+                      onPressed: () =>
+                          context.goNamed(AppRoute.projectEdit.name, extra: p),
                       icon: const Icon(Icons.edit_outlined),
                     ),
                     IconButton(
-                      onPressed: action.isLoading || p.id == null
+                      onPressed: (action.isLoading || p.id == null)
                           ? null
-                          : () => deleteItem(p),
+                          : () => _confirmAndDelete(context, ref, p.id!),
                       icon: const Icon(Icons.delete_outline),
                     ),
                   ],

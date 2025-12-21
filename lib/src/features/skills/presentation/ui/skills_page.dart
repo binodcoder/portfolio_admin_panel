@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/skills/data/skills_repository.dart';
 import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
 import 'package:portfolio_admin_panel/src/features/skills/presentation/controller/skills_controller.dart';
@@ -48,10 +50,8 @@ class _Body extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(skillListProvider);
 
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1000),
+    return SingleChildScrollView(
+      child: ResponsiveCenter(
         child: AsyncValueWidget(
           value: state,
           data: (items) => items.isEmpty
@@ -71,32 +71,22 @@ class SkillSuccessView extends ConsumerWidget {
 
   final List<Skill> items;
 
+  Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref, String id) async {
+    final confirm = await showAlertDialog(
+      context: context,
+      title: 'Are you sure?'.hardcoded,
+      cancelActionText: 'Cancel'.hardcoded,
+      defaultActionText: 'Delete'.hardcoded,
+    );
+
+    if (confirm == true) {
+      await ref.read(skillsControllerProvider.notifier).deleteSkill(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final action = ref.watch(skillListProvider);
-
-    Future<void> deleteItem(Skill s) async {
-      final confirm =
-          await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Delete skill?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          ) ??
-          false;
-      if (!confirm) return;
-      await ref.read(skillsControllerProvider.notifier).deleteSkill(s.id!);
-    }
+    final skillsController = ref.watch(skillsControllerProvider);
 
     void editItem(Skill s) => context.goNamed(AppRoute.skillEdit.name, extra: s);
 
@@ -121,9 +111,9 @@ class SkillSuccessView extends ConsumerWidget {
                             icon: const Icon(Icons.edit_outlined),
                           ),
                           IconButton(
-                            onPressed: action.isLoading || s.id == null
+                            onPressed: (skillsController.isLoading || s.id == null)
                                 ? null
-                                : () => deleteItem(s),
+                                : () => _confirmAndDelete(context, ref, s.id!),
                             icon: const Icon(Icons.delete_outline),
                           ),
                         ],
@@ -155,9 +145,9 @@ class SkillSuccessView extends ConsumerWidget {
                             icon: const Icon(Icons.edit_outlined),
                           ),
                           IconButton(
-                            onPressed: action.isLoading || s.id == null
+                            onPressed: (skillsController.isLoading || s.id == null)
                                 ? null
-                                : () => deleteItem(s),
+                                : () => _confirmAndDelete(context, ref, s.id!),
                             icon: const Icon(Icons.delete_outline),
                           ),
                         ],

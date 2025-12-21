@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
 import 'package:portfolio_admin_panel/src/features/skills/presentation/controller/skills_controller.dart';
 
@@ -13,8 +14,8 @@ class SkillForm extends ConsumerStatefulWidget {
 
 class _SkillFormState extends ConsumerState<SkillForm> {
   final _formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final categoryController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _categoryController;
   double level = 50;
 
   String? get _id => widget.item?.id;
@@ -22,21 +23,17 @@ class _SkillFormState extends ConsumerState<SkillForm> {
   @override
   void initState() {
     super.initState();
-    final s = widget.item;
-    if (s != null) {
-      nameController.text = s.name;
-      categoryController.text = s.category ?? '';
-      level = s.level.toDouble();
-    }
-    // Rebuild when fields change so Save button updates
-    nameController.addListener(() => setState(() {}));
-    categoryController.addListener(() => setState(() {}));
+    final Skill? skill = widget.item;
+
+    _nameController = TextEditingController(text: skill?.name);
+    _categoryController = TextEditingController(text: skill?.category);
+    level = skill == null ? 50 : skill.level.toDouble();
   }
 
   @override
   void dispose() {
-    nameController.dispose();
-    categoryController.dispose();
+    _nameController.dispose();
+    _categoryController.dispose();
     super.dispose();
   }
 
@@ -45,11 +42,11 @@ class _SkillFormState extends ConsumerState<SkillForm> {
     if (!isValid) return;
     final data = Skill(
       id: _id,
-      name: nameController.text.trim(),
+      name: _nameController.text.trim(),
       level: level.round(),
-      category: categoryController.text.trim().isEmpty
+      category: _categoryController.text.trim().isEmpty
           ? null
-          : categoryController.text.trim(),
+          : _categoryController.text.trim(),
     );
     final notifier = ref.read(skillsControllerProvider.notifier);
     if (_id == null) {
@@ -64,14 +61,14 @@ class _SkillFormState extends ConsumerState<SkillForm> {
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(skillsControllerProvider);
-    final canSave = !async.isLoading && nameController.text.trim().isNotEmpty;
+    // final canSave = !async.isLoading && _nameController.text.trim().isNotEmpty;
     final isEditing = _id != null;
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Skill' : 'New Skill'),
         actions: [
           TextButton.icon(
-            onPressed: canSave ? _save : null,
+            onPressed: _save,
             icon: async.isLoading
                 ? const SizedBox(
                     width: 16,
@@ -83,44 +80,37 @@ class _SkillFormState extends ConsumerState<SkillForm> {
           ),
         ],
       ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: nameController,
-                        validator: (v) =>
-                            (v ?? '').trim().isEmpty ? 'Enter skill name' : null,
-                        decoration: const InputDecoration(labelText: 'Name'),
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: categoryController,
-                        decoration: const InputDecoration(
-                          labelText: 'Category (optional)',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text('Level: ${level.round()}%'),
-                      Slider(
-                        value: level,
-                        onChanged: (v) => setState(() => level = v),
-                        min: 0,
-                        max: 100,
-                        divisions: 20,
-                      ),
-                    ],
-                  ),
+      body: SingleChildScrollView(
+        child: ResponsiveCenter(
+          child: Form(
+            key: _formKey,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _nameController,
+                      validator: (v) =>
+                          (v ?? '').trim().isEmpty ? 'Enter skill name' : null,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _categoryController,
+                      decoration: const InputDecoration(labelText: 'Category (optional)'),
+                    ),
+                    const SizedBox(height: 12),
+                    Text('Level: ${level.round()}%'),
+                    Slider(
+                      value: level,
+                      onChanged: (v) => setState(() => level = v),
+                      min: 0,
+                      max: 100,
+                      divisions: 20,
+                    ),
+                  ],
                 ),
               ),
             ),

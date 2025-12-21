@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
 import 'package:portfolio_admin_panel/src/features/contact/data/contact_repository.dart';
 import 'package:portfolio_admin_panel/src/features/contact/domain/contact_info.dart';
 import 'package:portfolio_admin_panel/src/features/contact/presentation/controller/contact_controller.dart';
@@ -24,60 +26,42 @@ class _AppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(65);
 
+  Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref, String id) async {
+    final delete = await showAlertDialog(
+      context: context,
+      title: 'Are you sure?'.hardcoded,
+      cancelActionText: 'Cancel'.hardcoded,
+      defaultActionText: 'Delete'.hardcoded,
+    );
+    if (delete == true) {
+      await ref.read(contactControllerProvider.notifier).deleteContact(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final action = ref.watch(contactControllerProvider);
     final state = ref.watch(contactInfoListProvider);
 
-    Future<void> deleteItem() async {
-      final items = state.asData?.value ?? const <ContactInfo>[];
-      if (items.isEmpty || items.first.id == null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Nothing to delete')));
-        return;
-      }
-      final confirm =
-          await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Delete contact details?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          ) ??
-          false;
-      if (!confirm) return;
-      await ref.read(contactControllerProvider.notifier).deleteContact(items.first.id!);
-    }
-
-    void editItem() {
-      final List<ContactInfo> existing = state.asData?.value ?? const [];
-      context.goNamed(
-        AppRoute.contactEdit.name,
-        extra: existing.isNotEmpty ? existing.first : null,
-      );
-    }
+    //new line
+    final items = state.asData?.value ?? const <ContactInfo>[];
 
     return AppBar(
       title: const Text('Contact'),
       actions: [
         TextButton.icon(
-          onPressed: editItem,
+          onPressed: () => context.goNamed(
+            AppRoute.contactEdit.name,
+            extra: items.isNotEmpty ? items.first : null,
+          ),
           icon: const Icon(Icons.edit_outlined),
           label: const Text('Edit'),
         ),
         const SizedBox(width: 4),
         TextButton.icon(
-          onPressed: action.isLoading ? null : deleteItem,
+          onPressed: (action.isLoading || items.isEmpty)
+              ? null
+              : () => _confirmAndDelete(context, ref, items.first.id!),
           icon: const Icon(Icons.delete_outline),
           label: const Text('Delete'),
         ),
@@ -94,10 +78,8 @@ class _Body extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(contactInfoListProvider);
 
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 900),
+    return SingleChildScrollView(
+      child: ResponsiveCenter(
         child: AsyncValueWidget(
           value: state,
           data: (items) {

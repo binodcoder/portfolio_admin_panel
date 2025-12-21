@@ -25,7 +25,9 @@ class _AboutFormState extends ConsumerState<AboutForm> {
   @override
   void initState() {
     super.initState();
-    aboutController = TextEditingController(text: widget.about?.value.trim() ?? '');
+    aboutController = TextEditingController(
+      text: widget.about?.value.trim() ?? ''.trim(),
+    );
   }
 
   @override
@@ -44,7 +46,7 @@ class _AboutFormState extends ConsumerState<AboutForm> {
     final goRouter = GoRouter.of(context);
 
     FocusScope.of(context).unfocus();
-    final aboutText = aboutController.text.trim();
+    final aboutText = aboutController.text;
 
     final notifier = ref.read(aboutControllerProvider.notifier);
 

@@ -26,10 +26,9 @@ class IntroController extends StateNotifier<AsyncValue> {
   }
 }
 
-final introControllerProvider =
-    StateNotifierProvider.autoDispose<IntroController, AsyncValue>((ref) {
-      final introRepository = ref.watch(introRepositoryProvider);
-      return IntroController(introRepository: introRepository);
-    });
+final introControllerProvider = StateNotifierProvider<IntroController, AsyncValue>((ref) {
+  final introRepository = ref.watch(introRepositoryProvider);
+  return IntroController(introRepository: introRepository);
+});
 
 final introCanSaveProvider = StateProvider.autoDispose<bool>((ref) => false);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/custom_text_form_field.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/custom_large_text_form_field.dart';
 import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 
 class FormCard extends StatelessWidget {
@@ -39,7 +39,7 @@ class FormCard extends StatelessWidget {
             Text(subTitle, style: Theme.of(context).textTheme.bodySmall),
             gapH20,
 
-            CustomTextFormField(
+            CustomLargeTextFormField(
               controller: controller,
               isLoading: isLoading,
               onChanged: onChanged,

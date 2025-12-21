@@ -1,38 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
     super.key,
     required this.controller,
-    required this.isLoading,
-    required this.onChanged,
+    required this.labelText,
+    this.validator,
   });
 
   final TextEditingController controller;
-  final bool isLoading;
-  final ValueChanged<String> onChanged;
+  final String labelText;
+  final FormFieldValidator? validator;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      minLines: 6,
-      maxLines: null,
-      keyboardType: TextInputType.multiline,
-      enabled: !isLoading,
-      onChanged: onChanged,
-      validator: (value) =>
-          (value ?? '').trim().isEmpty ? 'Please enter an introduction'.hardcoded : null,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      decoration: InputDecoration(
-        hintText: "E.g. I'm a Flutter developer building delightful apps.".hardcoded,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-        ),
-      ),
+      validator: validator,
+      decoration: InputDecoration(labelText: labelText),
     );
   }
 }

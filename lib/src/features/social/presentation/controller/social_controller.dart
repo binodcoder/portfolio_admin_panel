@@ -8,14 +8,16 @@ class SocialController extends StateNotifier<AsyncValue> {
 
   final SocialRepository socialRepository;
 
-  Future<void> createSocial(SocialLink data) async {
+  Future<bool> createSocial(SocialLink data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => socialRepository.create(data));
+    return state.hasError == false;
   }
 
-  Future<void> updateSocial(String id, SocialLink data) async {
+  Future<bool> updateSocial(String id, SocialLink data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => socialRepository.update(id, data));
+    return state.hasError == false;
   }
 
   Future<void> deleteSocial(String id) async {
@@ -24,8 +26,9 @@ class SocialController extends StateNotifier<AsyncValue> {
   }
 }
 
-final socialControllerProvider =
-    StateNotifierProvider.autoDispose<SocialController, AsyncValue>((ref) {
-      final socialRepository = ref.watch(socialRepositoryProvider);
-      return SocialController(socialRepository: socialRepository);
-    });
+final socialControllerProvider = StateNotifierProvider<SocialController, AsyncValue>((
+  ref,
+) {
+  final socialRepository = ref.watch(socialRepositoryProvider);
+  return SocialController(socialRepository: socialRepository);
+});
