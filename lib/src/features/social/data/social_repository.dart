@@ -13,8 +13,11 @@ class SocialRepository {
   );
   Future<void> create(SocialLink data) => _collection.add(data.toMap());
 
-  Future<void> update(String id, SocialLink data) =>
-      _collection.doc(id).update(data.toMap());
+  Future<void> update(String id, SocialLink data) async {
+    await Future.delayed(Duration(seconds: 2));
+    throw Exception('failed to update');
+  }
+  // _collection.doc(id).update(data.toMap());
 
   Future<void> delete(String id) => _collection.doc(id).delete();
 }

@@ -13,11 +13,15 @@ import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 import 'package:portfolio_admin_panel/src/routing/app_router.dart';
 import 'package:portfolio_admin_panel/src/utils/async_value_ui.dart';
 
-class SocialPage extends StatelessWidget {
+class SocialPage extends ConsumerWidget {
   const SocialPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(
+      socialControllerProvider,
+      (_, state) => state.showAlertDialogOnError(context),
+    );
     return Scaffold(appBar: _AppBar(), body: _Body());
   }
 }
@@ -85,11 +89,6 @@ class SocialSuccessView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(
-      socialControllerProvider,
-      (_, state) => state.showAlertDialogOnError(context),
-    );
-
     final isLoading = ref.watch(socialControllerProvider.select((s) => s.isLoading));
 
     return ListView.builder(
