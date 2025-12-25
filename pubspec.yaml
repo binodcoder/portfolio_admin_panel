@@ -40,7 +40,6 @@ dependencies:
   flutter_riverpod: ^3.0.3
   go_router: ^16.2.5
   equatable: ^2.0.7
-  riverpod: ^3.0.3
   envied: 1.1.1
   cloud_firestore: ^6.0.3
   firebase_storage: ^13.0.3

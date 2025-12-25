@@ -1,119 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/custom_text_field.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/save_button.dart';
+import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
-import 'package:portfolio_admin_panel/src/features/experience/presentation/controller/experience_controller.dart';
+import 'package:portfolio_admin_panel/src/features/experience/presentation/controller/experience_form_notifier.dart';
+import 'package:portfolio_admin_panel/src/features/experience/presentation/controller/experience_form_state.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
-class ExperienceForm extends ConsumerStatefulWidget {
+class ExperienceForm extends ConsumerWidget {
   const ExperienceForm({super.key, this.item});
   final Experience? item;
-  @override
-  ConsumerState<ExperienceForm> createState() => _ExperienceFormState();
-}
 
-class _ExperienceFormState extends ConsumerState<ExperienceForm> {
-  final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _companyController;
-  late final TextEditingController _titleController;
-  late final TextEditingController _locationController;
-  late final TextEditingController _startController;
-  late final TextEditingController _endController;
-  late final TextEditingController _descriptionController;
-  late final TextEditingController _techsController;
-  bool current = false;
-
-  String? get _id => widget.item?.id;
+  String? get _id => item?.id;
 
   @override
-  void initState() {
-    super.initState();
-    final Experience? experience = widget.item;
-    _companyController = TextEditingController(text: experience?.company);
-    _titleController = TextEditingController(text: experience?.title);
-    _locationController = TextEditingController(text: experience?.location);
-    _startController = TextEditingController(text: experience?.start);
-    _endController = TextEditingController(text: experience?.end);
-    _descriptionController = TextEditingController(text: experience?.description);
-    _techsController = TextEditingController(text: experience?.technologies.join(', '));
-    current = experience == null ? false : experience.current;
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(experienceFormProvider(item));
+    final notifier = ref.read(experienceFormProvider(item).notifier);
 
-  @override
-  void dispose() {
-    _companyController.dispose();
-    _titleController.dispose();
-    _locationController.dispose();
-    _startController.dispose();
-    _endController.dispose();
-    _descriptionController.dispose();
-    _techsController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
-    final isValid = _formKey.currentState?.validate() ?? false;
-    if (!isValid) return;
-    final techs = _techsController.text
-        .split(',')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
-    final data = Experience(
-      id: _id,
-      company: _companyController.text.trim(),
-      title: _titleController.text.trim(),
-      location: _locationController.text.trim().isEmpty
-          ? null
-          : _locationController.text.trim(),
-      start: _startController.text.trim().isEmpty ? null : _startController.text.trim(),
-      end: current
-          ? null
-          : (_endController.text.trim().isEmpty ? null : _endController.text.trim()),
-      current: current,
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-      technologies: techs,
-    );
-    final notifier = ref.read(experienceControllerProvider.notifier);
-    if (_id == null) {
-      await notifier.createExperience(data);
-    } else {
-      await notifier.updateExperience(_id!, data);
-    }
-    if (!mounted) return;
-    Navigator.of(context).pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final async = ref.watch(experienceControllerProvider);
-    final canSave =
-        !async.isLoading &&
-        _companyController.text.trim().isNotEmpty &&
-        _titleController.text.trim().isNotEmpty;
-    final isEditing = _id != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Experience' : 'New Experience'),
+        title: Text(
+          _id != null ? 'Edit Experience'.hardcoded : 'New Experience'.hardcoded,
+        ),
         actions: [
-          TextButton.icon(
-            onPressed: canSave ? _save : null,
-            icon: async.isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.check_outlined),
-            label: const Text('Save'),
+          SaveButton(
+            onSave: !state.canSubmit
+                ? null
+                : () async {
+                    final success = await notifier.submit(id: _id);
+                    if (context.mounted && success) {
+                      context.pop();
+                    }
+                  },
+            isLoading: state.isSubmitting,
           ),
         ],
       ),
       body: SingleChildScrollView(
         child: ResponsiveCenter(
-          child: Form(
-            key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Sizes.p4,
+              vertical: Sizes.p24,
+            ),
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -123,76 +56,107 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm> {
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
-                            controller: _companyController,
-                            validator: (v) =>
-                                (v ?? '').trim().isEmpty ? 'Enter company' : null,
-                            decoration: const InputDecoration(labelText: 'Company'),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.company)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.company.length,
+                              ),
+                            onChanged: notifier.companyChanged,
+                            labelText: 'Company'.hardcoded,
+                            errorText: state.companyError,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        gapW12,
                         Expanded(
-                          child: TextFormField(
-                            controller: _titleController,
-                            validator: (v) =>
-                                (v ?? '').trim().isEmpty ? 'Enter title/role' : null,
-                            decoration: const InputDecoration(labelText: 'Title / Role'),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.title)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.title.length,
+                              ),
+                            onChanged: notifier.titleChanged,
+                            labelText: 'Title / Role'.hardcoded,
+                            errorText: state.titleError,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    gapH12,
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
-                            controller: _startController,
-                            decoration: const InputDecoration(
-                              labelText: 'Start (YYYY-MM)',
-                            ),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.start)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.start.length,
+                              ),
+                            onChanged: notifier.startChanged,
+                            labelText: 'Start (YYYY-MM)'.hardcoded,
+                            errorText: null,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        gapW12,
                         Expanded(
-                          child: TextFormField(
-                            controller: _endController,
-                            decoration: const InputDecoration(labelText: 'End (YYYY-MM)'),
-                            enabled: !current,
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.end)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.end.length,
+                              ),
+                            onChanged: notifier.endChanged,
+                            labelText: 'End (YYYY-MM)'.hardcoded,
+                            errorText: null,
+                            enabled: !state.isSubmitting && !state.current,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    gapH8,
                     Row(
                       children: [
                         Checkbox(
-                          value: current,
-                          onChanged: (v) => setState(() {
-                            current = v ?? false;
-                            if (current) _endController.clear();
-                          }),
+                          value: state.current,
+                          onChanged: state.isSubmitting
+                              ? null
+                              : (v) => notifier.currentChanged(v ?? false),
                         ),
-                        const Text('I currently work here'),
+                        Text('I currently work here'.hardcoded),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _locationController,
-                      decoration: const InputDecoration(labelText: 'Location (optional)'),
+                    gapH12,
+                    CustomTextField(
+                      controller: TextEditingController(text: state.location)
+                        ..selection = TextSelection.collapsed(
+                          offset: state.location.length,
+                        ),
+                      onChanged: notifier.locationChanged,
+                      labelText: 'Location (optional)'.hardcoded,
+                      errorText: null,
+                      enabled: !state.isSubmitting,
                     ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _descriptionController,
+                    gapH12,
+                    TextField(
+                      controller: TextEditingController(text: state.description)
+                        ..selection = TextSelection.collapsed(
+                          offset: state.description.length,
+                        ),
+                      onChanged: notifier.descriptionChanged,
                       minLines: 4,
                       maxLines: null,
-                      decoration: const InputDecoration(labelText: 'Description'),
+                      decoration: InputDecoration(labelText: 'Description'.hardcoded),
+                      enabled: !state.isSubmitting,
                     ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _techsController,
-                      decoration: const InputDecoration(
-                        labelText: 'Technologies (comma separated)',
-                      ),
+                    gapH12,
+                    CustomTextField(
+                      controller: TextEditingController(text: state.technologies)
+                        ..selection = TextSelection.collapsed(
+                          offset: state.technologies.length,
+                        ),
+                      onChanged: notifier.technologiesChanged,
+                      labelText: 'Technologies (comma separated)'.hardcoded,
+                      errorText: null,
+                      enabled: !state.isSubmitting,
                     ),
                   ],
                 ),

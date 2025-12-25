@@ -1,111 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/custom_text_field.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/save_button.dart';
+import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
-import 'package:portfolio_admin_panel/src/features/skills/presentation/controller/skills_controller.dart';
+import 'package:portfolio_admin_panel/src/features/skills/presentation/controller/skill_form_notifier.dart';
+import 'package:portfolio_admin_panel/src/features/skills/presentation/controller/skill_form_state.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
-class SkillForm extends ConsumerStatefulWidget {
+class SkillForm extends ConsumerWidget {
   const SkillForm({super.key, this.item});
   final Skill? item;
 
-  @override
-  ConsumerState<SkillForm> createState() => _SkillFormState();
-}
-
-class _SkillFormState extends ConsumerState<SkillForm> {
-  final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _nameController;
-  late final TextEditingController _categoryController;
-  double level = 50;
-
-  String? get _id => widget.item?.id;
+  String? get _id => item?.id;
 
   @override
-  void initState() {
-    super.initState();
-    final Skill? skill = widget.item;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(skillFormProvider(item));
+    final notifier = ref.read(skillFormProvider(item).notifier);
 
-    _nameController = TextEditingController(text: skill?.name);
-    _categoryController = TextEditingController(text: skill?.category);
-    level = skill == null ? 50 : skill.level.toDouble();
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _categoryController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
-    final isValid = _formKey.currentState?.validate() ?? false;
-    if (!isValid) return;
-    final data = Skill(
-      id: _id,
-      name: _nameController.text.trim(),
-      level: level.round(),
-      category: _categoryController.text.trim().isEmpty
-          ? null
-          : _categoryController.text.trim(),
-    );
-    final notifier = ref.read(skillsControllerProvider.notifier);
-    if (_id == null) {
-      await notifier.createSkill(data);
-    } else {
-      await notifier.updateSkill(_id!, data);
-    }
-    if (!mounted) return;
-    Navigator.of(context).pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final async = ref.watch(skillsControllerProvider);
-    // final canSave = !async.isLoading && _nameController.text.trim().isNotEmpty;
-    final isEditing = _id != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Skill' : 'New Skill'),
+        title: Text(_id != null ? 'Edit Skill'.hardcoded : 'New Skill'.hardcoded),
         actions: [
-          TextButton.icon(
-            onPressed: _save,
-            icon: async.isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.check_outlined),
-            label: const Text('Save'),
+          SaveButton(
+            onSave: !state.canSubmit
+                ? null
+                : () async {
+                    final success = await notifier.submit(id: _id);
+                    if (context.mounted && success) {
+                      context.pop();
+                    }
+                  },
+            isLoading: state.isSubmitting,
           ),
         ],
       ),
       body: SingleChildScrollView(
         child: ResponsiveCenter(
-          child: Form(
-            key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Sizes.p4,
+              vertical: Sizes.p24,
+            ),
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _nameController,
-                      validator: (v) =>
-                          (v ?? '').trim().isEmpty ? 'Enter skill name' : null,
-                      decoration: const InputDecoration(labelText: 'Name'),
+                    CustomTextField(
+                      controller: TextEditingController(text: state.name)
+                        ..selection = TextSelection.collapsed(offset: state.name.length),
+                      onChanged: notifier.nameChanged,
+                      labelText: 'Name'.hardcoded,
+                      errorText: state.nameError,
+                      enabled: !state.isSubmitting,
                     ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _categoryController,
-                      decoration: const InputDecoration(labelText: 'Category (optional)'),
+                    gapH12,
+                    CustomTextField(
+                      controller: TextEditingController(text: state.category)
+                        ..selection = TextSelection.collapsed(
+                          offset: state.category.length,
+                        ),
+                      onChanged: notifier.categoryChanged,
+                      labelText: 'Category (optional)'.hardcoded,
+                      errorText: null,
+                      enabled: !state.isSubmitting,
                     ),
-                    const SizedBox(height: 12),
-                    Text('Level: ${level.round()}%'),
+                    gapH12,
+                    Text('Level: ${state.level.round()}%'),
                     Slider(
-                      value: level,
-                      onChanged: (v) => setState(() => level = v),
+                      value: state.level,
+                      onChanged: state.isSubmitting ? null : notifier.levelChanged,
                       min: 0,
                       max: 100,
                       divisions: 20,

@@ -7,14 +7,16 @@ class ProjectsController extends StateNotifier<AsyncValue> {
   ProjectsController({required this.projectsRepository}) : super(AsyncValue.data(null));
   final ProjectsRepository projectsRepository;
 
-  Future<void> createProject(Project data) async {
+  Future<bool> createProject(Project data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => projectsRepository.create(data));
+    return state.hasError == false;
   }
 
-  Future<void> updateProject(String id, Project data) async {
+  Future<bool> updateProject(String id, Project data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => projectsRepository.update(id, data));
+    return state.hasError == false;
   }
 
   Future<void> deleteProject(String id) async {

@@ -1,197 +1,169 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/custom_text_field.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/save_button.dart';
+import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
-import 'package:portfolio_admin_panel/src/features/education/presentation/controller/education_controller.dart';
+import 'package:portfolio_admin_panel/src/features/education/presentation/controller/education_form_notifier.dart';
+import 'package:portfolio_admin_panel/src/features/education/presentation/controller/education_form_state.dart';
+import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
-class EducationForm extends ConsumerStatefulWidget {
+class EducationForm extends ConsumerWidget {
   const EducationForm({super.key, this.item});
   final Education? item;
-  @override
-  ConsumerState<EducationForm> createState() => _EducationFormState();
-}
 
-class _EducationFormState extends ConsumerState<EducationForm> {
-  final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _institutionController;
-  late final TextEditingController _degreeController;
-  late final TextEditingController _fieldController;
-  late final TextEditingController _startController;
-  late final TextEditingController _endController;
-  late final TextEditingController _locationController;
-  late final TextEditingController _gpaController;
-  late final TextEditingController _descriptionController;
-
-  String? get _id => widget.item?.id;
+  String? get _id => item?.id;
 
   @override
-  void initState() {
-    super.initState();
-    final Education? education = widget.item;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(educationFormProvider(item));
+    final notifier = ref.read(educationFormProvider(item).notifier);
 
-    _institutionController = TextEditingController(text: education?.institution);
-    _degreeController = TextEditingController(text: education?.degree);
-    _fieldController = TextEditingController(text: education?.field);
-    _startController = TextEditingController(text: education?.start);
-    _endController = TextEditingController(text: education?.end);
-    _locationController = TextEditingController(text: education?.location);
-    _gpaController = TextEditingController(text: education?.gpa);
-    _descriptionController = TextEditingController(text: education?.description);
-  }
-
-  @override
-  void dispose() {
-    _institutionController.dispose();
-    _degreeController.dispose();
-    _fieldController.dispose();
-    _startController.dispose();
-    _endController.dispose();
-    _locationController.dispose();
-    _gpaController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
-    final isValid = _formKey.currentState?.validate() ?? false;
-    if (!isValid) return;
-    final data = Education(
-      id: _id,
-      institution: _institutionController.text.trim(),
-      degree: _degreeController.text.trim().isEmpty
-          ? null
-          : _degreeController.text.trim(),
-      field: _fieldController.text.trim().isEmpty ? null : _fieldController.text.trim(),
-      start: _startController.text.trim().isEmpty ? null : _startController.text.trim(),
-      end: _endController.text.trim().isEmpty ? null : _endController.text.trim(),
-      location: _locationController.text.trim().isEmpty
-          ? null
-          : _locationController.text.trim(),
-      gpa: _gpaController.text.trim().isEmpty ? null : _gpaController.text.trim(),
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-    );
-    final notifier = ref.read(educationControllerProvider.notifier);
-    if (_id == null) {
-      await notifier.createEducation(data);
-    } else {
-      await notifier.updateEducation(_id!, data);
-    }
-    if (!mounted) return;
-    Navigator.of(context).pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final async = ref.watch(educationControllerProvider);
-    //  final canSave = !async.isLoading && _institutionController.text.trim().isNotEmpty;
-    final isEditing = _id != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Education' : 'New Education'),
+        title: Text(_id != null ? 'Edit Education'.hardcoded : 'New Education'.hardcoded),
         actions: [
-          TextButton.icon(
-            onPressed: _save,
-            icon: async.isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.check_outlined),
-            label: const Text('Save'),
+          SaveButton(
+            onSave: !state.canSubmit
+                ? null
+                : () async {
+                    final success = await notifier.submit(id: _id);
+                    if (context.mounted && success) {
+                      context.pop();
+                    }
+                  },
+            isLoading: state.isSubmitting,
           ),
         ],
       ),
       body: SingleChildScrollView(
         child: ResponsiveCenter(
-          child: Form(
-            key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Sizes.p4,
+              vertical: Sizes.p24,
+            ),
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _institutionController,
-                      validator: (v) =>
-                          (v ?? '').trim().isEmpty ? 'Enter institution' : null,
-                      decoration: const InputDecoration(labelText: 'Institution'),
+                    CustomTextField(
+                      controller: TextEditingController(text: state.institution)
+                        ..selection = TextSelection.collapsed(
+                          offset: state.institution.length,
+                        ),
+                      onChanged: notifier.institutionChanged,
+                      labelText: 'Institution'.hardcoded,
+                      errorText: state.institutionError,
+                      enabled: !state.isSubmitting,
                     ),
-                    const SizedBox(height: 12),
+                    gapH12,
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
-                            controller: _degreeController,
-                            decoration: const InputDecoration(
-                              labelText: 'Degree (e.g., BSc)',
-                            ),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.degree)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.degree.length,
+                              ),
+                            onChanged: notifier.degreeChanged,
+                            labelText: 'Degree (e.g., BSc)'.hardcoded,
+                            errorText: null,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        gapW12,
                         Expanded(
-                          child: TextFormField(
-                            controller: _fieldController,
-                            decoration: const InputDecoration(
-                              labelText: 'Field of study',
-                            ),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.field)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.field.length,
+                              ),
+                            onChanged: notifier.fieldChanged,
+                            labelText: 'Field of study'.hardcoded,
+                            errorText: null,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    gapH12,
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
-                            controller: _startController,
-                            decoration: const InputDecoration(
-                              labelText: 'Start (YYYY-MM)',
-                            ),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.start)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.start.length,
+                              ),
+                            onChanged: notifier.startChanged,
+                            labelText: 'Start (YYYY-MM)'.hardcoded,
+                            errorText: null,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        gapW12,
                         Expanded(
-                          child: TextFormField(
-                            controller: _endController,
-                            decoration: const InputDecoration(labelText: 'End (YYYY-MM)'),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.end)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.end.length,
+                              ),
+                            onChanged: notifier.endChanged,
+                            labelText: 'End (YYYY-MM)'.hardcoded,
+                            errorText: null,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    gapH12,
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
-                            controller: _locationController,
-                            decoration: const InputDecoration(
-                              labelText: 'Location (optional)',
-                            ),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.location)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.location.length,
+                              ),
+                            onChanged: notifier.locationChanged,
+                            labelText: 'Location (optional)'.hardcoded,
+                            errorText: null,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        gapW12,
                         Expanded(
-                          child: TextFormField(
-                            controller: _gpaController,
-                            decoration: const InputDecoration(
-                              labelText: 'GPA (optional)',
-                            ),
+                          child: CustomTextField(
+                            controller: TextEditingController(text: state.gpa)
+                              ..selection = TextSelection.collapsed(
+                                offset: state.gpa.length,
+                              ),
+                            onChanged: notifier.gpaChanged,
+                            labelText: 'GPA (optional)'.hardcoded,
+                            errorText: null,
+                            enabled: !state.isSubmitting,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _descriptionController,
+                    gapH12,
+                    TextField(
+                      controller: TextEditingController(text: state.description)
+                        ..selection = TextSelection.collapsed(
+                          offset: state.description.length,
+                        ),
+                      onChanged: notifier.descriptionChanged,
                       minLines: 3,
                       maxLines: null,
-                      decoration: const InputDecoration(
-                        labelText: 'Description (optional)',
+                      decoration: InputDecoration(
+                        labelText: 'Description (optional)'.hardcoded,
                       ),
+                      enabled: !state.isSubmitting,
                     ),
                   ],
                 ),

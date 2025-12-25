@@ -9,14 +9,16 @@ class ExperienceController extends StateNotifier<AsyncValue> {
 
   final ExperienceRepository experienceRepository;
 
-  Future<void> createExperience(Experience data) async {
+  Future<bool> createExperience(Experience data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => experienceRepository.create(data));
+    return state.hasError == false;
   }
 
-  Future<void> updateExperience(String id, Experience data) async {
+  Future<bool> updateExperience(String id, Experience data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => experienceRepository.update(id, data));
+    return state.hasError == false;
   }
 
   Future<void> deleteExperience(String id) async {

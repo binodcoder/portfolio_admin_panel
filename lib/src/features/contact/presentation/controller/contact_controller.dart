@@ -8,14 +8,16 @@ class ContactController extends StateNotifier<AsyncValue> {
 
   final ContactRepository contactRepository;
 
-  Future<void> createContact(ContactInfo data) async {
+  Future<bool> createContact(ContactInfo data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => contactRepository.create(data));
+    return state.hasError == false;
   }
 
-  Future<void> updateContact(String id, ContactInfo data) async {
+  Future<bool> updateContact(String id, ContactInfo data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => contactRepository.update(id, data));
+    return state.hasError == false;
   }
 
   Future<void> deleteContact(String id) async {

@@ -14,7 +14,7 @@ class SocialRepository {
   Future<void> create(SocialLink data) => _collection.add(data.toMap());
 
   Future<void> update(String id, SocialLink data) async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 4));
     throw Exception('failed to update');
   }
   // _collection.doc(id).update(data.toMap());

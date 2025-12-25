@@ -1,4 +1,4 @@
-import 'package:riverpod/legacy.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:portfolio_admin_panel/src/features/about/data/about_repository.dart';
 import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
@@ -30,5 +30,3 @@ final aboutControllerProvider = StateNotifierProvider<AboutController, AsyncValu
   final aboutRepository = ref.watch(aboutRepositoryProvider);
   return AboutController(aboutRepository: aboutRepository);
 });
-
-final aboutCanSaveProvider = StateProvider<bool>((ref) => false);

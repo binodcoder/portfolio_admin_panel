@@ -8,14 +8,16 @@ class SkillsController extends StateNotifier<AsyncValue> {
 
   final SkillsRepository skillsRepository;
 
-  Future<void> createSkill(Skill data) async {
+  Future<bool> createSkill(Skill data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => skillsRepository.create(data));
+    return state.hasError == false;
   }
 
-  Future<void> updateSkill(String id, Skill data) async {
+  Future<bool> updateSkill(String id, Skill data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => skillsRepository.update(id, data));
+    return state.hasError == false;
   }
 
   Future<void> deleteSkill(String id) async {

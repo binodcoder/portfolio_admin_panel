@@ -8,14 +8,16 @@ class EducationController extends StateNotifier<AsyncValue> {
 
   final EducationRepository educationRepository;
 
-  Future<void> createEducation(Education data) async {
+  Future<bool> createEducation(Education data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => educationRepository.create(data));
+    return state.hasError == false;
   }
 
-  Future<void> updateEducation(String id, Education data) async {
+  Future<bool> updateEducation(String id, Education data) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => educationRepository.update(id, data));
+    return state.hasError == false;
   }
 
   Future<void> deleteEducation(String id) async {
