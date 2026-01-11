@@ -70,6 +70,13 @@ class EducationSuccessView extends ConsumerWidget {
 
   final List<Education> items;
 
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      return '';
+    }
+    return date.toIso8601String().split('T').first;
+  }
+
   Future<void> _confirmAndDeleteItem(
     BuildContext context,
     WidgetRef ref,
@@ -100,7 +107,7 @@ class EducationSuccessView extends ConsumerWidget {
               child: ListTile(
                 title: Text('${e.degree ?? ''} ${e.field != null ? '• ${e.field}' : ''}'),
                 subtitle: Text(
-                  '${e.institution}${e.location != null ? ' • ${e.location}' : ''}\n${e.start ?? ''} - ${e.end ?? ''}',
+                  _subtitleFor(e),
                 ),
                 isThreeLine: true,
                 trailing: Wrap(
@@ -124,5 +131,16 @@ class EducationSuccessView extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  String _subtitleFor(Education e) {
+    final location = e.location != null ? ' • ${e.location}' : '';
+    final startText = _formatDate(e.start);
+    final endText = _formatDate(e.end);
+    final dates = [startText, endText].where((text) => text.isNotEmpty).join(' - ');
+    if (dates.isEmpty) {
+      return '${e.institution}$location';
+    }
+    return '${e.institution}$location\n$dates';
   }
 }

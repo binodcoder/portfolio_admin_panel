@@ -15,8 +15,8 @@ class Education {
   final String institution;
   final String? degree;
   final String? field;
-  final String? start; // YYYY-MM
-  final String? end; // YYYY-MM
+  final DateTime? start; // YYYY-MM-DD
+  final DateTime? end; // YYYY-MM-DD
   final String? location;
   final String? gpa;
   final String? description;
@@ -25,8 +25,8 @@ class Education {
         'institution': institution,
         'degree': degree,
         'field': field,
-        'start': start,
-        'end': end,
+        'start': start?.toIso8601String(),
+        'end': end?.toIso8601String(),
         'location': location,
         'gpa': gpa,
         'description': description,
@@ -37,11 +37,10 @@ class Education {
         institution: (map['institution'] ?? '').toString(),
         degree: map['degree']?.toString(),
         field: map['field']?.toString(),
-        start: map['start']?.toString(),
-        end: map['end']?.toString(),
+        start: map['start'] == null ? null : DateTime.parse(map['start'].toString()),
+        end: map['end'] == null ? null : DateTime.parse(map['end'].toString()),
         location: map['location']?.toString(),
         gpa: map['gpa']?.toString(),
         description: map['description']?.toString(),
       );
 }
-

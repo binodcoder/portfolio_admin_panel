@@ -13,6 +13,13 @@ class CertificationSuccessView extends ConsumerWidget {
 
   final List<Certification> items;
 
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      return '';
+    }
+    return date.toIso8601String().split('T').first;
+  }
+
   Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref, String id) async {
     final delete = await showAlertDialog(
       context: context,
@@ -38,7 +45,8 @@ class CertificationSuccessView extends ConsumerWidget {
         context.goNamed(AppRoute.certificationEdit.name, extra: c);
 
     String subtitleFor(Certification c) {
-      final date = (c.issueDate ?? '').isNotEmpty ? ' • ${c.issueDate}' : '';
+      final dateText = _formatDate(c.issueDate);
+      final date = dateText.isNotEmpty ? ' • $dateText' : '';
       final issuer = c.issuer ?? '';
       return '$issuer$date';
     }

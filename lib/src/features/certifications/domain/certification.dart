@@ -12,16 +12,16 @@ class Certification {
   final String? id;
   final String name;
   final String? issuer;
-  final String? issueDate; // YYYY-MM
-  final String? expiryDate; // YYYY-MM
+  final DateTime? issueDate; // YYYY-MM-DD
+  final DateTime? expiryDate; // YYYY-MM-DD
   final String? credentialId;
   final String? credentialUrl;
 
   Map<String, dynamic> toMap() => {
     'name': name,
     'issuer': issuer,
-    'issueDate': issueDate,
-    'expiryDate': expiryDate,
+    'issueDate': issueDate?.toIso8601String(),
+    'expiryDate': expiryDate?.toIso8601String(),
     'credentialId': credentialId,
     'credentialUrl': credentialUrl,
   };
@@ -30,8 +30,12 @@ class Certification {
     id: map['id'] as String?,
     name: (map['name'] ?? '').toString(),
     issuer: map['issuer']?.toString(),
-    issueDate: map['issueDate']?.toString(),
-    expiryDate: map['expiryDate']?.toString(),
+    issueDate: map['issueDate'] == null
+        ? null
+        : DateTime.parse(map['issueDate'].toString()),
+    expiryDate: map['expiryDate'] == null
+        ? null
+        : DateTime.parse(map['expiryDate'].toString()),
     credentialId: map['credentialId']?.toString(),
     credentialUrl: map['credentialUrl']?.toString(),
   );

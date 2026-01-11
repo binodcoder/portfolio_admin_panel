@@ -72,6 +72,27 @@ class ExperienceSuccessView extends ConsumerWidget {
 
   final List<Experience> items;
 
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      return '';
+    }
+    return date.toIso8601String().split('T').first;
+  }
+
+  String _subtitleFor(Experience e) {
+    final startText = _formatDate(e.start);
+    final endText = e.current ? 'Present' : _formatDate(e.end);
+    final dateRange = [startText, endText].where((text) => text.isNotEmpty).join(' - ');
+    final location = e.location;
+    if (location == null || location.isEmpty) {
+      return dateRange;
+    }
+    if (dateRange.isEmpty) {
+      return location;
+    }
+    return '$dateRange • $location';
+  }
+
   Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref, String id) async {
     final confirm = await showAlertDialog(
       context: context,
@@ -114,9 +135,7 @@ class ExperienceSuccessView extends ConsumerWidget {
             Card(
               child: ListTile(
                 title: Text('${e.title} • ${e.company}'),
-                subtitle: Text(
-                  '${e.start ?? ''} - ${e.current ? 'Present' : (e.end ?? '')}${e.location != null ? ' • ${e.location}' : ''}',
-                ),
+                subtitle: Text(_subtitleFor(e)),
                 isThreeLine: true,
                 trailing: Wrap(
                   spacing: 8,

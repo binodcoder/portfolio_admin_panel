@@ -15,8 +15,8 @@ class Experience {
   final String company;
   final String title;
   final String? location;
-  final String? start; // e.g. 2023-01
-  final String? end; // e.g. 2024-06
+  final DateTime? start; // YYYY-MM-DD
+  final DateTime? end; // YYYY-MM-DD
   final bool current;
   final String? description;
   final List<String> technologies;
@@ -26,8 +26,8 @@ class Experience {
     String? company,
     String? title,
     String? location,
-    String? start,
-    String? end,
+    DateTime? start,
+    DateTime? end,
     bool? current,
     String? description,
     List<String>? technologies,
@@ -49,8 +49,8 @@ class Experience {
         'company': company,
         'title': title,
         'location': location,
-        'start': start,
-        'end': end,
+        'start': start?.toIso8601String(),
+        'end': end?.toIso8601String(),
         'current': current,
         'description': description,
         'technologies': technologies,
@@ -63,12 +63,11 @@ class Experience {
       company: (map['company'] ?? '').toString(),
       title: (map['title'] ?? '').toString(),
       location: map['location']?.toString(),
-      start: map['start']?.toString(),
-      end: map['end']?.toString(),
+      start: map['start'] == null ? null : DateTime.parse(map['start'].toString()),
+      end: map['end'] == null ? null : DateTime.parse(map['end'].toString()),
       current: (map['current'] ?? false) == true,
       description: map['description']?.toString(),
       technologies: techs,
     );
   }
 }
-

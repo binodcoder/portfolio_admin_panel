@@ -1,110 +1,188 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/custom_text_field.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
+import 'package:portfolio_admin_panel/src/common_widgets/responsive_scrollable_card.dart';
 import 'package:portfolio_admin_panel/src/common_widgets/save_button.dart';
 import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
 import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
-import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/project_form_notifier.dart';
-import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/project_form_state.dart';
+import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/projects_controller.dart';
+import 'package:portfolio_admin_panel/src/features/projects/presentation/ui/project_validators.dart';
 import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
 
-class ProjectForm extends ConsumerWidget {
+class ProjectForm extends ConsumerStatefulWidget {
   const ProjectForm({super.key, this.item});
   final Project? item;
 
-  String? get _id => item?.id;
+  @override
+  ConsumerState<ProjectForm> createState() => _ProjectFormState();
+}
+
+class _ProjectFormState extends ConsumerState<ProjectForm> with ProjectValidators {
+  final _formKey = GlobalKey<FormState>();
+  final _node = FocusScopeNode();
+
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _repoUrlController = TextEditingController();
+  final _liveUrlController = TextEditingController();
+  final _tagsController = TextEditingController();
+
+  String get title => _titleController.text;
+  String get tags => _tagsController.text;
+
+  String? get _id => widget.item?.id;
+
+  var _submitted = false;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(projectFormProvider(item));
-    final notifier = ref.read(projectFormProvider(item).notifier);
+  void initState() {
+    super.initState();
+    _titleController.text = widget.item?.title ?? '';
+    _descriptionController.text = widget.item?.description ?? '';
+    _repoUrlController.text = widget.item?.repoUrl ?? '';
+    _liveUrlController.text = widget.item?.liveUrl ?? '';
+    _tagsController.text = (widget.item?.tags ?? const <String>[]).join(', ');
+  }
 
+  @override
+  void dispose() {
+    _node.dispose();
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _repoUrlController.dispose();
+    _liveUrlController.dispose();
+    _tagsController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    setState(() => _submitted = true);
+    if (_formKey.currentState!.validate()) {
+      final controller = ref.read(projectsControllerProvider.notifier);
+      final tagList = tags
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+      final data = Project(
+        id: _id,
+        title: title.trim(),
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+        repoUrl: _repoUrlController.text.trim().isEmpty ? null : _repoUrlController.text.trim(),
+        liveUrl: _liveUrlController.text.trim().isEmpty ? null : _liveUrlController.text.trim(),
+        tags: tagList,
+      );
+      final success =
+          _id == null ? await controller.createProject(data) : await controller.updateProject(
+            _id!,
+            data,
+          );
+      if (success && mounted) {
+        context.pop();
+      }
+    }
+  }
+
+  void _titleEditingComplete() {
+    if (canSubmitTitle(title)) {
+      _node.nextFocus();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(projectsControllerProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(_id != null ? 'Edit Project'.hardcoded : 'New Project'.hardcoded),
         actions: [
           SaveButton(
-            onSave: !state.canSubmit
-                ? null
-                : () async {
-                    final success = await notifier.submit(id: _id);
-                    if (context.mounted && success) {
-                      context.pop();
-                    }
-                  },
-            isLoading: state.isSubmitting,
+            onSave: state.isLoading ? null : () => _submit(),
+            isLoading: state.isLoading,
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: ResponsiveCenter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Sizes.p4,
-              vertical: Sizes.p24,
-            ),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextField(
-                      controller: TextEditingController(text: state.title)
-                        ..selection = TextSelection.collapsed(offset: state.title.length),
-                      onChanged: notifier.titleChanged,
-                      labelText: 'Title'.hardcoded,
-                      errorText: state.titleError,
-                      enabled: !state.isSubmitting,
-                    ),
-                    gapH12,
-                    TextField(
-                      controller: TextEditingController(text: state.description)
-                        ..selection = TextSelection.collapsed(
-                          offset: state.description.length,
-                        ),
-                      onChanged: notifier.descriptionChanged,
-                      minLines: 4,
-                      maxLines: null,
-                      decoration: InputDecoration(labelText: 'Description'.hardcoded),
-                      enabled: !state.isSubmitting,
-                    ),
-                    gapH12,
-                    CustomTextField(
-                      controller: TextEditingController(text: state.repoUrl)
-                        ..selection = TextSelection.collapsed(
-                          offset: state.repoUrl.length,
-                        ),
-                      onChanged: notifier.repoChanged,
-                      labelText: 'Repository URL (optional)'.hardcoded,
-                      errorText: null,
-                      enabled: !state.isSubmitting,
-                    ),
-                    gapH12,
-                    CustomTextField(
-                      controller: TextEditingController(text: state.liveUrl)
-                        ..selection = TextSelection.collapsed(
-                          offset: state.liveUrl.length,
-                        ),
-                      onChanged: notifier.liveChanged,
-                      labelText: 'Live URL (optional)'.hardcoded,
-                      errorText: null,
-                      enabled: !state.isSubmitting,
-                    ),
-                    gapH12,
-                    CustomTextField(
-                      controller: TextEditingController(text: state.tags)
-                        ..selection = TextSelection.collapsed(offset: state.tags.length),
-                      onChanged: notifier.tagsChanged,
-                      labelText: 'Tags (comma separated)'.hardcoded,
-                      errorText: null,
-                      enabled: !state.isSubmitting,
-                    ),
-                  ],
+      body: ResponsiveScrollableCard(
+        child: FocusScope(
+          node: _node,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    labelText: 'Title'.hardcoded,
+                    enabled: !state.isLoading,
+                  ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => !_submitted ? null : titleErrorText(value ?? ''),
+                  autocorrect: false,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.text,
+                  keyboardAppearance: Brightness.light,
+                  onEditingComplete: () => _titleEditingComplete(),
                 ),
-              ),
+                gapH12,
+                TextFormField(
+                  controller: _descriptionController,
+                  minLines: 4,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    labelText: 'Description'.hardcoded,
+                    enabled: !state.isLoading,
+                  ),
+                  autocorrect: false,
+                  keyboardAppearance: Brightness.light,
+                  keyboardType: TextInputType.multiline,
+                ),
+                gapH12,
+                TextFormField(
+                  controller: _repoUrlController,
+                  decoration: InputDecoration(
+                    labelText: 'Repository URL (optional)'.hardcoded,
+                    enabled: !state.isLoading,
+                  ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => !_submitted ? null : repoUrlErrorText(value ?? ''),
+                  autocorrect: false,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.url,
+                  keyboardAppearance: Brightness.light,
+                  onEditingComplete: () => _node.nextFocus(),
+                ),
+                gapH12,
+                TextFormField(
+                  controller: _liveUrlController,
+                  decoration: InputDecoration(
+                    labelText: 'Live URL (optional)'.hardcoded,
+                    enabled: !state.isLoading,
+                  ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => !_submitted ? null : liveUrlErrorText(value ?? ''),
+                  autocorrect: false,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.url,
+                  keyboardAppearance: Brightness.light,
+                  onEditingComplete: () => _node.nextFocus(),
+                ),
+                gapH12,
+                TextFormField(
+                  controller: _tagsController,
+                  decoration: InputDecoration(
+                    labelText: 'Tags (comma separated)'.hardcoded,
+                    enabled: !state.isLoading,
+                  ),
+                  autocorrect: false,
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.text,
+                  keyboardAppearance: Brightness.light,
+                  onEditingComplete: () => _submit(),
+                ),
+              ],
             ),
           ),
         ),
