@@ -32,13 +32,13 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
 
   bool _current = false;
 
-  String get company => _companyController.text;
-  String get title => _titleController.text;
-  String get start => _startController.text;
-  String get end => _endController.text;
-  String get location => _locationController.text;
-  String get description => _descriptionController.text;
-  String get technologies => _technologiesController.text;
+  String get company => _companyController.text.trim();
+  String get title => _titleController.text.trim();
+  String get start => _startController.text.trim();
+  String get end => _endController.text.trim();
+  String get location => _locationController.text.trim();
+  String get description => _descriptionController.text.trim();
+  String get technologies => _technologiesController.text.trim();
 
   String? get _id => widget.item?.id;
 
@@ -49,14 +49,15 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
     super.initState();
     _companyController.text = widget.item?.company ?? '';
     _titleController.text = widget.item?.title ?? '';
-    _startController.text =
-        widget.item?.start == null ? '' : _formatDate(widget.item!.start!);
-    _endController.text =
-        widget.item?.end == null ? '' : _formatDate(widget.item!.end!);
+    _startController.text = widget.item?.start == null
+        ? ''
+        : _formatDate(widget.item!.start!);
+    _endController.text = widget.item?.end == null ? '' : _formatDate(widget.item!.end!);
     _locationController.text = widget.item?.location ?? '';
     _descriptionController.text = widget.item?.description ?? '';
-    _technologiesController.text = (widget.item?.technologies ?? const <String>[])
-        .join(', ');
+    _technologiesController.text = (widget.item?.technologies ?? const <String>[]).join(
+      ', ',
+    );
     _current = widget.item?.current ?? false;
   }
 
@@ -84,18 +85,18 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
           .toList();
       final data = Experience(
         id: _id,
-        company: company.trim(),
-        title: title.trim(),
-        location: location.trim().isEmpty ? null : location.trim(),
-        start: start.trim().isEmpty ? null : DateTime.parse(start.trim()),
-        end: _current ? null : (end.trim().isEmpty ? null : DateTime.parse(end.trim())),
+        company: company,
+        title: title,
+        location: location.isEmpty ? null : location,
+        start: start.isEmpty ? null : DateTime.parse(start),
+        end: _current ? null : (end.isEmpty ? null : DateTime.parse(end)),
         current: _current,
-        description: description.trim().isEmpty ? null : description.trim(),
+        description: description.isEmpty ? null : description,
         technologies: techs,
       );
-      final success =
-          _id == null ? await controller.createExperience(data) : await controller
-              .updateExperience(_id!, data);
+      final success = _id == null
+          ? await controller.createExperience(data)
+          : await controller.updateExperience(_id!, data);
       if (success && mounted) {
         context.pop();
       }
@@ -114,8 +115,7 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
     }
   }
 
-  String _formatDate(DateTime date) =>
-      date.toIso8601String().split('T').first;
+  String _formatDate(DateTime date) => date.toIso8601String().split('T').first;
 
   DateTime _initialDate(String value) =>
       DateTime.tryParse(value.trim()) ?? DateTime.now();
@@ -212,7 +212,9 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
                         keyboardType: TextInputType.text,
                         keyboardAppearance: Brightness.light,
                         readOnly: true,
-                        onTap: state.isLoading ? null : () => _selectDate(_startController),
+                        onTap: state.isLoading
+                            ? null
+                            : () => _selectDate(_startController),
                         onEditingComplete: () => _node.nextFocus(),
                       ),
                     ),

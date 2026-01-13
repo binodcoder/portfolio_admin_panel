@@ -30,11 +30,11 @@ class _CertificationFormState extends ConsumerState<CertificationForm>
 
   String _credentialId = '';
 
-  String get name => _nameController.text;
-  String get issuer => _issuerController.text;
-  String get issueDate => _issueDateController.text;
-  String get expiryDate => _expiryDateController.text;
-  String get credentialUrl => _credentialUrlController.text;
+  String get name => _nameController.text.trim();
+  String get issuer => _issuerController.text.trim();
+  String get issueDate => _issueDateController.text.trim();
+  String get expiryDate => _expiryDateController.text.trim();
+  String get credentialUrl => _credentialUrlController.text.trim();
 
   String? get _id => widget.item?.id;
 
@@ -72,12 +72,12 @@ class _CertificationFormState extends ConsumerState<CertificationForm>
       final controller = ref.read(certificationControllerProvider.notifier);
       final data = Certification(
         id: _id,
-        name: name.trim(),
-        issuer: issuer.trim().isEmpty ? null : issuer.trim(),
-        issueDate: issueDate.trim().isEmpty ? null : DateTime.parse(issueDate.trim()),
-        expiryDate: expiryDate.trim().isEmpty ? null : DateTime.parse(expiryDate.trim()),
-        credentialId: _credentialId.trim().isEmpty ? null : _credentialId.trim(),
-        credentialUrl: credentialUrl.trim().isEmpty ? null : credentialUrl.trim(),
+        name: name,
+        issuer: issuer.isEmpty ? null : issuer,
+        issueDate: issueDate.isEmpty ? null : DateTime.parse(issueDate),
+        expiryDate: expiryDate.isEmpty ? null : DateTime.parse(expiryDate),
+        credentialId: _credentialId.isEmpty ? null : _credentialId,
+        credentialUrl: credentialUrl.isEmpty ? null : credentialUrl,
       );
       final success = _id == null
           ? await controller.createCertification(data)
@@ -112,11 +112,11 @@ class _CertificationFormState extends ConsumerState<CertificationForm>
     }
   }
 
-  // void _credentialUrlEditingComplete() {
-  //   if (canSubmitCredentialUrl(credentialUrl)) {
-  //     _node.nextFocus();
-  //   }
-  // }
+  void _credentialUrlEditingComplete() {
+    if (canSubmitCredentialUrl(credentialUrl)) {
+      _submit();
+    }
+  }
 
   String _formatDate(DateTime date) => date.toIso8601String().split('T').first;
 
@@ -237,7 +237,7 @@ class _CertificationFormState extends ConsumerState<CertificationForm>
                   textInputAction: TextInputAction.done,
                   keyboardType: TextInputType.url,
                   keyboardAppearance: Brightness.light,
-                  onEditingComplete: () => _submit(),
+                  onEditingComplete: () => _credentialUrlEditingComplete(),
                 ),
               ],
             ),

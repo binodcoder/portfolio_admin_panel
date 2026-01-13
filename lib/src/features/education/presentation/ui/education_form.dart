@@ -30,7 +30,14 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
   final _gpaController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  String get institution => _institutionController.text;
+  String get institution => _institutionController.text.trim();
+  String get degree => _degreeController.text.trim();
+  String get field => _fieldController.text.trim();
+  String get start => _startController.text.trim();
+  String get end => _endController.text.trim();
+  String get location => _locationController.text.trim();
+  String get gpa => _gpaController.text.trim();
+  String get description => _descriptionController.text.trim();
 
   String? get _id => widget.item?.id;
 
@@ -42,10 +49,10 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
     _institutionController.text = widget.item?.institution ?? '';
     _degreeController.text = widget.item?.degree ?? '';
     _fieldController.text = widget.item?.field ?? '';
-    _startController.text =
-        widget.item?.start == null ? '' : _formatDate(widget.item!.start!);
-    _endController.text =
-        widget.item?.end == null ? '' : _formatDate(widget.item!.end!);
+    _startController.text = widget.item?.start == null
+        ? ''
+        : _formatDate(widget.item!.start!);
+    _endController.text = widget.item?.end == null ? '' : _formatDate(widget.item!.end!);
     _locationController.text = widget.item?.location ?? '';
     _gpaController.text = widget.item?.gpa ?? '';
     _descriptionController.text = widget.item?.description ?? '';
@@ -71,28 +78,18 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
       final controller = ref.read(educationControllerProvider.notifier);
       final data = Education(
         id: _id,
-        institution: _institutionController.text.trim(),
-        degree: _degreeController.text.trim().isEmpty
-            ? null
-            : _degreeController.text.trim(),
-        field: _fieldController.text.trim().isEmpty ? null : _fieldController.text.trim(),
-        start: _startController.text.trim().isEmpty
-            ? null
-            : DateTime.parse(_startController.text.trim()),
-        end: _endController.text.trim().isEmpty
-            ? null
-            : DateTime.parse(_endController.text.trim()),
-        location: _locationController.text.trim().isEmpty
-            ? null
-            : _locationController.text.trim(),
-        gpa: _gpaController.text.trim().isEmpty ? null : _gpaController.text.trim(),
-        description: _descriptionController.text.trim().isEmpty
-            ? null
-            : _descriptionController.text.trim(),
+        institution: institution,
+        degree: degree.isEmpty ? null : degree,
+        field: field.isEmpty ? null : field,
+        start: start.isEmpty ? null : DateTime.parse(start),
+        end: end.isEmpty ? null : DateTime.parse(end),
+        location: location.isEmpty ? null : location,
+        gpa: gpa.isEmpty ? null : gpa,
+        description: description.isEmpty ? null : description,
       );
-      final success =
-          _id == null ? await controller.createEducation(data) : await controller
-              .updateEducation(_id!, data);
+      final success = _id == null
+          ? await controller.createEducation(data)
+          : await controller.updateEducation(_id!, data);
       if (success && mounted) {
         context.pop();
       }
@@ -105,8 +102,49 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
     }
   }
 
-  String _formatDate(DateTime date) =>
-      date.toIso8601String().split('T').first;
+  void _degreeEditingComplete() {
+    if (canSubmitDegree(degree)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _fieldEditingComplete() {
+    if (canSubmitField(field)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _startEditingComplete() {
+    if (canSubmitStart(start)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _endEditingComplete() {
+    if (canSubmitEnd(end)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _locationEditingComplete() {
+    if (canSubmitLocation(location)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _gpaEditingComplete() {
+    if (canSubmitGpa(gpa)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _descriptionEditingComplete() {
+    if (canSubmitDescription(description)) {
+      _submit();
+    }
+  }
+
+  String _formatDate(DateTime date) => date.toIso8601String().split('T').first;
 
   DateTime _initialDate(String value) =>
       DateTime.tryParse(value.trim()) ?? DateTime.now();
@@ -169,11 +207,14 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
                           labelText: 'Degree (e.g., BSc)'.hardcoded,
                           enabled: !state.isLoading,
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) =>
+                            !_submitted ? null : degreeErrorText(value ?? ''),
                         autocorrect: false,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         keyboardAppearance: Brightness.light,
-                        onEditingComplete: () => _node.nextFocus(),
+                        onEditingComplete: () => _degreeEditingComplete(),
                       ),
                     ),
                     gapW12,
@@ -184,11 +225,15 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
                           labelText: 'Field of study'.hardcoded,
                           enabled: !state.isLoading,
                         ),
+
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) =>
+                            !_submitted ? null : fieldErrorText(value ?? ''),
                         autocorrect: false,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         keyboardAppearance: Brightness.light,
-                        onEditingComplete: () => _node.nextFocus(),
+                        onEditingComplete: () => _fieldEditingComplete(),
                       ),
                     ),
                   ],
@@ -211,8 +256,10 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
                         keyboardType: TextInputType.text,
                         keyboardAppearance: Brightness.light,
                         readOnly: true,
-                        onTap: state.isLoading ? null : () => _selectDate(_startController),
-                        onEditingComplete: () => _node.nextFocus(),
+                        onTap: state.isLoading
+                            ? null
+                            : () => _selectDate(_startController),
+                        onEditingComplete: () => _startEditingComplete(),
                       ),
                     ),
                     gapW12,
@@ -224,14 +271,15 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
                           enabled: !state.isLoading,
                         ),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) => !_submitted ? null : endErrorText(value ?? ''),
+                        validator: (value) =>
+                            !_submitted ? null : endErrorText(value ?? ''),
                         autocorrect: false,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         keyboardAppearance: Brightness.light,
                         readOnly: true,
                         onTap: state.isLoading ? null : () => _selectDate(_endController),
-                        onEditingComplete: () => _node.nextFocus(),
+                        onEditingComplete: () => _endEditingComplete(),
                       ),
                     ),
                   ],
@@ -246,11 +294,14 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
                           labelText: 'Location (optional)'.hardcoded,
                           enabled: !state.isLoading,
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) =>
+                            !_submitted ? null : locationErrorText(value ?? ''),
                         autocorrect: false,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         keyboardAppearance: Brightness.light,
-                        onEditingComplete: () => _node.nextFocus(),
+                        onEditingComplete: () => _locationEditingComplete(),
                       ),
                     ),
                     gapW12,
@@ -261,11 +312,14 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
                           labelText: 'GPA (optional)'.hardcoded,
                           enabled: !state.isLoading,
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) =>
+                            !_submitted ? null : gpaErrorText(value ?? ''),
                         autocorrect: false,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         keyboardAppearance: Brightness.light,
-                        onEditingComplete: () => _node.nextFocus(),
+                        onEditingComplete: () => _gpaEditingComplete(),
                       ),
                     ),
                   ],
@@ -279,9 +333,13 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
                     labelText: 'Description (optional)'.hardcoded,
                     enabled: !state.isLoading,
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) =>
+                      !_submitted ? null : descriptionErrorText(value ?? ''),
                   autocorrect: false,
                   keyboardAppearance: Brightness.light,
                   keyboardType: TextInputType.multiline,
+                  onEditingComplete: () => _descriptionEditingComplete(),
                 ),
               ],
             ),

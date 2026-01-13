@@ -46,11 +46,9 @@ class _AboutFormState extends ConsumerState<AboutForm> with AboutValidators {
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(aboutControllerProvider.notifier);
       final data = About(id: _id, value: aboutText.trim());
-      final success =
-          _id == null ? await controller.createAbout(data) : await controller.updateAbout(
-            _id!,
-            data,
-          );
+      final success = _id == null
+          ? await controller.createAbout(data)
+          : await controller.updateAbout(_id!, data);
       if (success && mounted) {
         context.pop();
       }

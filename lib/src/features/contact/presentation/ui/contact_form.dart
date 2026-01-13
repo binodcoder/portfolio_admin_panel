@@ -29,6 +29,11 @@ class _ContactFormState extends ConsumerState<ContactForm> with ContactValidator
 
   bool _openToWork = true;
 
+  String get email => _emailController.text.trim();
+  String get phone => _phoneController.text.trim();
+  String get location => _locationController.text.trim();
+  String get website => _websiteController.text.trim();
+  String get message => _messageController.text.trim();
   String? get _id => widget.item?.id;
 
   var _submitted = false;
@@ -61,28 +66,16 @@ class _ContactFormState extends ConsumerState<ContactForm> with ContactValidator
       final controller = ref.read(contactControllerProvider.notifier);
       final data = ContactInfo(
         id: _id,
-        email: _emailController.text.trim().isEmpty
-            ? null
-            : _emailController.text.trim(),
-        phone: _phoneController.text.trim().isEmpty
-            ? null
-            : _phoneController.text.trim(),
-        location: _locationController.text.trim().isEmpty
-            ? null
-            : _locationController.text.trim(),
-        website: _websiteController.text.trim().isEmpty
-            ? null
-            : _websiteController.text.trim(),
+        email: email.isEmpty ? null : email,
+        phone: phone.isEmpty ? null : phone,
+        location: location.isEmpty ? null : location,
+        website: website.isEmpty ? null : website,
         openToWork: _openToWork,
-        message: _messageController.text.trim().isEmpty
-            ? null
-            : _messageController.text.trim(),
+        message: message.isEmpty ? null : message,
       );
-      final success =
-          _id == null ? await controller.createContact(data) : await controller.updateContact(
-            _id!,
-            data,
-          );
+      final success = _id == null
+          ? await controller.createContact(data)
+          : await controller.updateContact(_id!, data);
       if (success && mounted) {
         context.pop();
       }
@@ -117,8 +110,7 @@ class _ContactFormState extends ConsumerState<ContactForm> with ContactValidator
                     enabled: !state.isLoading,
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) =>
-                      !_submitted ? null : emailErrorText(value ?? ''),
+                  validator: (value) => !_submitted ? null : emailErrorText(value ?? ''),
                   autocorrect: false,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.emailAddress,
@@ -183,9 +175,9 @@ class _ContactFormState extends ConsumerState<ContactForm> with ContactValidator
                   children: [
                     Switch(
                       value: _openToWork,
-                      onChanged: state.isLoading ? null : (value) => setState(
-                        () => _openToWork = value,
-                      ),
+                      onChanged: state.isLoading
+                          ? null
+                          : (value) => setState(() => _openToWork = value),
                     ),
                     gapW8,
                     Text('Open to work'.hardcoded),
