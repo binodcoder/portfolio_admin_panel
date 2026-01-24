@@ -32,7 +32,7 @@ class _SocialFormState extends ConsumerState<SocialForm> with SocialLinkValidato
   String get platform => _platformController.text;
   String get url => _urlController.text;
 
-  String? get _id => widget.item?.id;
+  SocialLink? get socialLink => widget.item;
 
   var _submitted = false;
 
@@ -55,9 +55,7 @@ class _SocialFormState extends ConsumerState<SocialForm> with SocialLinkValidato
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(socialControllerProvider.notifier);
-      final success = await controller.createSocial(
-        SocialLink(platform: platform, url: url),
-      );
+      final success = await controller.createSocial(platform: platform, url: url);
       if (success && mounted) {
         context.pop();
       }
@@ -83,7 +81,7 @@ class _SocialFormState extends ConsumerState<SocialForm> with SocialLinkValidato
     final state = ref.watch(socialControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_id != null ? 'Edit Link'.hardcoded : 'New Link'.hardcoded),
+        title: Text(socialLink != null ? 'Edit Link'.hardcoded : 'New Link'.hardcoded),
         actions: [
           SaveButton(
             onSave: !state.isLoading ? null : () => _submit(),

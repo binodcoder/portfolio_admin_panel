@@ -8,15 +8,17 @@ class IntroController extends StateNotifier<AsyncValue> {
 
   final IntroRepository introRepository;
 
-  Future<bool> createIntro(Intro intro) async {
+  Future<bool> createIntro({required String introText}) async {
+    final intro = Intro(value: introText);
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => introRepository.create(intro));
     return state.hasError == false;
   }
 
-  Future<bool> updateIntro(String id, Intro data) async {
+  Future<bool> updateIntro({required Intro data, required String introText}) async {
+    final updatedData = data.copyWith(value: introText);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => introRepository.updateIntro(id, data));
+    state = await AsyncValue.guard(() => introRepository.updateIntro(updatedData));
     return state.hasError == false;
   }
 

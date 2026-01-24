@@ -39,7 +39,7 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
   String get gpa => _gpaController.text.trim();
   String get description => _descriptionController.text.trim();
 
-  String? get _id => widget.item?.id;
+  Education? get education => widget.item;
 
   var _submitted = false;
 
@@ -76,20 +76,29 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(educationControllerProvider.notifier);
-      final data = Education(
-        id: _id,
-        institution: institution,
-        degree: degree.isEmpty ? null : degree,
-        field: field.isEmpty ? null : field,
-        start: start.isEmpty ? null : DateTime.parse(start),
-        end: end.isEmpty ? null : DateTime.parse(end),
-        location: location.isEmpty ? null : location,
-        gpa: gpa.isEmpty ? null : gpa,
-        description: description.isEmpty ? null : description,
-      );
-      final success = _id == null
-          ? await controller.createEducation(data)
-          : await controller.updateEducation(_id!, data);
+
+      final success = education == null
+          ? await controller.createEducation(
+              institution: institution,
+              degree: degree,
+              field: field,
+              start: start,
+              end: end,
+              location: location,
+              gpa: gpa,
+              description: description,
+            )
+          : await controller.updateEducation(
+              data: education!,
+              institution: institution,
+              degree: degree,
+              field: field,
+              start: start,
+              end: end,
+              location: location,
+              gpa: gpa,
+              description: description,
+            );
       if (success && mounted) {
         context.pop();
       }
@@ -166,7 +175,9 @@ class _EducationFormState extends ConsumerState<EducationForm> with EducationVal
     final state = ref.watch(educationControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_id != null ? 'Edit Education'.hardcoded : 'New Education'.hardcoded),
+        title: Text(
+          education != null ? 'Edit Education'.hardcoded : 'New Education'.hardcoded,
+        ),
         actions: [
           SaveButton(
             onSave: state.isLoading ? null : () => _submit(),

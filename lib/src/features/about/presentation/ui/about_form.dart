@@ -24,7 +24,8 @@ class _AboutFormState extends ConsumerState<AboutForm> with AboutValidators {
   final _aboutController = TextEditingController();
 
   String get aboutText => _aboutController.text;
-  String? get _id => widget.about?.id;
+
+  About? get about => widget.about;
 
   var _submitted = false;
 
@@ -45,10 +46,10 @@ class _AboutFormState extends ConsumerState<AboutForm> with AboutValidators {
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(aboutControllerProvider.notifier);
-      final data = About(id: _id, value: aboutText.trim());
-      final success = _id == null
-          ? await controller.createAbout(data)
-          : await controller.updateAbout(_id!, data);
+
+      final success = about == null
+          ? await controller.createAbout(value: aboutText)
+          : await controller.updateAbout(data: about!, value: aboutText);
       if (success && mounted) {
         context.pop();
       }
@@ -66,7 +67,7 @@ class _AboutFormState extends ConsumerState<AboutForm> with AboutValidators {
     final state = ref.watch(aboutControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_id != null ? 'Edit About'.hardcoded : 'New About'.hardcoded),
+        title: Text(about != null ? 'Edit About'.hardcoded : 'New About'.hardcoded),
         actions: [
           SaveButton(
             onSave: state.isLoading ? null : () => _submit(),

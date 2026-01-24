@@ -14,8 +14,7 @@ class ContactRepository {
   );
 
   Future<void> create(ContactInfo data) => _collection.add(data.toMap());
-  Future<void> update(String id, ContactInfo data) =>
-      _collection.doc(id).update(data.toMap());
+  Future<void> update(ContactInfo data) => _collection.doc(data.id).update(data.toMap());
   Future<void> delete(String id) => _collection.doc(id).delete();
 }
 

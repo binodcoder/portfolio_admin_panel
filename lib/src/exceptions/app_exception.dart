@@ -35,34 +35,3 @@ class UserNotSignedInException extends AppException {
         'The operation can\'t be completed (not signed in)'.hardcoded,
       );
 }
-
-/// Cart
-class CartSyncFailedException extends AppException {
-  CartSyncFailedException()
-    : super(
-        'cart-sync-failed',
-        'An error has occurred while updating the shopping cart'.hardcoded,
-      );
-}
-
-/// Checkout
-class PaymentFailureEmptyCartException extends AppException {
-  PaymentFailureEmptyCartException()
-    : super(
-        'payment-failure-empty-cart',
-        'Can\'t place an order if the cart is empty'.hardcoded,
-      );
-}
-
-// Products
-class NullProductImageUrlException extends AppException {
-  NullProductImageUrlException()
-    : super('user-not-signed-in', 'Can\'t upload a product with a null image'.hardcoded);
-}
-
-/// Orders
-class ParseOrderFailureException extends AppException {
-  ParseOrderFailureException(this.status)
-    : super('parse-order-failure', 'Could not parse order status: $status'.hardcoded);
-  final String status;
-}

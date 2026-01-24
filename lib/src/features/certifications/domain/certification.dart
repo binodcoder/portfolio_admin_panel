@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Certification {
   const Certification({
     this.id,
@@ -39,4 +40,24 @@ class Certification {
     credentialId: map['credentialId']?.toString(),
     credentialUrl: map['credentialUrl']?.toString(),
   );
+
+  Certification copyWith({
+    String? id,
+    String? name,
+    String? issuer,
+    DateTime? issueDate,
+    DateTime? expiryDate,
+    String? credentialId,
+    String? credentialUrl,
+  }) {
+    return Certification(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      issuer: issuer ?? this.issuer,
+      issueDate: issueDate ?? this.issueDate,
+      expiryDate: expiryDate ?? this.expiryDate,
+      credentialId: credentialId ?? this.credentialId,
+      credentialUrl: credentialUrl ?? this.credentialUrl,
+    );
+  }
 }

@@ -1,4 +1,4 @@
-import 'package:riverpod/legacy.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:portfolio_admin_panel/src/features/contact/data/contact_repository.dart';
 import 'package:portfolio_admin_panel/src/features/contact/domain/contact_info.dart';
@@ -8,15 +8,45 @@ class ContactController extends StateNotifier<AsyncValue> {
 
   final ContactRepository contactRepository;
 
-  Future<bool> createContact(ContactInfo data) async {
+  Future<bool> createContact({
+    required String email,
+    required String phone,
+    required String location,
+    required String website,
+    required bool openToWork,
+    required String message,
+  }) async {
+    final data = ContactInfo(
+      email: email,
+      phone: phone,
+      location: location,
+      website: website,
+      openToWork: openToWork,
+      message: message,
+    );
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => contactRepository.create(data));
     return state.hasError == false;
   }
 
-  Future<bool> updateContact(String id, ContactInfo data) async {
+  Future<bool> updateContact({
+    required ContactInfo data,
+    required String email,
+    required String phone,
+    required String location,
+    required String website,
+    required bool openToWork,
+    required String message,
+  }) async {
+    final updatedData = data.copyWith(
+      phone: phone,
+      location: location,
+      website: website,
+      openToWork: openToWork,
+      message: message,
+    );
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => contactRepository.update(id, data));
+    state = await AsyncValue.guard(() => contactRepository.update(updatedData));
     return state.hasError == false;
   }
 

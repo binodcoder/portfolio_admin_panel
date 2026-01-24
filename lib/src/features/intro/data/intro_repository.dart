@@ -18,8 +18,8 @@ class IntroRepository {
     );
   }
 
-  Future<void> updateIntro(String id, Intro data) async {
-    return _collection.doc(id).update(data.toMap());
+  Future<void> updateIntro(Intro data) async {
+    return _collection.doc(data.id).update(data.toMap());
   }
 
   Future<void> deleteIntro(String id) {

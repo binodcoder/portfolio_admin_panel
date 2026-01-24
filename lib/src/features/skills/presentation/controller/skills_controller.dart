@@ -1,4 +1,4 @@
-import 'package:riverpod/legacy.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:portfolio_admin_panel/src/features/skills/data/skills_repository.dart';
 import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
@@ -8,15 +8,28 @@ class SkillsController extends StateNotifier<AsyncValue> {
 
   final SkillsRepository skillsRepository;
 
-  Future<bool> createSkill(Skill data) async {
+  Future<bool> createSkill({
+    required String name,
+    required double level,
+    required String category,
+  }) async {
+    final levelValue = level.round();
+    final data = Skill(name: name, level: levelValue, category: category);
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => skillsRepository.create(data));
     return state.hasError == false;
   }
 
-  Future<bool> updateSkill(String id, Skill data) async {
+  Future<bool> updateSkill({
+    required Skill data,
+    required String name,
+    required double level,
+    required String category,
+  }) async {
+    final levelValue = level.round();
+    final updatedData = data.copyWith(name: name, level: levelValue, category: category);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => skillsRepository.update(id, data));
+    state = await AsyncValue.guard(() => skillsRepository.update(updatedData));
     return state.hasError == false;
   }
 

@@ -8,15 +8,17 @@ class AboutController extends StateNotifier<AsyncValue> {
 
   final AboutRepository aboutRepository;
 
-  Future<bool> createAbout(About data) async {
+  Future<bool> createAbout({required String value}) async {
+    final data = About(value: value);
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => aboutRepository.create(data));
     return state.hasError == false;
   }
 
-  Future<bool> updateAbout(String id, About data) async {
+  Future<bool> updateAbout({required About data, required String value}) async {
+    final updatedData = data.copyWith(value: value);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => aboutRepository.update(id, data));
+    state = await AsyncValue.guard(() => aboutRepository.update(updatedData));
     return state.hasError == false;
   }
 

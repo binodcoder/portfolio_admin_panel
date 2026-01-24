@@ -14,8 +14,7 @@ class ProjectsRepository {
   );
 
   Future<void> create(Project data) => _collection.add(data.toMap());
-  Future<void> update(String id, Project data) =>
-      _collection.doc(id).update(data.toMap());
+  Future<void> update(Project data) => _collection.doc(data.id).update(data.toMap());
   Future<void> delete(String id) => _collection.doc(id).delete();
 }
 

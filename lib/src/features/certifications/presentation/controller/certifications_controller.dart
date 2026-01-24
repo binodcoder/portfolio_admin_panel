@@ -9,15 +9,50 @@ class CertificationsController extends StateNotifier<AsyncValue> {
 
   final CertificationsRepository certificationsRepository;
 
-  Future<bool> createCertification(Certification data) async {
+  Future<bool> createCertification({
+    required String name,
+    required String issuer,
+    required String issueDate,
+    required String expiryDate,
+    required String credentialId,
+    required String credentialUrl,
+  }) async {
+    final issueDateValue = DateTime.parse(issueDate);
+    final expiryDateValue = DateTime.parse(expiryDate);
+    final data = Certification(
+      name: name,
+      issuer: issuer,
+      issueDate: issueDateValue,
+      expiryDate: expiryDateValue,
+      credentialId: credentialId,
+      credentialUrl: credentialUrl,
+    );
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => certificationsRepository.create(data));
     return state.hasError == false;
   }
 
-  Future<bool> updateCertification(String id, Certification data) async {
+  Future<bool> updateCertification({
+    required Certification data,
+    required String name,
+    required String issuer,
+    required String issueDate,
+    required String expiryDate,
+    required String credentialId,
+    required String credentialUrl,
+  }) async {
+    final issueDateValue = DateTime.parse(issueDate);
+    final expiryDateValue = DateTime.parse(expiryDate);
+    final updatedData = data.copyWith(
+      name: name,
+      issuer: issuer,
+      issueDate: issueDateValue,
+      expiryDate: expiryDateValue,
+      credentialId: credentialId,
+      credentialUrl: credentialUrl,
+    );
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => certificationsRepository.update(id, data));
+    state = await AsyncValue.guard(() => certificationsRepository.update(updatedData));
     return state.hasError == false;
   }
 

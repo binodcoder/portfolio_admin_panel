@@ -20,8 +20,8 @@ class AboutRepository {
     return _collection.doc(id).snapshots().map((doc) => About.fromMap(doc.data()!));
   }
 
-  Future<void> update(String id, About data) async {
-    return _collection.doc(id).update(data.toMap());
+  Future<void> update(About data) async {
+    return _collection.doc(data.id).update(data.toMap());
   }
 
   Future<void> delete(String id) async {

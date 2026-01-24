@@ -27,7 +27,7 @@ class _IntroFormState extends ConsumerState<IntroForm> with IntroValidators {
   final _introController = TextEditingController();
 
   String get introText => _introController.text.trim();
-  String? get _id => widget.intro?.id;
+  Intro? get intro => widget.intro;
 
   var _submitted = false;
 
@@ -48,10 +48,10 @@ class _IntroFormState extends ConsumerState<IntroForm> with IntroValidators {
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(introControllerProvider.notifier);
-      final data = Intro(id: _id, value: introText);
-      final success = _id == null
-          ? await controller.createIntro(data)
-          : await controller.updateIntro(_id!, data);
+
+      final success = intro == null
+          ? await controller.createIntro(introText: introText)
+          : await controller.updateIntro(data: intro!, introText: introText);
       if (success && mounted) {
         context.pop();
       }
@@ -69,7 +69,7 @@ class _IntroFormState extends ConsumerState<IntroForm> with IntroValidators {
     final state = ref.watch(introControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text((_id != null) ? 'Edit Intro'.hardcoded : 'New Intro'.hardcoded),
+        title: Text((intro != null) ? 'Edit Intro'.hardcoded : 'New Intro'.hardcoded),
         actions: [
           SaveButton(
             onSave: state.isLoading ? null : () => _submit(),

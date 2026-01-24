@@ -34,7 +34,7 @@ class _ContactFormState extends ConsumerState<ContactForm> with ContactValidator
   String get location => _locationController.text.trim();
   String get website => _websiteController.text.trim();
   String get message => _messageController.text.trim();
-  String? get _id => widget.item?.id;
+  ContactInfo? get contactInfo => widget.item;
 
   var _submitted = false;
 
@@ -64,18 +64,25 @@ class _ContactFormState extends ConsumerState<ContactForm> with ContactValidator
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(contactControllerProvider.notifier);
-      final data = ContactInfo(
-        id: _id,
-        email: email.isEmpty ? null : email,
-        phone: phone.isEmpty ? null : phone,
-        location: location.isEmpty ? null : location,
-        website: website.isEmpty ? null : website,
-        openToWork: _openToWork,
-        message: message.isEmpty ? null : message,
-      );
-      final success = _id == null
-          ? await controller.createContact(data)
-          : await controller.updateContact(_id!, data);
+
+      final success = contactInfo == null
+          ? await controller.createContact(
+              email: email,
+              phone: phone,
+              location: location,
+              website: website,
+              openToWork: _openToWork,
+              message: message,
+            )
+          : await controller.updateContact(
+              data: contactInfo!,
+              email: email,
+              phone: phone,
+              location: location,
+              website: website,
+              openToWork: _openToWork,
+              message: message,
+            );
       if (success && mounted) {
         context.pop();
       }
@@ -87,7 +94,9 @@ class _ContactFormState extends ConsumerState<ContactForm> with ContactValidator
     final state = ref.watch(contactControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_id != null ? 'Edit Contact'.hardcoded : 'New Contact'.hardcoded),
+        title: Text(
+          contactInfo != null ? 'Edit Contact'.hardcoded : 'New Contact'.hardcoded,
+        ),
         actions: [
           SaveButton(
             onSave: state.isLoading ? null : () => _submit(),

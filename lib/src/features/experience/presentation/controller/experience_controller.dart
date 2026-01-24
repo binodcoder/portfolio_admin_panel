@@ -9,15 +9,69 @@ class ExperienceController extends StateNotifier<AsyncValue> {
 
   final ExperienceRepository experienceRepository;
 
-  Future<bool> createExperience(Experience data) async {
+  Future<bool> createExperience({
+    required String company,
+    required String title,
+    required String location,
+    required String start,
+    required String end,
+    required bool current,
+    required String description,
+    required String technologies,
+  }) async {
+    final techs = technologies
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    final startValue = DateTime.parse(start);
+    final endValue = DateTime.parse(end);
+
+    final data = Experience(
+      company: company,
+      title: title,
+      location: location,
+      start: startValue,
+      end: endValue,
+      current: current,
+      description: description,
+      technologies: techs,
+    );
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => experienceRepository.create(data));
     return state.hasError == false;
   }
 
-  Future<bool> updateExperience(String id, Experience data) async {
+  Future<bool> updateExperience({
+    required Experience data,
+    required String company,
+    required String title,
+    required String location,
+    required String start,
+    required String end,
+    required bool current,
+    required String description,
+    required String technologies,
+  }) async {
+    final techs = technologies
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    final startValue = DateTime.parse(start);
+    final endValue = DateTime.parse(end);
+    final updatedData = data.copyWith(
+      company: company,
+      title: title,
+      location: location,
+      start: startValue,
+      end: endValue,
+      current: current,
+      description: description,
+      technologies: techs,
+    );
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => experienceRepository.update(id, data));
+    state = await AsyncValue.guard(() => experienceRepository.update(updatedData));
     return state.hasError == false;
   }
 

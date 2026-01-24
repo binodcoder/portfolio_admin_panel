@@ -8,15 +8,58 @@ class EducationController extends StateNotifier<AsyncValue> {
 
   final EducationRepository educationRepository;
 
-  Future<bool> createEducation(Education data) async {
+  Future<bool> createEducation({
+    required String institution,
+    required String degree,
+    required String field,
+    required String start,
+    required String end,
+    required String location,
+    required String gpa,
+    required String description,
+  }) async {
+    final startValue = DateTime.parse(start);
+    final endValue = DateTime.parse(end);
+    final data = Education(
+      institution: institution,
+      degree: degree,
+      field: field,
+      start: startValue,
+      end: endValue,
+      location: location,
+      gpa: gpa,
+      description: description,
+    );
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => educationRepository.create(data));
     return state.hasError == false;
   }
 
-  Future<bool> updateEducation(String id, Education data) async {
+  Future<bool> updateEducation({
+    required Education data,
+    required String institution,
+    required String degree,
+    required String field,
+    required String start,
+    required String end,
+    required String location,
+    required String gpa,
+    required String description,
+  }) async {
+    final startValue = DateTime.parse(start);
+    final endValue = DateTime.parse(end);
+    final updatedData = data.copyWith(
+      institution: institution,
+      degree: degree,
+      field: field,
+      start: startValue,
+      end: endValue,
+      location: location,
+      gpa: gpa,
+      description: description,
+    );
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => educationRepository.update(id, data));
+    state = await AsyncValue.guard(() => educationRepository.update(updatedData));
     return state.hasError == false;
   }
 

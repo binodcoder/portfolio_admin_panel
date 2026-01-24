@@ -27,6 +27,18 @@ mixin ExperienceValidators {
     return trimmed.isEmpty || _isValidDate(trimmed);
   }
 
+  bool canSubmitLocation(String value) {
+    return nonEmpty.isValid(value.trim());
+  }
+
+  bool canSubmitDescription(String value) {
+    return nonEmpty.isValid(value.trim());
+  }
+
+  bool canSubmitTechnology(String value) {
+    return nonEmpty.isValid(value.trim());
+  }
+
   String? companyErrorText(String value) {
     if (value.trim().isEmpty) {
       return 'Enter company'.hardcoded;
@@ -62,6 +74,27 @@ mixin ExperienceValidators {
     }
     if (!_isValidDate(trimmed)) {
       return 'Select a valid date'.hardcoded;
+    }
+    return null;
+  }
+
+  String? locationErrorText(String value) {
+    if (value.trim().isEmpty) {
+      return 'Enter location'.hardcoded;
+    }
+    return null;
+  }
+
+  String? descriptionErrorText(String value) {
+    if (value.trim().isEmpty) {
+      return 'Enter description'.hardcoded;
+    }
+    return null;
+  }
+
+  String? technologyErrorText(String value) {
+    if (value.trim().isEmpty) {
+      return 'Enter technology'.hardcoded;
     }
     return null;
   }

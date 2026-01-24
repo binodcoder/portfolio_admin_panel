@@ -28,9 +28,12 @@ class _ProjectFormState extends ConsumerState<ProjectForm> with ProjectValidator
   final _tagsController = TextEditingController();
 
   String get title => _titleController.text;
+  String get description => _descriptionController.text;
+  String get repoUrl => _repoUrlController.text;
+  String get liveUrl => _liveUrlController.text;
   String get tags => _tagsController.text;
 
-  String? get _id => widget.item?.id;
+  Project? get project => widget.item;
 
   var _submitted = false;
 
@@ -59,26 +62,23 @@ class _ProjectFormState extends ConsumerState<ProjectForm> with ProjectValidator
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(projectsControllerProvider.notifier);
-      final tagList = tags
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-      final data = Project(
-        id: _id,
-        title: title.trim(),
-        description: _descriptionController.text.trim().isEmpty
-            ? null
-            : _descriptionController.text.trim(),
-        repoUrl: _repoUrlController.text.trim().isEmpty ? null : _repoUrlController.text.trim(),
-        liveUrl: _liveUrlController.text.trim().isEmpty ? null : _liveUrlController.text.trim(),
-        tags: tagList,
-      );
-      final success =
-          _id == null ? await controller.createProject(data) : await controller.updateProject(
-            _id!,
-            data,
-          );
+
+      final success = project == null
+          ? await controller.createProject(
+              title: title,
+              description: description,
+              repoUrl: repoUrl,
+              liveUrl: liveUrl,
+              tags: tags,
+            )
+          : await controller.updateProject(
+              data: project!,
+              title: title,
+              description: description,
+              repoUrl: repoUrl,
+              liveUrl: liveUrl,
+              tags: tags,
+            );
       if (success && mounted) {
         context.pop();
       }
@@ -96,7 +96,7 @@ class _ProjectFormState extends ConsumerState<ProjectForm> with ProjectValidator
     final state = ref.watch(projectsControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_id != null ? 'Edit Project'.hardcoded : 'New Project'.hardcoded),
+        title: Text(project != null ? 'Edit Project'.hardcoded : 'New Project'.hardcoded),
         actions: [
           SaveButton(
             onSave: state.isLoading ? null : () => _submit(),
@@ -147,7 +147,8 @@ class _ProjectFormState extends ConsumerState<ProjectForm> with ProjectValidator
                     enabled: !state.isLoading,
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) => !_submitted ? null : repoUrlErrorText(value ?? ''),
+                  validator: (value) =>
+                      !_submitted ? null : repoUrlErrorText(value ?? ''),
                   autocorrect: false,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.url,
@@ -162,7 +163,8 @@ class _ProjectFormState extends ConsumerState<ProjectForm> with ProjectValidator
                     enabled: !state.isLoading,
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) => !_submitted ? null : liveUrlErrorText(value ?? ''),
+                  validator: (value) =>
+                      !_submitted ? null : liveUrlErrorText(value ?? ''),
                   autocorrect: false,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.url,

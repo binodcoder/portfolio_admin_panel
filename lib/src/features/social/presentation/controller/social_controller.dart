@@ -8,15 +8,21 @@ class SocialController extends StateNotifier<AsyncValue> {
 
   final SocialRepository socialRepository;
 
-  Future<bool> createSocial(SocialLink data) async {
+  Future<bool> createSocial({required String platform, required String url}) async {
+    final data = SocialLink(platform: platform, url: url);
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => socialRepository.create(data));
     return state.hasError == false;
   }
 
-  Future<bool> updateSocial(String id, SocialLink data) async {
+  Future<bool> updateSocial({
+    required SocialLink data,
+    required String platform,
+    required String url,
+  }) async {
+    final updatedData = data.copyWith(platform: platform, url: url);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => socialRepository.update(id, data));
+    state = await AsyncValue.guard(() => socialRepository.update(updatedData));
     return state.hasError == false;
   }
 

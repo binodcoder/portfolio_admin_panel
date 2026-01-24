@@ -40,7 +40,7 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
   String get description => _descriptionController.text.trim();
   String get technologies => _technologiesController.text.trim();
 
-  String? get _id => widget.item?.id;
+  Experience? get experience => widget.item;
 
   var _submitted = false;
 
@@ -78,25 +78,29 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(experienceControllerProvider.notifier);
-      final techs = technologies
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-      final data = Experience(
-        id: _id,
-        company: company,
-        title: title,
-        location: location.isEmpty ? null : location,
-        start: start.isEmpty ? null : DateTime.parse(start),
-        end: _current ? null : (end.isEmpty ? null : DateTime.parse(end)),
-        current: _current,
-        description: description.isEmpty ? null : description,
-        technologies: techs,
-      );
-      final success = _id == null
-          ? await controller.createExperience(data)
-          : await controller.updateExperience(_id!, data);
+
+      final success = experience == null
+          ? await controller.createExperience(
+              company: company,
+              title: title,
+              location: location,
+              start: start,
+              end: end,
+              current: _current,
+              description: description,
+              technologies: technologies,
+            )
+          : await controller.updateExperience(
+              data: experience!,
+              company: company,
+              title: title,
+              location: location,
+              start: start,
+              end: end,
+              current: _current,
+              description: description,
+              technologies: technologies,
+            );
       if (success && mounted) {
         context.pop();
       }
@@ -112,6 +116,36 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
   void _titleEditingComplete() {
     if (canSubmitTitle(title)) {
       _node.nextFocus();
+    }
+  }
+
+  void _locationEditingComplete() {
+    if (canSubmitLocation(location)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _startEditingComplete() {
+    if (canSubmitStart(start)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _endEditingComplete() {
+    if (canSubmitEnd(isCurrent: _current, end)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _descriptionEditingComplete() {
+    if (canSubmitDescription(description)) {
+      _node.nextFocus();
+    }
+  }
+
+  void _technologyEditingComplete() {
+    if (canSubmitTechnology(technologies)) {
+      _submit();
     }
   }
 
@@ -138,7 +172,7 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _id != null ? 'Edit Experience'.hardcoded : 'New Experience'.hardcoded,
+          experience != null ? 'Edit Experience'.hardcoded : 'New Experience'.hardcoded,
         ),
         actions: [
           SaveButton(
@@ -215,7 +249,7 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
                         onTap: state.isLoading
                             ? null
                             : () => _selectDate(_startController),
-                        onEditingComplete: () => _node.nextFocus(),
+                        onEditingComplete: () => _startEditingComplete(),
                       ),
                     ),
                     gapW12,
@@ -238,7 +272,7 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
                         onTap: state.isLoading || _current
                             ? null
                             : () => _selectDate(_endController),
-                        onEditingComplete: () => _node.nextFocus(),
+                        onEditingComplete: () => _endEditingComplete(),
                       ),
                     ),
                   ],
@@ -267,11 +301,14 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
                     labelText: 'Location (optional)'.hardcoded,
                     enabled: !state.isLoading,
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) =>
+                      !_submitted ? null : locationErrorText(value ?? ''),
                   autocorrect: false,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   keyboardAppearance: Brightness.light,
-                  onEditingComplete: () => _node.nextFocus(),
+                  onEditingComplete: () => _locationEditingComplete(),
                 ),
                 gapH12,
                 TextFormField(
@@ -282,9 +319,13 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
                     labelText: 'Description'.hardcoded,
                     enabled: !state.isLoading,
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) =>
+                      !_submitted ? null : descriptionErrorText(value ?? ''),
                   autocorrect: false,
                   keyboardAppearance: Brightness.light,
                   keyboardType: TextInputType.multiline,
+                  onEditingComplete: () => _descriptionEditingComplete(),
                 ),
                 gapH12,
                 TextFormField(
@@ -293,11 +334,14 @@ class _ExperienceFormState extends ConsumerState<ExperienceForm>
                     labelText: 'Technologies (comma separated)'.hardcoded,
                     enabled: !state.isLoading,
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) =>
+                      !_submitted ? null : technologyErrorText(value ?? ''),
                   autocorrect: false,
                   textInputAction: TextInputAction.done,
                   keyboardType: TextInputType.text,
                   keyboardAppearance: Brightness.light,
-                  onEditingComplete: () => _submit(),
+                  onEditingComplete: () => _technologyEditingComplete(),
                 ),
               ],
             ),

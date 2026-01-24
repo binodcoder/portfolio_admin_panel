@@ -14,8 +14,8 @@ class CertificationsRepository {
   );
 
   Future<void> create(Certification data) => _collection.add(data.toMap());
-  Future<void> update(String id, Certification data) =>
-      _collection.doc(id).update(data.toMap());
+  Future<void> update(Certification data) =>
+      _collection.doc(data.id).update(data.toMap());
   Future<void> delete(String id) => _collection.doc(id).delete();
 }
 

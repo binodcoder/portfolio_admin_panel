@@ -36,7 +36,7 @@ class _CertificationFormState extends ConsumerState<CertificationForm>
   String get expiryDate => _expiryDateController.text.trim();
   String get credentialUrl => _credentialUrlController.text.trim();
 
-  String? get _id => widget.item?.id;
+  Certification? get certification => widget.item;
 
   var _submitted = false;
 
@@ -70,18 +70,25 @@ class _CertificationFormState extends ConsumerState<CertificationForm>
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(certificationControllerProvider.notifier);
-      final data = Certification(
-        id: _id,
-        name: name,
-        issuer: issuer.isEmpty ? null : issuer,
-        issueDate: issueDate.isEmpty ? null : DateTime.parse(issueDate),
-        expiryDate: expiryDate.isEmpty ? null : DateTime.parse(expiryDate),
-        credentialId: _credentialId.isEmpty ? null : _credentialId,
-        credentialUrl: credentialUrl.isEmpty ? null : credentialUrl,
-      );
-      final success = _id == null
-          ? await controller.createCertification(data)
-          : await controller.updateCertification(_id!, data);
+
+      final success = certification == null
+          ? await controller.createCertification(
+              name: name,
+              issuer: issuer,
+              issueDate: issueDate,
+              expiryDate: expiryDate,
+              credentialId: _credentialId,
+              credentialUrl: credentialUrl,
+            )
+          : await controller.updateCertification(
+              data: certification!,
+              name: name,
+              issuer: issuer,
+              issueDate: issueDate,
+              expiryDate: expiryDate,
+              credentialId: _credentialId,
+              credentialUrl: credentialUrl,
+            );
       if (success && mounted) {
         context.pop();
       }
@@ -140,7 +147,7 @@ class _CertificationFormState extends ConsumerState<CertificationForm>
     final state = ref.watch(certificationControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_id != null ? 'Edit Certification' : 'New Certification'),
+        title: Text(certification != null ? 'Edit Certification' : 'New Certification'),
         actions: [
           SaveButton(
             onSave: state.isLoading ? null : () => _submit(),

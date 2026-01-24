@@ -29,7 +29,7 @@ class _SkillFormState extends ConsumerState<SkillForm> with SkillValidators {
   String get name => _nameController.text;
   String get category => _categoryController.text;
 
-  String? get _id => widget.item?.id;
+  Skill? get skill => widget.item;
 
   var _submitted = false;
 
@@ -53,15 +53,15 @@ class _SkillFormState extends ConsumerState<SkillForm> with SkillValidators {
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(skillsControllerProvider.notifier);
-      final data = Skill(
-        id: _id,
-        name: name.trim(),
-        level: _level.round(),
-        category: category.trim().isEmpty ? null : category.trim(),
-      );
-      final success = _id == null
-          ? await controller.createSkill(data)
-          : await controller.updateSkill(_id!, data);
+
+      final success = skill == null
+          ? await controller.createSkill(name: name, level: _level, category: category)
+          : await controller.updateSkill(
+              data: skill!,
+              name: name,
+              level: _level,
+              category: category,
+            );
       if (success && mounted) {
         context.pop();
       }
@@ -87,7 +87,7 @@ class _SkillFormState extends ConsumerState<SkillForm> with SkillValidators {
     final state = ref.watch(skillsControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_id != null ? 'Edit Skill'.hardcoded : 'New Skill'.hardcoded),
+        title: Text(skill != null ? 'Edit Skill'.hardcoded : 'New Skill'.hardcoded),
         actions: [
           SaveButton(
             onSave: state.isLoading ? null : () => _submit(),
