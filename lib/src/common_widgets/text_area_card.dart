@@ -18,7 +18,7 @@ class TextAreaCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Card(
-      elevation: 1,
+      //elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
       child: DecoratedBox(
         decoration: BoxDecoration(

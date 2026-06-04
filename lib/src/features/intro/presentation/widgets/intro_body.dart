@@ -46,7 +46,7 @@ class IntroSuccessView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(Sizes.p4),
-      child: TextAreaCard(text: item.value, padding: const EdgeInsets.all(Sizes.p4)),
+      child: TextAreaCard(text: item.value, padding: const EdgeInsets.all(Sizes.p12)),
     );
   }
 }
