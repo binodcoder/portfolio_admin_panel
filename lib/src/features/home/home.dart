@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
-import 'package:portfolio_admin_panel/src/constants/breakpoints.dart';
-import 'package:portfolio_admin_panel/src/features/home/widgets/action_card.dart';
-import 'package:portfolio_admin_panel/src/features/home/widgets/main_header.dart';
-import 'package:portfolio_admin_panel/src/features/home/widgets/sub_header.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/routing/app_router.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_center.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/constants/breakpoints.dart';
+import 'package:binodfolioadmin/src/features/home/widgets/action_card.dart';
+import 'package:binodfolioadmin/src/features/home/widgets/main_header.dart';
+import 'package:binodfolioadmin/src/features/home/widgets/sub_header.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/routing/app_router.dart';
 
 class QuickAction {
   const QuickAction({

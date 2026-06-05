@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:portfolio_admin_panel/src/features/skills/data/skills_repository.dart';
-import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
+import 'package:binodfolioadmin/src/features/skills/data/skills_repository.dart';
+import 'package:binodfolioadmin/src/features/skills/domain/skill.dart';
 
 class SkillsController extends StateNotifier<AsyncValue> {
   SkillsController({required this.skillsRepository}) : super(AsyncValue.data(null));

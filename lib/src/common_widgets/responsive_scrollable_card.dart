@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
-import 'package:portfolio_admin_panel/src/constants/breakpoints.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_center.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/constants/breakpoints.dart';
 
 /// Scrollable widget that shows a responsive card with a given child widget.
 /// Useful for displaying forms and other widgets that need to be scrollable.

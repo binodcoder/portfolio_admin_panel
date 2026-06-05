@@ -1,11 +1,9 @@
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/utils/string_validators.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/utils/string_validators.dart';
 
 mixin ProjectValidators {
   final StringValidator nonEmpty = NonEmptyStringValidator();
-  final StringValidator urlValidator = RegexValidator(
-    regexSource: r'^https?:\/\/.+$',
-  );
+  final StringValidator urlValidator = RegexValidator(regexSource: r'^https?:\/\/.+$');
 
   bool canSubmitTitle(String value) {
     return nonEmpty.isValid(value.trim());

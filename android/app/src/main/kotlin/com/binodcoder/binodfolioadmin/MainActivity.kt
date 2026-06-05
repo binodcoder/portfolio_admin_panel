@@ -1,4 +1,4 @@
-package com.example.portfolio_admin_panel
+package com.binodcoder.binodfolioadmin
 
 import io.flutter.embedding.android.FlutterActivity
 

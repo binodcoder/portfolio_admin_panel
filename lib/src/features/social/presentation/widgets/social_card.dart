@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/features/social/domain/social_link.dart';
-import 'package:portfolio_admin_panel/src/routing/app_router.dart';
+import 'package:binodfolioadmin/src/features/social/domain/social_link.dart';
+import 'package:binodfolioadmin/src/routing/app_router.dart';
 
 class SocialCard extends StatelessWidget {
   const SocialCard({super.key, required this.socialLink, required this.onDelete});

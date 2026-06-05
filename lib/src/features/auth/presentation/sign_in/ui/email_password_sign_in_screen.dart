@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/custom_text_button.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/primary_button.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_scrollable_card.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/controller/email_password_sign_in_controller.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_form_type.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/sign_in/ui/email_password_sign_in_validators.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/utils/async_value_ui.dart';
-import 'package:portfolio_admin_panel/src/utils/string_validators.dart';
+import 'package:binodfolioadmin/src/common_widgets/custom_text_button.dart';
+import 'package:binodfolioadmin/src/common_widgets/primary_button.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_scrollable_card.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/features/auth/presentation/sign_in/controller/email_password_sign_in_controller.dart';
+import 'package:binodfolioadmin/src/features/auth/presentation/sign_in/ui/email_password_sign_in_form_type.dart';
+import 'package:binodfolioadmin/src/features/auth/presentation/sign_in/ui/email_password_sign_in_validators.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/utils/async_value_ui.dart';
+import 'package:binodfolioadmin/src/utils/string_validators.dart';
 
 /// Email & password sign in screen.
 /// Wraps the [EmailPasswordSignInContents] widget below with a [Scaffold] and

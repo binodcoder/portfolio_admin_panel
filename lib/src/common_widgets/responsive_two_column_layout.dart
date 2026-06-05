@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/constants/breakpoints.dart';
+import 'package:binodfolioadmin/src/constants/breakpoints.dart';
 
 /// Responsive layout that shows two child widgets side by side if there is
 /// enough space, or vertically stacked if there is not enough space.

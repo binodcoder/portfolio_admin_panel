@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
-import 'package:portfolio_admin_panel/src/features/auth/data/auth_repository.dart';
-import 'package:portfolio_admin_panel/src/features/auth/domain/app_user.dart';
-import 'package:portfolio_admin_panel/src/features/auth/presentation/account/account_screen_controller.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/utils/async_value_ui.dart';
+import 'package:binodfolioadmin/src/common_widgets/alert_dialogs.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/features/auth/data/auth_repository.dart';
+import 'package:binodfolioadmin/src/features/auth/domain/app_user.dart';
+import 'package:binodfolioadmin/src/features/auth/presentation/account/account_screen_controller.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/utils/async_value_ui.dart';
 import 'package:flutter/services.dart';
 
 /// Simple account screen showing some user info and a logout button.

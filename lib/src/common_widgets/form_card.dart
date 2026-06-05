@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/custom_large_text_form_field.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/common_widgets/custom_large_text_form_field.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
 
 class FormCard extends StatelessWidget {
   const FormCard({

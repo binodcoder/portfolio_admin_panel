@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/features/home/widgets/icon_badge.dart';
+import 'package:binodfolioadmin/src/features/home/widgets/icon_badge.dart';
 
 class ActionCard extends StatefulWidget {
   final IconData icon;

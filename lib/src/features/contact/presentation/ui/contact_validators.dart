@@ -1,14 +1,12 @@
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/utils/string_validators.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/utils/string_validators.dart';
 
 mixin ContactValidators {
   final StringValidator emailValidator = EmailSubmitRegexValidator();
   final StringValidator phoneValidator = RegexValidator(
     regexSource: r'^[0-9+()\s-]{7,}$',
   );
-  final StringValidator urlValidator = RegexValidator(
-    regexSource: r'^https?:\/\/.+$',
-  );
+  final StringValidator urlValidator = RegexValidator(regexSource: r'^https?:\/\/.+$');
 
   bool canSubmitEmail(String value) {
     final trimmed = value.trim();

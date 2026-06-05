@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
+import 'package:binodfolioadmin/src/features/education/domain/education.dart';
 
 class EducationRepository {
   EducationRepository(this._firestore);

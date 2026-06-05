@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/domain/certification.dart';
+import 'package:binodfolioadmin/src/features/certifications/domain/certification.dart';
 
 class CertificationsRepository {
   CertificationsRepository(this._firestore);

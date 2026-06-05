@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
-import 'package:portfolio_admin_panel/src/exceptions/app_exception.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/common_widgets/alert_dialogs.dart';
+import 'package:binodfolioadmin/src/exceptions/app_exception.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
 
 /// A helper [AsyncValue] extension to show an alert dialog on error
 extension AsyncValueUI on AsyncValue {

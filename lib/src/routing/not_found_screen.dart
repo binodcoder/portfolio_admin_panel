@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/empty_placeholder_widget.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/common_widgets/empty_placeholder_widget.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
 
 /// Simple not found screen used for 404 errors (page not found on web)
 class NotFoundScreen extends StatelessWidget {

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
-import 'package:portfolio_admin_panel/src/features/projects/data/projects_repository.dart';
-import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
-import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/projects_controller.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/routing/app_router.dart';
+import 'package:binodfolioadmin/src/common_widgets/alert_dialogs.dart';
+import 'package:binodfolioadmin/src/common_widgets/async_value_widget.dart';
+import 'package:binodfolioadmin/src/common_widgets/empty_state.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_center.dart';
+import 'package:binodfolioadmin/src/features/projects/data/projects_repository.dart';
+import 'package:binodfolioadmin/src/features/projects/domain/project.dart';
+import 'package:binodfolioadmin/src/features/projects/presentation/controller/projects_controller.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/routing/app_router.dart';
 
 class ProjectsPage extends StatelessWidget {
   const ProjectsPage({super.key});

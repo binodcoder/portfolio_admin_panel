@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/constants/breakpoints.dart';
+import 'package:binodfolioadmin/src/constants/breakpoints.dart';
 
 class MainHeader extends StatelessWidget {
   const MainHeader({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:portfolio_admin_panel/src/features/about/data/about_repository.dart';
-import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
+import 'package:binodfolioadmin/src/features/about/data/about_repository.dart';
+import 'package:binodfolioadmin/src/features/about/domain/about.dart';
 
 class AboutController extends StateNotifier<AsyncValue> {
   AboutController({required this.aboutRepository}) : super(AsyncValue.data(null));

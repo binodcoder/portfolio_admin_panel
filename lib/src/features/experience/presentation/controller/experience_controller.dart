@@ -1,7 +1,7 @@
 import 'package:riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:portfolio_admin_panel/src/features/experience/data/experience_repository.dart';
-import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
+import 'package:binodfolioadmin/src/features/experience/data/experience_repository.dart';
+import 'package:binodfolioadmin/src/features/experience/domain/experience.dart';
 
 class ExperienceController extends StateNotifier<AsyncValue> {
   ExperienceController({required this.experienceRepository})

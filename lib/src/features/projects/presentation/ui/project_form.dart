@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_scrollable_card.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/save_button.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
-import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
-import 'package:portfolio_admin_panel/src/features/projects/presentation/controller/projects_controller.dart';
-import 'package:portfolio_admin_panel/src/features/projects/presentation/ui/project_validators.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_scrollable_card.dart';
+import 'package:binodfolioadmin/src/common_widgets/save_button.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/features/projects/domain/project.dart';
+import 'package:binodfolioadmin/src/features/projects/presentation/controller/projects_controller.dart';
+import 'package:binodfolioadmin/src/features/projects/presentation/ui/project_validators.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
 
 class ProjectForm extends ConsumerStatefulWidget {
   const ProjectForm({super.key, this.item});

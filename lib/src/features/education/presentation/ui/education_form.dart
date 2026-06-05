@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_scrollable_card.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/save_button.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
-import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
-import 'package:portfolio_admin_panel/src/features/education/presentation/controller/education_controller.dart';
-import 'package:portfolio_admin_panel/src/features/education/presentation/ui/education_validators.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_scrollable_card.dart';
+import 'package:binodfolioadmin/src/common_widgets/save_button.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/features/education/domain/education.dart';
+import 'package:binodfolioadmin/src/features/education/presentation/controller/education_controller.dart';
+import 'package:binodfolioadmin/src/features/education/presentation/ui/education_validators.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
 
 class EducationForm extends ConsumerStatefulWidget {
   const EducationForm({super.key, this.item});

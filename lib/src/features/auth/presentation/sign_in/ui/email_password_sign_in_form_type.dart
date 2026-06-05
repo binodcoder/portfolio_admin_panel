@@ -1,4 +1,4 @@
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
 
 /// Form type for email & password authentication
 enum EmailPasswordSignInFormType { signIn, register }

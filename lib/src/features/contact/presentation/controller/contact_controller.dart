@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:portfolio_admin_panel/src/features/contact/data/contact_repository.dart';
-import 'package:portfolio_admin_panel/src/features/contact/domain/contact_info.dart';
+import 'package:binodfolioadmin/src/features/contact/data/contact_repository.dart';
+import 'package:binodfolioadmin/src/features/contact/domain/contact_info.dart';
 
 class ContactController extends StateNotifier<AsyncValue> {
   ContactController({required this.contactRepository}) : super(AsyncValue.data(null));

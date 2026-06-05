@@ -4,11 +4,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:portfolio_admin_panel/firebase_options.dart';
-import 'package:portfolio_admin_panel/src/app.dart';
+import 'package:binodfolioadmin/firebase_options.dart';
+import 'package:binodfolioadmin/src/app.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
 
 /// Custom [DecoratedBox] widget with shadow to be used at the bottom of the
 /// screen on mobile. Useful for pinning CTAs such as checkout buttons etc.

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
-import 'package:portfolio_admin_panel/src/constants/breakpoints.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/data/certifications_repository.dart';
-import 'package:portfolio_admin_panel/src/features/certifications/presentation/widgets/certification_success_view.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/routing/app_router.dart';
+import 'package:binodfolioadmin/src/common_widgets/async_value_widget.dart';
+import 'package:binodfolioadmin/src/common_widgets/empty_state.dart';
+import 'package:binodfolioadmin/src/constants/breakpoints.dart';
+import 'package:binodfolioadmin/src/features/certifications/data/certifications_repository.dart';
+import 'package:binodfolioadmin/src/features/certifications/presentation/widgets/certification_success_view.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/routing/app_router.dart';
 
 class CertificationsPage extends StatelessWidget {
   const CertificationsPage({super.key});

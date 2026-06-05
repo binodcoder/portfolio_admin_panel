@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
-import 'package:portfolio_admin_panel/src/features/social/data/social_repository.dart';
-import 'package:portfolio_admin_panel/src/features/social/domain/social_link.dart';
-import 'package:portfolio_admin_panel/src/features/social/presentation/controller/social_controller.dart';
-import 'package:portfolio_admin_panel/src/features/social/presentation/widgets/social_card.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/routing/app_router.dart';
-import 'package:portfolio_admin_panel/src/utils/async_value_ui.dart';
+import 'package:binodfolioadmin/src/common_widgets/alert_dialogs.dart';
+import 'package:binodfolioadmin/src/common_widgets/async_value_widget.dart';
+import 'package:binodfolioadmin/src/common_widgets/empty_state.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_center.dart';
+import 'package:binodfolioadmin/src/features/social/data/social_repository.dart';
+import 'package:binodfolioadmin/src/features/social/domain/social_link.dart';
+import 'package:binodfolioadmin/src/features/social/presentation/controller/social_controller.dart';
+import 'package:binodfolioadmin/src/features/social/presentation/widgets/social_card.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/routing/app_router.dart';
+import 'package:binodfolioadmin/src/utils/async_value_ui.dart';
 
 class SocialPage extends ConsumerWidget {
   const SocialPage({super.key});

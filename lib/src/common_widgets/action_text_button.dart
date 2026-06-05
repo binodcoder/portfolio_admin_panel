@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
 
 /// Text button to be used as an [AppBar] action
 class ActionTextButton extends StatelessWidget {
@@ -15,11 +15,9 @@ class ActionTextButton extends StatelessWidget {
         child: Builder(
           builder: (context) {
             final theme = Theme.of(context);
-            final color = theme.appBarTheme.foregroundColor ?? theme.colorScheme.onSurface;
-            return Text(
-              text,
-              style: theme.textTheme.titleLarge!.copyWith(color: color),
-            );
+            final color =
+                theme.appBarTheme.foregroundColor ?? theme.colorScheme.onSurface;
+            return Text(text, style: theme.textTheme.titleLarge!.copyWith(color: color));
           },
         ),
       ),

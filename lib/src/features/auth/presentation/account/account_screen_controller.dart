@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:portfolio_admin_panel/src/features/auth/data/auth_repository.dart';
-import 'package:portfolio_admin_panel/src/features/auth/domain/app_user.dart';
+import 'package:binodfolioadmin/src/features/auth/data/auth_repository.dart';
+import 'package:binodfolioadmin/src/features/auth/domain/app_user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'account_screen_controller.g.dart';

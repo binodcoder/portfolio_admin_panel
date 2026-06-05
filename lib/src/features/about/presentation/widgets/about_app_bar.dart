@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
-import 'package:portfolio_admin_panel/src/features/about/data/about_repository.dart';
-import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
-import 'package:portfolio_admin_panel/src/features/about/presentation/controller/about_controller.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/routing/app_router.dart';
+import 'package:binodfolioadmin/src/common_widgets/alert_dialogs.dart';
+import 'package:binodfolioadmin/src/features/about/data/about_repository.dart';
+import 'package:binodfolioadmin/src/features/about/domain/about.dart';
+import 'package:binodfolioadmin/src/features/about/presentation/controller/about_controller.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/routing/app_router.dart';
 
 class AboutAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const AboutAppBar({super.key});

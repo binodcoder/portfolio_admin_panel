@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/error_message_widget.dart';
+import 'package:binodfolioadmin/src/common_widgets/error_message_widget.dart';
 
 /// A reusable widget to provide default loading and error widgets when working
 /// with AsyncValue.

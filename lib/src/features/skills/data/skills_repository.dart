@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/features/skills/domain/skill.dart';
+import 'package:binodfolioadmin/src/features/skills/domain/skill.dart';
 
 class SkillsRepository {
   SkillsRepository(this._firestore);

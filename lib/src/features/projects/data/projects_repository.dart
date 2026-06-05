@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
+import 'package:binodfolioadmin/src/features/projects/domain/project.dart';
 
 class ProjectsRepository {
   ProjectsRepository(this._firestore);

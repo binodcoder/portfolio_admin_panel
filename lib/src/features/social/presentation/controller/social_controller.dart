@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:portfolio_admin_panel/src/features/social/data/social_repository.dart';
-import 'package:portfolio_admin_panel/src/features/social/domain/social_link.dart';
+import 'package:binodfolioadmin/src/features/social/data/social_repository.dart';
+import 'package:binodfolioadmin/src/features/social/domain/social_link.dart';
 
 class SocialController extends StateNotifier<AsyncValue> {
   SocialController({required this.socialRepository}) : super(AsyncValue.data(null));

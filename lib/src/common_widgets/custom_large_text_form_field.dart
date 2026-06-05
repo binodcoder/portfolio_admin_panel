@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
 
 class CustomLargeTextFormField extends StatelessWidget {
   const CustomLargeTextFormField({

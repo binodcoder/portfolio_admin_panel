@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/features/experience/domain/experience.dart';
+import 'package:binodfolioadmin/src/features/experience/domain/experience.dart';
 
 class ExperienceRepository {
   ExperienceRepository(this._firestore);

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/text_area_card.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
-import 'package:portfolio_admin_panel/src/features/about/data/about_repository.dart';
-import 'package:portfolio_admin_panel/src/features/about/domain/about.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/common_widgets/async_value_widget.dart';
+import 'package:binodfolioadmin/src/common_widgets/empty_state.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_center.dart';
+import 'package:binodfolioadmin/src/common_widgets/text_area_card.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/features/about/data/about_repository.dart';
+import 'package:binodfolioadmin/src/features/about/domain/about.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
 
 class AboutBody extends ConsumerWidget {
   const AboutBody({super.key});

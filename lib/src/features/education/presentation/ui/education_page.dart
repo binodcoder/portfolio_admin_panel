@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/alert_dialogs.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/async_value_widget.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/empty_state.dart';
-import 'package:portfolio_admin_panel/src/common_widgets/responsive_center.dart';
-import 'package:portfolio_admin_panel/src/features/education/data/education_repository.dart';
-import 'package:portfolio_admin_panel/src/features/education/domain/education.dart';
-import 'package:portfolio_admin_panel/src/features/education/presentation/controller/education_controller.dart';
-import 'package:portfolio_admin_panel/src/localization/string_hardcoded.dart';
-import 'package:portfolio_admin_panel/src/routing/app_router.dart';
+import 'package:binodfolioadmin/src/common_widgets/alert_dialogs.dart';
+import 'package:binodfolioadmin/src/common_widgets/async_value_widget.dart';
+import 'package:binodfolioadmin/src/common_widgets/empty_state.dart';
+import 'package:binodfolioadmin/src/common_widgets/responsive_center.dart';
+import 'package:binodfolioadmin/src/features/education/data/education_repository.dart';
+import 'package:binodfolioadmin/src/features/education/domain/education.dart';
+import 'package:binodfolioadmin/src/features/education/presentation/controller/education_controller.dart';
+import 'package:binodfolioadmin/src/localization/string_hardcoded.dart';
+import 'package:binodfolioadmin/src/routing/app_router.dart';
 
 class EducationPage extends StatelessWidget {
   const EducationPage({super.key});
@@ -106,9 +106,7 @@ class EducationSuccessView extends ConsumerWidget {
             Card(
               child: ListTile(
                 title: Text('${e.degree ?? ''} ${e.field != null ? '• ${e.field}' : ''}'),
-                subtitle: Text(
-                  _subtitleFor(e),
-                ),
+                subtitle: Text(_subtitleFor(e)),
                 isThreeLine: true,
                 trailing: Wrap(
                   spacing: 8,

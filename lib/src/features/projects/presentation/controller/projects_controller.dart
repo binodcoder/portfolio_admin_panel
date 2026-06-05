@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:portfolio_admin_panel/src/features/projects/data/projects_repository.dart';
-import 'package:portfolio_admin_panel/src/features/projects/domain/project.dart';
+import 'package:binodfolioadmin/src/features/projects/data/projects_repository.dart';
+import 'package:binodfolioadmin/src/features/projects/domain/project.dart';
 
 class ProjectsController extends StateNotifier<AsyncValue> {
   ProjectsController({required this.projectsRepository}) : super(AsyncValue.data(null));

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:portfolio_admin_panel/src/features/intro/data/intro_repository.dart';
-import 'package:portfolio_admin_panel/src/features/intro/domain/intro.dart';
+import 'package:binodfolioadmin/src/features/intro/data/intro_repository.dart';
+import 'package:binodfolioadmin/src/features/intro/domain/intro.dart';
 
 class IntroController extends StateNotifier<AsyncValue> {
   IntroController({required this.introRepository}) : super(AsyncValue.data(null));

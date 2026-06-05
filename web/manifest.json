@@ -1,6 +1,6 @@
 {
-    "name": "portfolio_admin_panel",
-    "short_name": "portfolio_admin_panel",
+    "name": "binodfolioadmin",
+    "short_name": "binodfolioadmin",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

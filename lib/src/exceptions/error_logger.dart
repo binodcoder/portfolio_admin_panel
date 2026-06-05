@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:portfolio_admin_panel/src/exceptions/app_exception.dart';
+import 'package:binodfolioadmin/src/exceptions/app_exception.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'error_logger.g.dart';

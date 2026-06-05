@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio_admin_panel/src/constants/app_sizes.dart';
+import 'package:binodfolioadmin/src/constants/app_sizes.dart';
 
 /// Primary button based on [ElevatedButton]. Useful for CTAs in the app.
 class PrimaryButton extends StatelessWidget {
@@ -36,8 +36,8 @@ class PrimaryButton extends StatelessWidget {
                 text,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
       ),
     );
